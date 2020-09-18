@@ -54,32 +54,28 @@ label_title.grid(row=0, sticky='new', pady=(0,20))
 label_title.config(font=title_font)
 
 
-def on_enter(e):
-    label_0['background'] = 'green'
+class Button_menu():
+    def __init__(self, text, num_row):
+        self.button = tk.Button(frame_left, text=text, bg=color_left_menu, fg="white", activebackground="red", borderwidth=0)
+        self.button.grid(row=num_row, sticky='new', pady=(0, 10))
+        self.button.config(font=menu_font)
+        self.button.bind("<Enter>", self.on_enter)
+        self.button.bind("<Leave>", self.on_leave)
 
-def on_leave(e):
-    label_0['background'] = color_left_menu
+    def on_enter(self, e):
+        self.button['background'] = 'green'
+
+    def on_leave(self, e):
+        self.button['background'] = color_left_menu
+
+
+Button_1 = Button_menu("Tableau de bord", 1)
+Button_2 = Button_menu("Produits", 2)
+Button_3 = Button_menu("Historiques", 3)
 
 
 
 
-# Left title
-label_0 = tk.Button(frame_left, text="Tableau de bord", bg=color_left_menu, fg="white", activebackground="red", borderwidth=0)
-label_0.grid(row=1, sticky='new', pady=(0, 10))
-label_0.config(font=menu_font)
-
-label_0.bind("<Enter>", on_enter)
-label_0.bind("<Leave>", on_leave)
-
-# Left title
-label_1 = tk.Button(frame_left, text="Produits", bg=color_left_menu, fg="white", borderwidth=0)
-label_1.grid(row=2, sticky='new', pady=(0, 10))
-label_1.config(font=menu_font)
-
-# Left title
-label_2 = tk.Button(frame_left, text="Historiques", bg=color_left_menu, fg="white", borderwidth=0)
-label_2.grid(row=3, sticky='new', pady=(0, 10))
-label_2.config(font=menu_font)
 
 # # Main title
 # label_title = tk.Label(frame_main, text="Gestion de stock", bg=color_title, fg="white")
