@@ -44,12 +44,12 @@ frame_left.columnconfigure(0, weight=1)
 
 # Right frame
 frame_right_width = 4*(window_width/5)
-frame_right = tk.Frame(root, bg="yellow", width=frame_right_width)
+frame_right = tk.Frame(root, bg="#e8e8e8", width=frame_right_width)
 frame_right.grid(row=0, column=1, sticky='news')
 frame_right.columnconfigure(0, weight=1)
 
 # Left title
-label_title = tk.Label(frame_left, text="Nom entreprise", bg="#13547a", fg="white")
+label_title = tk.Label(frame_left, text="Nom entreprise", bg="black", fg="white", height=2)
 label_title.grid(row=0, sticky='new', pady=(0, 20))
 label_title.config(font=title_font)
 
@@ -57,68 +57,34 @@ label_title.config(font=title_font)
 class ButtonLeftText():
     """ Text buttons located in the left of the window """
 
-    def __init__(self, text, num_row):
-        self.button = tk.Button(frame_left, text=text, bg=color_left_menu, fg="white", activebackground="red", borderwidth=0)
-        self.button.grid(row=num_row, sticky='new', pady=(0, 10))
+    def __init__(self, p_text, p_row, p_parent, p_bg, p_pady, p_command):
+        self.init_bg = p_bg
+        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", activebackground="green", borderwidth=0, command=p_command)
+        self.button.grid(row=p_row, sticky='new', pady=p_pady)
         self.button.config(font=menu_font)
         self.button.bind("<Enter>", self.on_enter)
         self.button.bind("<Leave>", self.on_leave)
 
     def on_enter(self, e):
-        self.button['background'] = 'green'
+        self.button['bg'] = 'white'
+        self.button['fg'] = 'black'
 
     def on_leave(self, e):
-        self.button['background'] = color_left_menu
+        self.button['bg'] = self.init_bg
+        self.button['fg'] = 'white'
 
 
 # Initialization of the left buttons
-Button_1 = ButtonLeftText("Dashboard", 1)
-Button_2 = ButtonLeftText("Produits", 2)
-Button_3 = ButtonLeftText("Historique", 3)
+Button_1 = ButtonLeftText("Dashboard", 1, frame_left, color_left_menu, (0, 10), None)
+Button_2 = ButtonLeftText("Produits", 2, frame_left, color_left_menu, (0, 10), None)
+Button_3 = ButtonLeftText("Historique", 3, frame_left, color_left_menu, (0, 10), None)
 
+frame_bottom_left = tk.Frame(frame_left, bg="#13547a", height=200, width=frame_left_width)
+frame_bottom_left.grid(row=4, sticky='new', pady=(345, 0))
+frame_bottom_left.columnconfigure(0, weight=1)
 
-# Top menu
-frame_top_menu = tk.Frame(frame_right, bg="#13547a", width=frame_right_width, height=32)
-frame_top_menu.grid(row=0, sticky='new')
-frame_top_menu.columnconfigure(0, weight=1)
-
-
-class ButtonTopIcon:
-    """ Icon buttons located in the top of the window """
-
-    def __init__(self, num_col, p_color_enter, p_color_leave):
-        self.button = tk.Button(frame_top_menu, image=settings_icon_blue, height=31, width=31, borderwidth=0)
-        self.button.grid(row=0, column=num_col, sticky="e", padx=(0, 0), pady=(0, 0))
-        self.button.bind("<Enter>", self.on_enter)
-        self.button.bind("<Leave>", self.on_leave)
-        self.color_enter = p_color_enter
-        self.color_leave = p_color_leave
-
-    def on_enter(self, e):
-        self.button['image'] = self.color_enter
-
-    def on_leave(self, e):
-        self.button['image'] = self.color_leave
-
-
-class ButtonTopText:
-    """ Text buttons located in the top of the window """
-
-    def __init__(self, num_col):
-        self.button = tk.Button(frame_top_menu, text="Se connecter", bg="#13547a", fg="white", borderwidth=0, command=create_login_window)
-        self.button.grid(row=0, column=num_col, sticky="e", padx=(10, 5))
-        self.button.config(font=low_font)
-        self.button.bind("<Enter>", self.on_enter)
-        self.button.bind("<Leave>", self.on_leave)
-
-    def on_enter(self, e):
-        self.button['bg'] = '#FFA500'
-        self.button['fg'] = 'white'
-
-    def on_leave(self, e):
-        self.button['bg'] = "#13547a"
-        self.button['fg'] = 'white'
-
+Button_4 = ButtonLeftText("Aide", 0, frame_bottom_left, "#13547a", (10, 10), None)
+Button_5 = ButtonLeftText("Paramètres", 1, frame_bottom_left, "#13547a", (0, 10), None)
 
 def create_login_window():
     """ Creation of the login window """
@@ -157,16 +123,27 @@ def create_login_window():
     entry_password = tk.Entry(login_window, bg="white", width=30, textvariable=var_password, font=("Consolas", 15))
     entry_password.grid(row=4,  pady=(0, 20))
 
+Button_6 = ButtonLeftText("Se connecter", 2, frame_bottom_left, "orange", (0, 0), create_login_window)
 
-# Initialization of the top buttons
-settings_icon_blue = tk.PhotoImage(file="settings_blue.png")
-settings_icon_orange = tk.PhotoImage(file="settings_orange.png")
-Button_settings = ButtonTopIcon(0, settings_icon_orange, settings_icon_blue)
-Button_login = ButtonTopText(1)
 
-# Main frame
-frame_main = tk.Frame(frame_right, bg="#e8e8e8", width=frame_right_width, height=window_height-34)
-frame_main.grid(row=2, sticky='new')
+
+# Label page title
+label_page_title = tk.Label(frame_right, text="Dashboard", bg="#e8e8e8")
+label_page_title.grid(row=0, sticky='nw', padx=(10, 10), pady=(5, 5))
+label_page_title.config(font=title_font)
+
+# First frame
+frame_first = tk.Frame(frame_right, bg="white", width=frame_right_width, height=200, highlightthickness=1)
+frame_first.config(highlightbackground="grey")
+frame_first.grid(row=1, sticky='new', padx=(10, 10), pady=(5, 10))
+frame_first.columnconfigure(0, weight=1)
+
+# Second frame
+frame_second = tk.Frame(frame_right, bg="white", width=frame_right_width, height=200, highlightthickness=1)
+frame_second.config(highlightbackground="grey")
+frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
+frame_second.columnconfigure(0, weight=1)
+
 
 
 
