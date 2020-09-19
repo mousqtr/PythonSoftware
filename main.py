@@ -17,7 +17,6 @@ menu_font = ("Calibri bold", 14)
 low_font = ("Calibri bold", 13)
 username_font = ("Calibri", 13)
 
-
 # Root initialization
 root = tk.Tk()
 root.title("Gestionnaire d'inventaire")
@@ -55,7 +54,9 @@ label_title.grid(row=0, sticky='new', pady=(0, 20))
 label_title.config(font=title_font)
 
 
-class Button_menu():
+class ButtonLeftText():
+    """ Text buttons located in the left of the window """
+
     def __init__(self, text, num_row):
         self.button = tk.Button(frame_left, text=text, bg=color_left_menu, fg="white", activebackground="red", borderwidth=0)
         self.button.grid(row=num_row, sticky='new', pady=(0, 10))
@@ -70,9 +71,10 @@ class Button_menu():
         self.button['background'] = color_left_menu
 
 
-Button_1 = Button_menu("Dashboard", 1)
-Button_2 = Button_menu("Produits", 2)
-Button_3 = Button_menu("Historique", 3)
+# Initialization of the left buttons
+Button_1 = ButtonLeftText("Dashboard", 1)
+Button_2 = ButtonLeftText("Produits", 2)
+Button_3 = ButtonLeftText("Historique", 3)
 
 
 # Top menu
@@ -80,40 +82,48 @@ frame_top_menu = tk.Frame(frame_right, bg="#13547a", width=frame_right_width, he
 frame_top_menu.grid(row=0, sticky='new')
 frame_top_menu.columnconfigure(0, weight=1)
 
-# Top menu - right icon
-settings_icon_blue = tk.PhotoImage(file="settings_blue.png")
-settings_icon_orange = tk.PhotoImage(file="settings_orange.png")
+
+class ButtonTopIcon:
+    """ Icon buttons located in the top of the window """
+
+    def __init__(self, num_col, p_color_enter, p_color_leave):
+        self.button = tk.Button(frame_top_menu, image=settings_icon_blue, height=31, width=31, borderwidth=0)
+        self.button.grid(row=0, column=num_col, sticky="e", padx=(0, 0), pady=(0, 0))
+        self.button.bind("<Enter>", self.on_enter)
+        self.button.bind("<Leave>", self.on_leave)
+        self.color_enter = p_color_enter
+        self.color_leave = p_color_leave
+
+    def on_enter(self, e):
+        self.button['image'] = self.color_enter
+
+    def on_leave(self, e):
+        self.button['image'] = self.color_leave
 
 
-def on_enter0(e):
-    button_setting['image'] = settings_icon_orange
+class ButtonTopText:
+    """ Text buttons located in the top of the window """
+
+    def __init__(self, num_col):
+        self.button = tk.Button(frame_top_menu, text="Se connecter", bg="#13547a", fg="white", borderwidth=0, command=create_login_window)
+        self.button.grid(row=0, column=num_col, sticky="e", padx=(10, 5))
+        self.button.config(font=low_font)
+        self.button.bind("<Enter>", self.on_enter)
+        self.button.bind("<Leave>", self.on_leave)
+
+    def on_enter(self, e):
+        self.button['bg'] = '#FFA500'
+        self.button['fg'] = 'white'
+
+    def on_leave(self, e):
+        self.button['bg'] = "#13547a"
+        self.button['fg'] = 'white'
 
 
-def on_leave0(e):
-    button_setting['image'] = settings_icon_blue
+def create_login_window():
+    """ Creation of the login window """
 
-
-settings_icon = tk.PhotoImage(file="settings_blue.png")
-button_setting = tk.Button(frame_top_menu, image=settings_icon, height=31, width=31, borderwidth=0)
-button_setting.grid(row=0, column=0, sticky="e", padx=(0, 0), pady=(0, 0))
-button_setting.bind("<Enter>", on_enter0)
-button_setting.bind("<Leave>", on_leave0)
-
-
-# Top menu - right user name
-def on_enter(e):
-    button_login['bg'] = '#FFA500'
-    button_login['fg'] = 'white'
-
-
-def on_leave(e):
-    button_login['bg'] = "#13547a"
-    button_login['fg'] = 'white'
-
-
-
-
-def create_window():
+    # Window handle
     login_window = tk.Toplevel(root)
     login_window_width = 500
     login_window_height = 250
@@ -122,63 +132,43 @@ def create_window():
     login_window.geometry("{}x{}+{}+{}".format(login_window_width, login_window_height, x_cord, y_cord))
     login_window.columnconfigure(0, weight=1)
 
+    # Title of the login window
     label_login_title = tk.Label(login_window, text="Identification", bg="#13547a", fg="white")
     label_login_title.grid(row=0, sticky='new', pady=(0, 20))
     label_login_title.config(font=menu_font)
 
+    # Username label
     label_username = tk.Label(login_window, text="Username")
     label_username.grid(row=1, sticky='new', pady=(0, 10))
     label_username.config(font=username_font)
 
+    # Username entry
     var_username = tk.StringVar(value='')
     entry_username = tk.Entry(login_window, bg="white", width=30, textvariable=var_username, font=("Consolas", 15))
     entry_username.grid(row=2,  pady=(0, 20))
 
+    # Password label
     label_password = tk.Label(login_window, text="Password")
     label_password.grid(row=3, sticky='new', pady=(0, 10))
     label_password.config(font=username_font)
 
+    # Password entry
     var_password = tk.StringVar(value='')
     entry_password = tk.Entry(login_window, bg="white", width=30, textvariable=var_password, font=("Consolas", 15))
     entry_password.grid(row=4,  pady=(0, 20))
 
 
-button_login = tk.Button(frame_top_menu, text="Se connecter", bg="#13547a", fg="white", borderwidth=0, command=create_window)
-button_login.grid(row=0, column=1, sticky="e", padx=(10,5))
-button_login.config(font=low_font)
-button_login.bind("<Enter>", on_enter)
-button_login.bind("<Leave>", on_leave)
-
-
-
-
+# Initialization of the top buttons
+settings_icon_blue = tk.PhotoImage(file="settings_blue.png")
+settings_icon_orange = tk.PhotoImage(file="settings_orange.png")
+Button_settings = ButtonTopIcon(0, settings_icon_orange, settings_icon_blue)
+Button_login = ButtonTopText(1)
 
 # Main frame
 frame_main = tk.Frame(frame_right, bg="#e8e8e8", width=frame_right_width, height=window_height-34)
 frame_main.grid(row=2, sticky='new')
 
 
-# # Main title
-# label_title = tk.Label(frame_main, text="Gestion de stock", bg=color_title, fg="white")
-# label_title.grid(row=0, sticky='new')
-# label_title.config(font=("Consolas", 30))
-#
-# # Research section
-# frame_research = tk.Frame(frame_main, bg=color_window)
-# frame_research.grid(row=1, sticky='new', pady=20, padx=10)
-#
-# label_reference = tk.Label(frame_research, text="Référence", fg="white", bg=color_window)
-# label_reference.grid(row=0, column=0, padx=(200,5))
-# label_reference.config(font=("Consolas", 15))
-#
-# entry_var = tk.StringVar(value='')
-# entry_research = tk.Entry(frame_research, bg="white", width=30, textvariable=entry_var, font=("Consolas", 15))
-# entry_research.grid(row=0, column=1, padx=(5, 15))
-#
-#
-# label_research = tk.Button(frame_research, text="Rechercher", fg="black", width=30)
-# label_research.grid(row=0, column=2, padx=(10, 5))
-# label_research.config(font=("Consolas", 12))
 
 
 
