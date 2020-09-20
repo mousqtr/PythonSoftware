@@ -20,7 +20,7 @@ username_font = ("Calibri", 13)
 # Root initialization
 root = tk.Tk()
 root.title("Gestionnaire d'inventaire")
-root.resizable(False, False)
+root.resizable(True, True)
 root.config(bg=color_window)
 window_icon = tk.PhotoImage(file="inventory.png")
 root.iconphoto(False, window_icon)
@@ -43,10 +43,19 @@ frame_left.grid(row=0, column=0, sticky='news')
 frame_left.columnconfigure(0, weight=1)
 
 # Right frame
-frame_right_width = 4*(window_width/5)
-frame_dashboard = tk.Frame(root, bg="#e8e8e8", width=frame_right_width)
-frame_dashboard.grid(row=0, column=1, sticky='news')
-frame_dashboard.columnconfigure(0, weight=1)
+class FrameRight:
+    def __init__(self, p_title, p_background):
+        self.frame_width = 4*(window_width/5)
+        self.frame = tk.Frame(root, bg=p_background, width=self.frame_width)
+        self.frame.grid(row=0, column=1, sticky='news')
+        self.frame.columnconfigure(0, weight=1)
+
+        # Label page title
+        self.label_page_title = tk.Label(self.frame, bg=p_background, text=p_title)
+        self.label_page_title.grid(row=0, sticky='nw', padx=(10, 10), pady=(5, 5))
+        self.label_page_title.config(font=title_font)
+
+
 
 # Left title
 label_title = tk.Label(frame_left, text="Nom entreprise", bg="black", fg="white", height=2)
@@ -54,7 +63,7 @@ label_title.grid(row=0, sticky='new', pady=(0, 20))
 label_title.config(font=title_font)
 
 
-class ButtonLeftText():
+class ButtonLeftText:
     """ Text buttons located in the left of the window """
 
     def __init__(self, p_text, p_row, p_parent, p_bg, p_pady, p_command):
@@ -75,15 +84,15 @@ class ButtonLeftText():
 
 
 # Initialization of the left buttons
-Button_1 = ButtonLeftText("Dashboard", 1, frame_left, color_left_menu, (0, 10), None)
-Button_2 = ButtonLeftText("Produits", 2, frame_left, color_left_menu, (0, 10), None)
-Button_3 = ButtonLeftText("Historique", 3, frame_left, color_left_menu, (0, 10), None)
+Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, color_left_menu, (0, 10), None)
+Button_user = ButtonLeftText("Utilisateurs", 2, frame_left, color_left_menu, (0, 10), None)
+Button_action = ButtonLeftText("Actions", 3, frame_left, color_left_menu, (0, 10), None)
 
 frame_bottom_left = tk.Frame(frame_left, bg="#13547a", height=200, width=frame_left_width)
 frame_bottom_left.grid(row=4, sticky='new', pady=(345, 0))
 frame_bottom_left.columnconfigure(0, weight=1)
 
-Button_4 = ButtonLeftText("Aide", 0, frame_bottom_left, "#13547a", (10, 10), None)
+Button_help = ButtonLeftText("Aide", 0, frame_bottom_left, "#13547a", (10, 10), None)
 
 
 def create_login_window():
@@ -125,32 +134,25 @@ def create_login_window():
 
 Button_6 = ButtonLeftText("Se connecter", 2, frame_bottom_left, "orange", (0, 0), create_login_window)
 
-
-
-# Label page title
-label_page_title = tk.Label(frame_dashboard, text="Dashboard", bg="#e8e8e8")
-label_page_title.grid(row=0, sticky='nw', padx=(10, 10), pady=(5, 5))
-label_page_title.config(font=title_font)
+DashboardFrame = FrameRight("Dashboard", "#e8e8e8")
 
 # First frame
-frame_first = tk.Frame(frame_dashboard, bg="white", width=frame_right_width, height=200, highlightthickness=1)
+frame_first = tk.Frame(DashboardFrame.frame, bg="white", width=DashboardFrame.frame_width, height=200, highlightthickness=1)
 frame_first.config(highlightbackground="grey")
 frame_first.grid(row=1, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_first.columnconfigure(0, weight=1)
 
 # Second frame
-frame_second = tk.Frame(frame_dashboard, bg="red", width=frame_right_width, height=200, highlightthickness=1)
+frame_second = tk.Frame(DashboardFrame.frame, bg="white", width=DashboardFrame.frame_width, height=200, highlightthickness=1)
 frame_second.config(highlightbackground="grey")
 frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 
-frame_settings = tk.Frame(root, bg="red", width=frame_right_width)
-frame_settings.grid(row=0, column=1, sticky='news')
-frame_settings.columnconfigure(0, weight=1)
+SettingsFrame = FrameRight("Paramètres", "orange")
 
-frame_dashboard.lift()
-Button_5 = ButtonLeftText("Paramètres", 1, frame_bottom_left, "#13547a", (0, 10), frame_settings.lift)
+DashboardFrame.frame.lift()
+Button_5 = ButtonLeftText("Paramètres", 1, frame_bottom_left, "#13547a", (0, 10), SettingsFrame.frame.lift)
 
 
 
