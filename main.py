@@ -44,9 +44,9 @@ frame_left.columnconfigure(0, weight=1)
 
 # Right frame
 frame_right_width = 4*(window_width/5)
-frame_right = tk.Frame(root, bg="#e8e8e8", width=frame_right_width)
-frame_right.grid(row=0, column=1, sticky='news')
-frame_right.columnconfigure(0, weight=1)
+frame_dashboard = tk.Frame(root, bg="#e8e8e8", width=frame_right_width)
+frame_dashboard.grid(row=0, column=1, sticky='news')
+frame_dashboard.columnconfigure(0, weight=1)
 
 # Left title
 label_title = tk.Label(frame_left, text="Nom entreprise", bg="black", fg="white", height=2)
@@ -84,7 +84,7 @@ frame_bottom_left.grid(row=4, sticky='new', pady=(345, 0))
 frame_bottom_left.columnconfigure(0, weight=1)
 
 Button_4 = ButtonLeftText("Aide", 0, frame_bottom_left, "#13547a", (10, 10), None)
-Button_5 = ButtonLeftText("Paramètres", 1, frame_bottom_left, "#13547a", (0, 10), None)
+
 
 def create_login_window():
     """ Creation of the login window """
@@ -128,24 +128,29 @@ Button_6 = ButtonLeftText("Se connecter", 2, frame_bottom_left, "orange", (0, 0)
 
 
 # Label page title
-label_page_title = tk.Label(frame_right, text="Dashboard", bg="#e8e8e8")
+label_page_title = tk.Label(frame_dashboard, text="Dashboard", bg="#e8e8e8")
 label_page_title.grid(row=0, sticky='nw', padx=(10, 10), pady=(5, 5))
 label_page_title.config(font=title_font)
 
 # First frame
-frame_first = tk.Frame(frame_right, bg="white", width=frame_right_width, height=200, highlightthickness=1)
+frame_first = tk.Frame(frame_dashboard, bg="white", width=frame_right_width, height=200, highlightthickness=1)
 frame_first.config(highlightbackground="grey")
 frame_first.grid(row=1, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_first.columnconfigure(0, weight=1)
 
 # Second frame
-frame_second = tk.Frame(frame_right, bg="white", width=frame_right_width, height=200, highlightthickness=1)
+frame_second = tk.Frame(frame_dashboard, bg="red", width=frame_right_width, height=200, highlightthickness=1)
 frame_second.config(highlightbackground="grey")
 frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 
+frame_settings = tk.Frame(root, bg="red", width=frame_right_width)
+frame_settings.grid(row=0, column=1, sticky='news')
+frame_settings.columnconfigure(0, weight=1)
 
+frame_dashboard.lift()
+Button_5 = ButtonLeftText("Paramètres", 1, frame_bottom_left, "#13547a", (0, 10), frame_settings.lift)
 
 
 
