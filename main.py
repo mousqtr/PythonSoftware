@@ -3,6 +3,7 @@ from functools import partial
 import sqlite3
 import pandas as pd
 from product import Product
+from tools import FrameRight, ButtonLeftText
 
 
 # Custom settings
@@ -42,18 +43,8 @@ frame_left = tk.Frame(root, bg=color_left_menu, width=frame_left_width)
 frame_left.grid(row=0, column=0, sticky='news')
 frame_left.columnconfigure(0, weight=1)
 
-# Right frame
-class FrameRight:
-    def __init__(self, p_title, p_background):
-        self.frame_width = 4*(window_width/5)
-        self.frame = tk.Frame(root, bg=p_background, width=self.frame_width)
-        self.frame.grid(row=0, column=1, sticky='news')
-        self.frame.columnconfigure(0, weight=1)
 
-        # Label page title
-        self.label_page_title = tk.Label(self.frame, bg=p_background, text=p_title)
-        self.label_page_title.grid(row=0, sticky='nw', padx=(10, 10), pady=(5, 5))
-        self.label_page_title.config(font=title_font)
+
 
 
 
@@ -63,24 +54,7 @@ label_title.grid(row=0, sticky='new', pady=(0, 20))
 label_title.config(font=title_font)
 
 
-class ButtonLeftText:
-    """ Text buttons located in the left of the window """
 
-    def __init__(self, p_text, p_row, p_parent, p_bg, p_pady, p_command):
-        self.init_bg = p_bg
-        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", activebackground="green", borderwidth=0, command=p_command)
-        self.button.grid(row=p_row, sticky='new', pady=p_pady)
-        self.button.config(font=menu_font)
-        self.button.bind("<Enter>", self.on_enter)
-        self.button.bind("<Leave>", self.on_leave)
-
-    def on_enter(self, e):
-        self.button['bg'] = 'white'
-        self.button['fg'] = 'black'
-
-    def on_leave(self, e):
-        self.button['bg'] = self.init_bg
-        self.button['fg'] = 'white'
 
 
 # Initialization of the left buttons
@@ -134,7 +108,7 @@ def create_login_window():
 
 Button_6 = ButtonLeftText("Se connecter", 2, frame_bottom_left, "orange", (0, 0), create_login_window)
 
-DashboardFrame = FrameRight("Dashboard", "#e8e8e8")
+DashboardFrame = FrameRight(root, "Dashboard", "#e8e8e8")
 
 # First frame
 frame_first = tk.Frame(DashboardFrame.frame, bg="white", width=DashboardFrame.frame_width, height=200, highlightthickness=1)
@@ -149,7 +123,7 @@ frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 
-SettingsFrame = FrameRight("Paramètres", "orange")
+SettingsFrame = FrameRight(root, "Paramètres", "orange")
 
 DashboardFrame.frame.lift()
 Button_5 = ButtonLeftText("Paramètres", 1, frame_bottom_left, "#13547a", (0, 10), SettingsFrame.frame.lift)
