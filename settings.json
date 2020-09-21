@@ -3,7 +3,9 @@
     "dimensions": {
         "window_width": 1000,
         "window_height": 700,
-        "top_menu_height": 40
+        "top_menu_height": 40,
+        "window_login_width": 440,
+        "window_login_height": 250
     },
     "buttons": {
         "first": "Dashboard",
@@ -18,18 +20,24 @@
     },
     "font": {
         "font_company_name": "Calibri bold",
-        "font_menu": "Calibri bold",
+        "font_left_menu": "Calibri bold",
+        "font_top_menu": "Calibri bold",
         "font_right_frame_title": "Calibri bold",
         "font_login_title": "Calibri bold",
         "font_login_username": "Calibri",
-        "font_login_password": "Calibri"
+		"font_login_entry_username": "Calibri",
+        "font_login_password": "Calibri",
+        "font_login_entry_password": "Calibri"
     },
     "font_size": {
         "font_size_company_name": 14,
-        "font_size_menu": 14,
+        "font_size_left_menu": 14,
+        "font_size_top_menu": 12,
         "font_size_right_frame_title": 14,
-        "font_size_login_title": 13,
+        "font_size_login_title": 14,
         "font_size_login_username": 13,
-        "font_size_login_password": 13
+        "font_size_login_entry_username": 12,
+        "font_size_login_password": 13,
+        "font_size_login_entry_password": 12
     }
 }

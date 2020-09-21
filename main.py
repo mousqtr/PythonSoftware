@@ -3,15 +3,12 @@ from functools import partial
 import sqlite3
 import pandas as pd
 from product import Product
-from tools import FrameContent, ButtonLeftText, ButtonTopText
+from gui import FrameContent, ButtonLeftText, ButtonTopText
 import json
 from login import Login
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
-    # print(json.dumps(data, indent = 4, sort_keys=True))
-    # print(settings['colors']['title'])
-
 
 # Custom settings
 window_width = settings['dimensions']['window_width']
@@ -24,20 +21,15 @@ bg_top_menu = settings['colors']['bg_top_menu']
 bg_left_menu = settings['colors']['bg_left_menu']
 bg_connect = settings['colors']['bg_connect']
 
-
 font_company_name = settings['font']['font_company_name']
 font_size_company_name = settings['font_size']['font_size_company_name']
-
-font_menu = settings['font']['font_menu']
-font_size_menu = settings['font_size']['font_size_menu']
-
 
 # Root initialization
 root = tk.Tk()
 root.title("Gestionnaire d'inventaire")
 root.resizable(False, False)
 root.minsize(700, 700)
-window_icon = tk.PhotoImage(file="inventory.png")
+window_icon = tk.PhotoImage(file="img/inventory.png")
 root.iconphoto(False, window_icon)
 
 # Window size
@@ -51,7 +43,6 @@ root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_c
 root.grid_rowconfigure(0, weight=1)
 root.columnconfigure(0, weight=1)
 
-
 # Left menu
 frame_left_width = 200
 frame_left = tk.Frame(root, bg=bg_left_menu, width=frame_left_width)
@@ -61,15 +52,7 @@ frame_left.columnconfigure(0, weight=1)
 # Company title
 label_company_title = tk.Label(frame_left, text=company_name, bg=bg_company_name, fg="white", height=2)
 label_company_title.grid(row=0, sticky='new', pady=(0, 20))
-label_company_title.config(font=(font_company_name,font_size_company_name))
-
-
-
-
-
-
-
-
+label_company_title.config(font=(font_company_name, font_size_company_name))
 
 # Right frame (right part of the window)
 frame_right_width = 4*(window_width/5)
@@ -77,34 +60,33 @@ frame_right = tk.Frame(root, bg="black", width=frame_right_width, height=window_
 frame_right.grid(row=0, column=1, sticky='news')
 frame_right.columnconfigure(0, weight=1)
 
-# Top menu
+# Top menu (include in right_frame)
 top_menu_width = 4 * (window_width / 5)
 frame_top_menu = tk.Frame(frame_right, bg=bg_top_menu, width=top_menu_width, height=top_menu_height)
 frame_top_menu.grid(row=0, column=0, sticky='new')
 frame_top_menu.columnconfigure(0, weight=1)
 
-# Initialization of right sub frames
+# Initialization of right sub frames (include in right_frame)
 Frame_dashboard = FrameContent(frame_right, "Dashboard", "#e8e8e8")
-Frame_user = FrameContent(frame_right, "Dashboard", "red")
+Frame_research = FrameContent(frame_right, "Recherche", "red")
 Frame_settings = FrameContent(frame_right, "Paramètres", "orange")
-Frame_actions = FrameContent(frame_right, "Actions", "green")
+Frame_attribution = FrameContent(frame_right, "Attribution", "green")
 Frame_help = FrameContent(frame_right, "Aide", "purple")
 Frame_dashboard.frame.lift()
 
-print(frame_right["height"])
-print(root.winfo_height())
-
-
-# Initialization of the left menu buttons
+# Initialization of the left menu buttons (include in left_frame)
 Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
-Button_user = ButtonLeftText("Utilisateurs", 2, frame_left, bg_left_menu, (0, 10), Frame_user.frame.lift)
-Button_actions = ButtonLeftText("Actions", 3, frame_left, bg_left_menu, (0, 10), Frame_actions.frame.lift)
+Button_research = ButtonLeftText("Recherche", 2, frame_left, bg_left_menu, (0, 10), Frame_research.frame.lift)
+Button_attribution = ButtonLeftText("Attribution", 3, frame_left, bg_left_menu, (0, 10), Frame_attribution.frame.lift)
 Button_help = ButtonLeftText("Aide", 4, frame_left, bg_left_menu, (380, 10), Frame_help.frame.lift)
 Button_settings = ButtonLeftText("Paramètres", 5, frame_left, bg_left_menu, (0, 0), Frame_settings.frame.lift)
 
-# Initialization of the top menu buttons
+# Initialization of the top menu buttons (include in frame_top_menu)
 Window_login = Login(root)
 Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Window_login.create_login_window)
+
+
+
 
 
 
