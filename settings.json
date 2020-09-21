@@ -17,7 +17,19 @@
         "bg_identification": "#333333"
     },
     "font": {
-        "title": "Calibri",
-        "left_menu": "Calibri"
+        "font_company_name": "Calibri bold",
+        "font_menu": "Calibri bold",
+        "font_right_frame_title": "Calibri bold",
+        "font_login_title": "Calibri bold",
+        "font_login_username": "Calibri",
+        "font_login_password": "Calibri"
+    },
+    "font_size": {
+        "font_size_company_name": 14,
+        "font_size_menu": 14,
+        "font_size_right_frame_title": 14,
+        "font_size_login_title": 13,
+        "font_size_login_username": 13,
+        "font_size_login_password": 13
     }
 }

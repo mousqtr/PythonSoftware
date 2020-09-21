@@ -24,10 +24,13 @@ bg_left_menu = settings['colors']['bg_left_menu']
 bg_connect = settings['colors']['bg_connect']
 bg_identification = settings['colors']['bg_identification']
 
-title_font = ("Calibri bold", 14)
-menu_font = ("Calibri bold", 14)
-low_font = ("Calibri bold", 13)
-username_font = ("Calibri", 13)
+font_company_name = settings['font']['font_company_name']
+font_menu = settings['font']['font_menu']
+
+
+font_size_company_name = settings['font_size']['font_size_company_name']
+font_size_menu = settings['font_size']['font_size_menu']
+
 
 # Root initialization
 root = tk.Tk()
@@ -57,17 +60,13 @@ frame_left.columnconfigure(0, weight=1)
 # Company title
 label_company_title = tk.Label(frame_left, text=company_name, bg=bg_company_name, fg="white", height=2)
 label_company_title.grid(row=0, sticky='new', pady=(0, 20))
-label_company_title.config(font=title_font)
+label_company_title.config(font=(font_company_name,font_size_company_name))
 
 
 
 
 
-# Initialization of the left buttons
-Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), None)
-Button_user = ButtonLeftText("Utilisateurs", 2, frame_left, bg_left_menu, (0, 10), None)
-Button_action = ButtonLeftText("Actions", 3, frame_left, bg_left_menu, (0, 10), None)
-Button_help = ButtonLeftText("Aide", 4,frame_left, bg_left_menu, (380, 10), None)
+
 
 
 
@@ -83,6 +82,13 @@ frame_top_right.grid(row=0, column=0, sticky='new')
 frame_top_right.columnconfigure(0, weight=1)
 
 
+
+# Initialization of the left buttons
+DashboardFrame = FrameRight(frame_right, "Dashboard", "#e8e8e8")
+Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), DashboardFrame.frame.lift)
+Button_user = ButtonLeftText("Utilisateurs", 2, frame_left, bg_left_menu, (0, 10), None)
+Button_action = ButtonLeftText("Actions", 3, frame_left, bg_left_menu, (0, 10), None)
+Button_help = ButtonLeftText("Aide", 4,frame_left, bg_left_menu, (380, 10), None)
 
 
 def create_login_window():
@@ -100,31 +106,37 @@ def create_login_window():
     # Title of the login window
     label_login_title = tk.Label(login_window, text="Identification", bg=bg_identification, fg="white")
     label_login_title.grid(row=0, sticky='new', pady=(0, 20))
-    label_login_title.config(font=menu_font)
+    font_login_title = settings['font']['font_login_title']
+    font_size_login_title = settings['font_size']['font_size_login_title']
+    label_login_title.config(font=(font_login_title, font_size_login_title))
 
     # Username label
     label_username = tk.Label(login_window, text="Username")
     label_username.grid(row=1, sticky='new', pady=(0, 10))
-    label_username.config(font=username_font)
+    font_login_username = settings['font']['font_login_username']
+    font_size_login_username = settings['font_size']['font_size_login_username']
+    label_username.config(font=(font_login_username, font_size_login_username))
 
     # Username entry
     var_username = tk.StringVar(value='')
     entry_username = tk.Entry(login_window, bg="white", width=30, textvariable=var_username, font=("Consolas", 15))
-    entry_username.grid(row=2,  pady=(0, 20))
+    entry_username.grid(row=2, pady=(0, 20))
 
     # Password label
     label_password = tk.Label(login_window, text="Password")
     label_password.grid(row=3, sticky='new', pady=(0, 10))
-    label_password.config(font=username_font)
+    font_login_password = settings['font']['font_login_password']
+    font_size_login_password = settings['font_size']['font_size_login_password']
+    label_password.config(font=(font_login_password, font_size_login_password))
 
     # Password entry
     var_password = tk.StringVar(value='')
     entry_password = tk.Entry(login_window, bg="white", width=30, textvariable=var_password, font=("Consolas", 15))
-    entry_password.grid(row=4,  pady=(0, 20))
+    entry_password.grid(row=4, pady=(0, 20))
 
 Button_login = ButtonTopText("Se connecter", 2, frame_top_right, bg_connect, create_login_window)
 
-DashboardFrame = FrameRight(frame_right, "Dashboard", "#e8e8e8")
+
 
 # First frame
 frame_first = tk.Frame(DashboardFrame.frame, bg="white", width=DashboardFrame.frame_width, height=200, highlightthickness=1)
@@ -148,9 +160,13 @@ Button_settings = ButtonLeftText("Paramètres", 5, frame_left, bg_left_menu, (0,
 
 def window_resize(event):
     DashboardFrame.frame["width"] = 800 + (root.winfo_width() - window_width)
+    SettingsFrame.frame["width"] = 800 + (root.winfo_width() - window_width)
 
 
 root.bind("<Configure>", window_resize)
+
+print(DashboardFrame.frame_height)
+print(SettingsFrame.frame_height)
 
 # Launch the GUI
 root.mainloop()
