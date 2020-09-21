@@ -1,8 +1,9 @@
 {
     "company_name": "Nom d'entreprise",
-    "window": {
-        "width": 1000,
-        "height": 700
+    "dimensions": {
+        "window_width": 1000,
+        "window_height": 700,
+        "top_menu_height": 40
     },
     "buttons": {
         "first": "Dashboard",
@@ -10,9 +11,10 @@
     },
     "colors": {
         "bg_company_name": "orange",
-        "bg_top_left_menu": "#333333",
-        "bg_bottom_left_menu": "#333333",
-        "bg_connect": "#13547a"
+        "bg_top_menu": "#333333",
+        "bg_left_menu": "#333333",
+        "bg_connect": "#333333",
+        "bg_identification": "#333333"
     },
     "font": {
         "title": "Calibri",

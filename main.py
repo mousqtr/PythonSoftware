@@ -3,7 +3,7 @@ from functools import partial
 import sqlite3
 import pandas as pd
 from product import Product
-from tools import FrameRight, ButtonLeftText
+from tools import FrameRight, ButtonLeftText, ButtonTopText
 import json
 
 with open('settings.json') as json_file:
@@ -13,14 +13,16 @@ with open('settings.json') as json_file:
 
 
 # Custom settings
-window_width = settings['window']['width']
-window_height = settings['window']['height']
+window_width = settings['dimensions']['window_width']
+window_height = settings['dimensions']['window_height']
+top_menu_height = settings['dimensions']['top_menu_height']
 
 company_name = settings['company_name']
 bg_company_name = settings['colors']['bg_company_name']
-bg_top_left_menu = settings['colors']['bg_top_left_menu']
-bg_bottom_left_menu = settings['colors']['bg_bottom_left_menu']
+bg_top_menu = settings['colors']['bg_top_menu']
+bg_left_menu = settings['colors']['bg_left_menu']
 bg_connect = settings['colors']['bg_connect']
+bg_identification = settings['colors']['bg_identification']
 
 title_font = ("Calibri bold", 14)
 menu_font = ("Calibri bold", 14)
@@ -30,7 +32,7 @@ username_font = ("Calibri", 13)
 # Root initialization
 root = tk.Tk()
 root.title("Gestionnaire d'inventaire")
-root.resizable(True, False)
+root.resizable(False, False)
 root.minsize(700, 700)
 window_icon = tk.PhotoImage(file="inventory.png")
 root.iconphoto(False, window_icon)
@@ -48,7 +50,7 @@ root.columnconfigure(0, weight=1)
 
 # Left menu
 frame_left_width = 200
-frame_left = tk.Frame(root, bg=bg_top_left_menu, width=frame_left_width)
+frame_left = tk.Frame(root, bg=bg_left_menu, width=frame_left_width)
 frame_left.grid(row=0, column=0, sticky='news')
 frame_left.columnconfigure(0, weight=1)
 
@@ -62,15 +64,25 @@ label_company_title.config(font=title_font)
 
 
 # Initialization of the left buttons
-Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_top_left_menu, (0, 10), None)
-Button_user = ButtonLeftText("Utilisateurs", 2, frame_left, bg_top_left_menu, (0, 10), None)
-Button_action = ButtonLeftText("Actions", 3, frame_left, bg_top_left_menu, (0, 10), None)
+Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), None)
+Button_user = ButtonLeftText("Utilisateurs", 2, frame_left, bg_left_menu, (0, 10), None)
+Button_action = ButtonLeftText("Actions", 3, frame_left, bg_left_menu, (0, 10), None)
+Button_help = ButtonLeftText("Aide", 4,frame_left, bg_left_menu, (380, 10), None)
 
-frame_bottom_left = tk.Frame(frame_left, bg=bg_bottom_left_menu, height=200, width=frame_left_width)
-frame_bottom_left.grid(row=4, sticky='new', pady=(310, 0))
-frame_bottom_left.columnconfigure(0, weight=1)
 
-Button_help = ButtonLeftText("Aide", 0, frame_bottom_left, bg_bottom_left_menu, (10, 10), None)
+
+# Right frame
+frame_right_width = 4*(window_width/5)
+frame_right = tk.Frame(root, bg="#e8e8e8", width=frame_right_width)
+frame_right.grid(row=0, column=1, sticky='news')
+frame_right.columnconfigure(0, weight=1)
+
+frame_top_right_width = 4 * (window_width / 5)
+frame_top_right = tk.Frame(frame_right, bg=bg_top_menu, width=frame_top_right_width, height=top_menu_height)
+frame_top_right.grid(row=0, column=0, sticky='new')
+frame_top_right.columnconfigure(0, weight=1)
+
+
 
 
 def create_login_window():
@@ -86,7 +98,7 @@ def create_login_window():
     login_window.columnconfigure(0, weight=1)
 
     # Title of the login window
-    label_login_title = tk.Label(login_window, text="Identification", bg="#13547a", fg="white")
+    label_login_title = tk.Label(login_window, text="Identification", bg=bg_identification, fg="white")
     label_login_title.grid(row=0, sticky='new', pady=(0, 20))
     label_login_title.config(font=menu_font)
 
@@ -110,9 +122,9 @@ def create_login_window():
     entry_password = tk.Entry(login_window, bg="white", width=30, textvariable=var_password, font=("Consolas", 15))
     entry_password.grid(row=4,  pady=(0, 20))
 
-Button_6 = ButtonLeftText("\n Se connecter \n", 2, frame_bottom_left, bg_connect, (0, 0), create_login_window)
+Button_login = ButtonTopText("Se connecter", 2, frame_top_right, bg_connect, create_login_window)
 
-DashboardFrame = FrameRight(root, "Dashboard", "#e8e8e8")
+DashboardFrame = FrameRight(frame_right, "Dashboard", "#e8e8e8")
 
 # First frame
 frame_first = tk.Frame(DashboardFrame.frame, bg="white", width=DashboardFrame.frame_width, height=200, highlightthickness=1)
@@ -127,10 +139,10 @@ frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 
-SettingsFrame = FrameRight(root, "Paramètres", "orange")
+SettingsFrame = FrameRight(frame_right, "Paramètres", "orange")
 
 DashboardFrame.frame.lift()
-Button_5 = ButtonLeftText("Paramètres", 1, frame_bottom_left, bg_bottom_left_menu, (0, 10), SettingsFrame.frame.lift)
+Button_settings = ButtonLeftText("Paramètres", 5, frame_left, bg_left_menu, (0, 0), SettingsFrame.frame.lift)
 
 
 
