@@ -1,12 +1,13 @@
 import tkinter as tk
+import json
+
+with open('settings.json') as json_file:
+    settings = json.load(json_file)
 
 # Custom settings
-color_title = "#602320"
-color_window = "#979aaa"
-color_headers = "#eb8c00"
-color_left_menu = "#333333"
-window_width = 1000
-window_height = 700
+window_width = settings['window']['width']
+window_height = settings['window']['height']
+
 title_font = ("Calibri bold", 16)
 menu_font = ("Calibri bold", 14)
 low_font = ("Calibri bold", 13)
