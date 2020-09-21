@@ -14,7 +14,7 @@ with open('settings.json') as json_file:
 # low_font = ("Calibri bold", 13)
 # username_font = ("Calibri", 13)
 
-class FrameRight:
+class FrameContent:
     """ Right frame of the window"""
 
     def __init__(self, p_parent, p_title, p_background):
@@ -22,14 +22,16 @@ class FrameRight:
         window_height = settings['dimensions']['window_height']
         top_menu_height = settings['dimensions']['top_menu_height']
         self.frame_width = 4 * (window_width / 5)
-        self.frame_height = window_height - top_menu_height + 10
+        self.frame_height = window_height - top_menu_height
         self.frame = tk.Frame(p_parent, bg=p_background, width=self.frame_width, height=self.frame_height)
-        self.frame.grid(row=1, column=0, sticky='new')
+        print(self.frame_height)
+        self.frame.grid(row=1, column=0, sticky='news')
         self.frame.columnconfigure(0, weight=1)
+
 
         # Label page title
         self.label_page_title = tk.Label(self.frame, bg=p_background, text=p_title)
-        self.label_page_title.grid(row=0, sticky='nw', padx=(10, 10), pady=(5, 5))
+        self.label_page_title.grid(row=0, column=0, sticky='nw', padx=(10, 10), pady=(5, 5))
         font_right_frame_title = settings['font']['font_right_frame_title']
         font_size_right_frame_title = settings['font_size']['font_size_right_frame_title']
         self.label_page_title.config(font=(font_right_frame_title, font_size_right_frame_title))
