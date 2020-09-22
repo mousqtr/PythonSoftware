@@ -7,7 +7,12 @@ with open('settings.json') as json_file:
     settings = json.load(json_file)
 
 
-def choose_data(p_parent, p_row, p_column):
+def change_button(p_row, p_column, p_summary):
+    p_summary.buttons[p_row][p_column]['bg'] = "red"
+    p_summary.buttons[p_row][p_column]['text'] = "Changed !"
+
+
+def choose_data(p_parent, p_row, p_column, p_summary):
     # Window handle
     login_window = tk.Toplevel(p_parent.frame)
     login_window.resizable(False, False)
@@ -56,8 +61,11 @@ def choose_data(p_parent, p_row, p_column):
     combo_color.current(0)
     combo_color.grid(row=2, column=1)
 
-    button_validate = tk.Button(login_window, text="Valider", width=30, command=None)
+    button_validate = tk.Button(login_window, text="Valider", width=30)
     button_validate.grid(row=3, columnspan=2, pady=(30, 0))
+    button_validate['command'] = partial(change_button, p_row, p_column, p_summary)
+
+
 
 
 
@@ -87,5 +95,5 @@ class Summary:
             for j in range(0, self.nb_column):
                 self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ")
                 self.buttons[i][j].grid(row=i+1, column=j, padx=(10, 10), pady=(10, 10))
-                self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j)
+                self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
 
