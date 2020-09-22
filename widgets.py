@@ -9,15 +9,27 @@ with open('settings.json') as json_file:
 with open('widgets_data.json') as json_file:
     widgets_data = json.load(json_file)
 
+# def save_summary(p_row, p_column, p_data, p_color):
+
+def load_summary(p_buttons):
+    for x in widgets_data['summary_data']:
+        coord = x.split(',')
+        row = int(coord[0])
+        column = int(coord[1])
+        data = widgets_data['summary_data'][x]
+        color = widgets_data['summary_color'][x]
+        data_text = data + '\n' + str(widgets_data['data'][data])
+        p_buttons[row][column]['text'] = data_text
+        p_buttons[row][column]['bg'] = color
+
 
 def change_button(p_row, p_column, p_summary, p_combo_data, p_combo_color):
     data = p_combo_data.get()
     color = p_combo_color.get()
-    data_text = data + '\n' + str(widgets_data['summary'][data])
+    data_text = data + '\n' + str(widgets_data['data'][data])
     p_summary.buttons[p_row][p_column]['text'] = data_text
     p_summary.buttons[p_row][p_column]['bg'] = color
-    # print(widgets_data["summary"]["Nombre de casques"])
-    print(widgets_data['summary'][data])
+    print(widgets_data['data'][data])
 
 
 def choose_data(p_parent, p_row, p_column, p_summary):
@@ -52,7 +64,7 @@ def choose_data(p_parent, p_row, p_column, p_summary):
 
     # Combobox - Choose data to draw
     list_data = []
-    for x in widgets_data['summary']:
+    for x in widgets_data['data']:
         list_data.append(x)
     # list_data = ["Laptop", "Imprimante", "Tablette", "SmartPhone"]
     combo_data = ttk.Combobox(login_window, values=list_data)
@@ -110,3 +122,4 @@ class Summary:
                 self.buttons[i][j].config(font=("Calibri bold", 10))
                 self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
 
+        load_summary(self.buttons)

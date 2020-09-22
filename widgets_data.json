@@ -1,7 +1,13 @@
 {
-    "summary": {
+    "data": {
         "Nombre de PC": 25,
         "Nombre ecrans": 28,
         "Nombre de casques": 155
+    },
+    "summary_data": {
+        "0,1":"Nombre de PC"
+    },
+    "summary_color": {
+        "0,1":"red"
     }
 }
