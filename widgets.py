@@ -1,8 +1,13 @@
 import tkinter as tk
 import json
+from functools import partial
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
+
+def affichage(p1, p2):
+    print(p1, p2)
+
 
 class Summary:
     def __init__(self, p_parent, p_row):
@@ -17,14 +22,11 @@ class Summary:
         frame.rowconfigure(0, weight=1)
         frame.rowconfigure((1, 2), weight=4)
 
-
-
-        self.title = tk.Label(frame,text="Summary", compound="c", borderwidth=1, relief="raised")
+        self.title = tk.Label(frame,text="Summary", bg="#333333",fg="white", compound="c", borderwidth=1, relief="raised")
         self.title.grid(row=0, column=0, columnspan=5, sticky="nwe", ipadx=10, ipady=5)
         font_top_menu = settings['font']['font_top_menu']
         font_size_top_menu = settings['font_size']['font_size_top_menu']
         self.title.config(font=(font_top_menu, 12))
-
 
         # print(frame.winfo_width())
         # print(frame.winfo_height())
@@ -35,10 +37,12 @@ class Summary:
         self.nb_row = 2
         self.buttons = [[tk.Button() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         self.button_width = int(frame_width/self.nb_column)
-        self.button_height = int(frame_height/self.nb_row)
+        self.button_height = int((frame_height/self.nb_row)/16)
+        print(int(self.button_height * 72 / 96))
         for i in range(0, self.nb_row):
             for j in range(0, self.nb_column):
-                self.buttons[i][j] = tk.Label(frame, image=pixelVirtual, width=self.button_width, height=self.button_height, text="ok", compound="c")
-                # self.buttons[i][j].grid_propagate(False)
-                self.buttons[i][j].grid(row=i+1, column=j,  padx=(10,10), pady=(10,10))
+                self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ")
+                self.buttons[i][j].grid(row=i+1, column=j, padx=(10, 10), pady=(10, 10))
+                self.buttons[i][j]['command'] = partial(affichage, i, j)
+
 
