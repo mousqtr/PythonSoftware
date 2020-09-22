@@ -6,10 +6,18 @@ from tkinter import ttk
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
+with open('widgets_data.json') as json_file:
+    widgets_data = json.load(json_file)
 
-def change_button(p_row, p_column, p_summary):
-    p_summary.buttons[p_row][p_column]['bg'] = "red"
-    p_summary.buttons[p_row][p_column]['text'] = "Changed !"
+
+def change_button(p_row, p_column, p_summary, p_combo_data, p_combo_color):
+    data = p_combo_data.get()
+    color = p_combo_color.get()
+    data_text = data + '\n' + str(widgets_data['summary'][data])
+    p_summary.buttons[p_row][p_column]['text'] = data_text
+    p_summary.buttons[p_row][p_column]['bg'] = color
+    # print(widgets_data["summary"]["Nombre de casques"])
+    print(widgets_data['summary'][data])
 
 
 def choose_data(p_parent, p_row, p_column, p_summary):
@@ -43,7 +51,10 @@ def choose_data(p_parent, p_row, p_column, p_summary):
     label_data.config(font=(font_add_label_data, font_size_add_label_data))
 
     # Combobox - Choose data to draw
-    list_data = ["Laptop", "Imprimante", "Tablette", "SmartPhone"]
+    list_data = []
+    for x in widgets_data['summary']:
+        list_data.append(x)
+    # list_data = ["Laptop", "Imprimante", "Tablette", "SmartPhone"]
     combo_data = ttk.Combobox(login_window, values=list_data)
     combo_data.current(0)
     combo_data.grid(row=2, column=0)
@@ -63,7 +74,8 @@ def choose_data(p_parent, p_row, p_column, p_summary):
 
     button_validate = tk.Button(login_window, text="Valider", width=30)
     button_validate.grid(row=3, columnspan=2, pady=(30, 0))
-    button_validate['command'] = partial(change_button, p_row, p_column, p_summary)
+    button_validate['command'] = partial(change_button, p_row, p_column, p_summary, combo_data, combo_color)
+
 
 
 
@@ -93,7 +105,8 @@ class Summary:
         self.button_height = int((frame_height/self.nb_row)/16)
         for i in range(0, self.nb_row):
             for j in range(0, self.nb_column):
-                self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ")
+                self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ", fg="white")
                 self.buttons[i][j].grid(row=i+1, column=j, padx=(10, 10), pady=(10, 10))
+                self.buttons[i][j].config(font=("Calibri bold", 10))
                 self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
 
