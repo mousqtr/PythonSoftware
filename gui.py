@@ -34,7 +34,7 @@ class ButtonLeftText:
     def __init__(self, p_text, p_row, p_parent, p_bg, p_pady, p_command):
         self.init_bg = p_bg
         self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", activebackground="green", borderwidth=1, command=p_command)
-        self.button.grid(row=p_row, sticky='new', pady=p_pady, padx=(5,5))
+        self.button.grid(row=p_row, sticky='new', pady=p_pady, padx=(5, 5))
         font_left_menu = settings['font']['font_left_menu']
         font_size_left_menu = settings['font_size']['font_size_left_menu']
         self.button.config(font=(font_left_menu, font_size_left_menu))
@@ -56,7 +56,7 @@ class ButtonTopText:
     def __init__(self, p_text, p_col, p_parent, p_bg, p_command):
         self.bg = p_bg
         self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", borderwidth=1, command=p_command)
-        self.button.grid(row=0, column=p_col, sticky="e",  pady=(5,5), padx=(10,10), ipadx=15)
+        self.button.grid(row=0, column=p_col, sticky="e",  pady=(5, 5), padx=(10, 10), ipadx=15)
         font_top_menu = settings['font']['font_top_menu']
         font_size_top_menu = settings['font_size']['font_size_top_menu']
         self.button.config(font=(font_top_menu, font_size_top_menu))
