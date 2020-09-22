@@ -1,11 +1,15 @@
 import tkinter as tk
+import json
 from functools import partial
 import sqlite3
 import pandas as pd
 from product import Product
+
 from gui import FrameContent, ButtonLeftText, ButtonTopText
-import json
 from login import Login
+from widgets import Summary
+
+
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -14,6 +18,7 @@ with open('settings.json') as json_file:
 window_width = settings['dimensions']['window_width']
 window_height = settings['dimensions']['window_height']
 top_menu_height = settings['dimensions']['top_menu_height']
+left_menu_width = settings['dimensions']['left_menu_width']
 
 company_name = settings['company_name']
 bg_company_name = settings['colors']['bg_company_name']
@@ -40,13 +45,14 @@ y_cordinate = int((screen_height/2) - (window_height/2))
 root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
 
 # Window grid
-root.grid_rowconfigure(0, weight=1)
-root.columnconfigure(0, weight=1)
+# root.grid_rowconfigure(0, weight=2)
+# root.columnconfigure(0, weight=1)
+# root.columnconfigure(1, weight=1)
 
 # Left menu
-frame_left_width = 200
-frame_left = tk.Frame(root, bg=bg_left_menu, width=frame_left_width)
-frame_left.grid(row=0, column=0, sticky='news')
+frame_left = tk.Frame(root, bg=bg_left_menu, width=left_menu_width)
+frame_left.grid_propagate(False)
+frame_left.grid(row=0, column=0, sticky='ns')
 frame_left.columnconfigure(0, weight=1)
 
 # Company title
@@ -55,21 +61,23 @@ label_company_title.grid(row=0, sticky='new', pady=(0, 20))
 label_company_title.config(font=(font_company_name, font_size_company_name))
 
 # Right frame (right part of the window)
-frame_right_width = 4*(window_width/5)
+frame_right_width = window_width - left_menu_width
 frame_right = tk.Frame(root, bg="black", width=frame_right_width, height=window_height)
-frame_right.grid(row=0, column=1, sticky='news')
+frame_right.grid_propagate(False)
+frame_right.grid(row=0, column=1, sticky='n')
 frame_right.columnconfigure(0, weight=1)
 
 # Top menu (include in right_frame)
-top_menu_width = 4 * (window_width / 5)
+top_menu_width = window_width - left_menu_width
 frame_top_menu = tk.Frame(frame_right, bg=bg_top_menu, width=top_menu_width, height=top_menu_height)
-frame_top_menu.grid(row=0, column=0, sticky='new')
+frame_top_menu.grid_propagate(False)
+frame_top_menu.grid(row=0, column=0, sticky='n')
 frame_top_menu.columnconfigure(0, weight=1)
 
 # Initialization of right sub frames (include in right_frame)
 Frame_dashboard = FrameContent(frame_right, "Dashboard", "#e8e8e8")
 Frame_research = FrameContent(frame_right, "Recherche", "red")
-Frame_settings = FrameContent(frame_right, "Paramètres", "orange")
+Frame_settings = FrameContent(frame_right, "Paramètres", "#e8e8e8")
 Frame_attribution = FrameContent(frame_right, "Attribution", "green")
 Frame_help = FrameContent(frame_right, "Aide", "purple")
 Frame_dashboard.frame.lift()
@@ -91,26 +99,31 @@ Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Wind
 
 
 # First frame
-frame_first = tk.Frame(Frame_dashboard.frame, bg="white", width=Frame_dashboard.frame_width, height=200, highlightthickness=1)
+frame_first_width = 780
+frame_first = tk.Frame(Frame_dashboard.frame, bg="white", width=frame_first_width, height=200, highlightthickness=1)
+frame_first.grid_propagate(False)
 frame_first.config(highlightbackground="grey")
-frame_first.grid(row=1, sticky='new', padx=(10, 10), pady=(5, 10))
+frame_first.grid(row=1, sticky='new', padx=10, pady=(5, 10))
 frame_first.columnconfigure(0, weight=1)
 
 # Second frame
-frame_second = tk.Frame(Frame_dashboard.frame, bg="white", width=Frame_dashboard.frame_width, height=395, highlightthickness=1)
+frame_second = tk.Frame(Frame_dashboard.frame, bg="white", height=395, highlightthickness=1)
 frame_second.config(highlightbackground="grey")
 frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 
-# First frame
-frame_first0 = tk.Frame(Frame_settings.frame, bg="white", width=Frame_settings.frame_width, height=200, highlightthickness=1)
-frame_first0.config(highlightbackground="grey")
-frame_first0.grid(row=1, sticky='new', padx=(10, 10), pady=(5, 10))
-frame_first0.columnconfigure(0, weight=1)
 
 
+# print(Frame_settings.frame.winfo_width())
+# print(frame_right.winfo_width())
+#
+# buttons = tk.Button(frame_first0, width=10, height=10, bg="red", text="ok")
+# buttons.grid(row=0, column=0, padx=(10,0))
+# buttons2 = tk.Button(frame_first0, width=10, height=10, bg="red", text="ok")
+# buttons2.grid(row=0, column=1)
 
+Widget_summary = Summary(Frame_settings, 1)
 
 
 

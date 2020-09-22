@@ -3,6 +3,7 @@
     "dimensions": {
         "window_width": 1000,
         "window_height": 700,
+        "left_menu_width": 200,
         "top_menu_height": 40,
         "window_login_width": 440,
         "window_login_height": 250
