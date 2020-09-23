@@ -27,7 +27,10 @@ def load_summary(p_buttons):
         column = int(coord[1])
         data = widgets_data['summary_data'][x]
         color = widgets_data['summary_color'][x]
-        data_text = data + '\n' + str(widgets_data['data'][data])
+        if data == ' ':
+            data_text = data
+        else:
+            data_text = data + '\n' + str(widgets_data['data'][data])
         p_buttons[row][column]['text'] = data_text
         p_buttons[row][column]['bg'] = color
 
@@ -35,10 +38,13 @@ def load_summary(p_buttons):
 def change_button(p_row, p_column, p_summary, p_combo_data, p_combo_color):
     data = p_combo_data.get()
     color = p_combo_color.get()
-    data_text = data + '\n' + str(widgets_data['data'][data])
+    if data == ' ':
+        data_text = data
+        color = "SystemButtonFace"
+    else :
+        data_text = data + '\n' + str(widgets_data['data'][data])
     p_summary.buttons[p_row][p_column]['text'] = data_text
     p_summary.buttons[p_row][p_column]['bg'] = color
-    print(widgets_data['data'][data])
 
     save_summary(p_row, p_column, data, color)
 
@@ -90,7 +96,7 @@ def choose_data(p_parent, p_row, p_column, p_summary):
     label_color.config(font=(font_add_label_color, font_size_add_label_color))
 
     # Combobox - Choose data to draw
-    list_color = ["red", "orange", "blue", "green"]
+    list_color = [" ", "red", "orange", "blue", "green", "white"]
     combo_color = ttk.Combobox(login_window, values=list_color)
     combo_color.current(0)
     combo_color.grid(row=2, column=1)
@@ -98,10 +104,6 @@ def choose_data(p_parent, p_row, p_column, p_summary):
     button_validate = tk.Button(login_window, text="Valider", width=30)
     button_validate.grid(row=3, columnspan=2, pady=(30, 0))
     button_validate['command'] = partial(change_button, p_row, p_column, p_summary, combo_data, combo_color)
-
-
-
-
 
 
 class Summary:

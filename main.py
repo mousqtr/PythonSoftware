@@ -44,11 +44,6 @@ x_cordinate = int((screen_width/2) - (window_width/2))
 y_cordinate = int((screen_height/2) - (window_height/2))
 root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
 
-# Window grid
-# root.grid_rowconfigure(0, weight=2)
-# root.columnconfigure(0, weight=1)
-# root.columnconfigure(1, weight=1)
-
 # Left menu
 frame_left = tk.Frame(root, bg=bg_left_menu, width=left_menu_width)
 frame_left.grid_propagate(False)
@@ -113,15 +108,6 @@ frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 
-
-
-# print(Frame_settings.frame.winfo_width())
-# print(frame_right.winfo_width())
-#
-# buttons = tk.Button(frame_first0, width=10, height=10, bg="red", text="ok")
-# buttons.grid(row=0, column=0, padx=(10,0))
-# buttons2 = tk.Button(frame_first0, width=10, height=10, bg="red", text="ok")
-# buttons2.grid(row=0, column=1)
 
 Widget_summary = Summary(Frame_settings, 1)
 
