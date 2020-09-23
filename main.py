@@ -1,14 +1,10 @@
 import tkinter as tk
 import json
-from functools import partial
-import sqlite3
-import pandas as pd
-from product import Product
 
 from gui import FrameContent, ButtonLeftText, ButtonTopText
 from login import Login
-from widgets import Summary
-
+from widgets.summary import Summary
+from widgets.research import display_data
 
 
 with open('settings.json') as json_file:
@@ -81,8 +77,9 @@ Frame_dashboard.frame.lift()
 Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
 Button_research = ButtonLeftText("Recherche", 2, frame_left, bg_left_menu, (0, 10), Frame_research.frame.lift)
 Button_attribution = ButtonLeftText("Attribution", 3, frame_left, bg_left_menu, (0, 10), Frame_attribution.frame.lift)
-Button_help = ButtonLeftText("Aide", 4, frame_left, bg_left_menu, (380, 10), Frame_help.frame.lift)
-Button_settings = ButtonLeftText("Paramètres", 5, frame_left, bg_left_menu, (0, 0), Frame_settings.frame.lift)
+Button_historic = ButtonLeftText("Historique", 4, frame_left, bg_left_menu, (0, 10), Frame_attribution.frame.lift)
+Button_help = ButtonLeftText("Aide", 5, frame_left, bg_left_menu, (340, 10), Frame_help.frame.lift)
+Button_settings = ButtonLeftText("Paramètres", 6, frame_left, bg_left_menu, (0, 0), Frame_settings.frame.lift)
 
 # Initialization of the top menu buttons (include in frame_top_menu)
 Window_login = Login(root)
@@ -95,21 +92,21 @@ Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Wind
 
 # First frame
 frame_first_width = 780
-frame_first = tk.Frame(Frame_dashboard.frame, bg="white", width=frame_first_width, height=200, highlightthickness=1)
+frame_first = tk.Frame(Frame_settings.frame, bg="white", width=frame_first_width, height=200, highlightthickness=1)
 frame_first.grid_propagate(False)
 frame_first.config(highlightbackground="grey")
 frame_first.grid(row=1, sticky='new', padx=10, pady=(5, 10))
 frame_first.columnconfigure(0, weight=1)
 
 # Second frame
-frame_second = tk.Frame(Frame_dashboard.frame, bg="white", height=395, highlightthickness=1)
+frame_second = tk.Frame(Frame_settings.frame, bg="white", height=395, highlightthickness=1)
 frame_second.config(highlightbackground="grey")
 frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 
 
-Widget_summary = Summary(Frame_settings, 1)
+Widget_summary = Summary(Frame_dashboard, 1)
 
 
 
@@ -122,7 +119,7 @@ Widget_summary = Summary(Frame_settings, 1)
 #
 # root.bind("<Configure>", window_resize)
 
-
+display_data()
 
 # Launch the GUI
 root.mainloop()
