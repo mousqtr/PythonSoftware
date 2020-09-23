@@ -9,7 +9,16 @@ with open('settings.json') as json_file:
 with open('widgets_data.json') as json_file:
     widgets_data = json.load(json_file)
 
-# def save_summary(p_row, p_column, p_data, p_color):
+
+def save_summary(p_row, p_column, p_data, p_color):
+    key = str(p_row) + ',' + str(p_column)
+    value_data = {key: p_data}
+    value_color = {key: p_color}
+    widgets_data['summary_data'].update(value_data)
+    widgets_data['summary_color'].update(value_color)
+    with open('widgets_data.json', 'w') as outfile:
+        json.dump(widgets_data, outfile, indent=4)
+
 
 def load_summary(p_buttons):
     for x in widgets_data['summary_data']:
@@ -30,6 +39,8 @@ def change_button(p_row, p_column, p_summary, p_combo_data, p_combo_color):
     p_summary.buttons[p_row][p_column]['text'] = data_text
     p_summary.buttons[p_row][p_column]['bg'] = color
     print(widgets_data['data'][data])
+
+    save_summary(p_row, p_column, data, color)
 
 
 def choose_data(p_parent, p_row, p_column, p_summary):

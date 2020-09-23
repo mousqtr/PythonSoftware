@@ -5,9 +5,11 @@
         "Nombre de casques": 155
     },
     "summary_data": {
-        "0,1":"Nombre de PC"
+        "0,1": "Nombre de PC",
+        "1,3": "Nombre de casques"
     },
     "summary_color": {
-        "0,1":"red"
+        "0,1": "red",
+        "1,3": "green"
     }
 }
