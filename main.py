@@ -4,7 +4,7 @@ import json
 from gui import FrameContent, ButtonLeftText, ButtonTopText
 from login import Login
 from widgets.summary import Summary
-from widgets.research import display_data
+from widgets.research import Research
 
 
 with open('settings.json') as json_file:
@@ -67,7 +67,7 @@ frame_top_menu.columnconfigure(0, weight=1)
 
 # Initialization of right sub frames (include in right_frame)
 Frame_dashboard = FrameContent(frame_right, "Dashboard", "#e8e8e8")
-Frame_research = FrameContent(frame_right, "Recherche", "red")
+Frame_research = FrameContent(frame_right, "Recherche", "#e8e8e8")
 Frame_settings = FrameContent(frame_right, "Paramètres", "#e8e8e8")
 Frame_attribution = FrameContent(frame_right, "Attribution", "green")
 Frame_help = FrameContent(frame_right, "Aide", "purple")
@@ -107,6 +107,7 @@ frame_second.columnconfigure(0, weight=1)
 
 
 Widget_summary = Summary(Frame_dashboard, 1)
+Research_summary = Research(Frame_research, 1)
 
 
 
@@ -119,7 +120,7 @@ Widget_summary = Summary(Frame_dashboard, 1)
 #
 # root.bind("<Configure>", window_resize)
 
-display_data()
+# display_data()
 
 # Launch the GUI
 root.mainloop()
