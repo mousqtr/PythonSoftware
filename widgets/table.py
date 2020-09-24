@@ -39,9 +39,17 @@ class Table:
         self.title.grid(row=0, column=0, columnspan=6, sticky="nwe", ipadx=10, ipady=1)
         self.title.config(font=("Calibri bold", 12))
 
-        frame_research = tk.Frame(frame, bg="blue", height=20)
-        frame_research.grid(row=1, column=0, columnspan=6, sticky="nwe")
-        frame_research.columnconfigure(0, weight=1)
+        frame_buttons = tk.Frame(frame, height=40)
+        frame_buttons.grid(row=1, column=0, columnspan=6, sticky="nwe")
+        frame_buttons.grid_propagate(False)
+
+        button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
+        button_settings.config(font=("Calibri", 10))
+        button_settings.grid(row=4, column=0, sticky="nw", padx=(40,0), pady=5)
+
+        button_export = tk.Button(frame_buttons, width=20, height=1, text="Exporter")
+        button_export.config(font=("Calibri", 10))
+        button_export.grid(row=4, column=1,  sticky="nw", padx=(10,0), pady=5)
 
         frame_headers = tk.Frame(frame, bg="white")
         frame_headers.grid(row=2, padx=40)
@@ -97,7 +105,7 @@ class Table:
 
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
         first5columns_width = sum([self.buttons[0][j].winfo_width() for j in range(0, nb_column)])
-        first5rows_height = sum([self.buttons[i][0].winfo_height() for i in range(0, 12)])
+        first5rows_height = sum([self.buttons[i][0].winfo_height() for i in range(0, 11)])
         frame_canvas.config(width=first5columns_width + vsb.winfo_width(),
                             height=first5rows_height)
 

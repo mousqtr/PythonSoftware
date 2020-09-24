@@ -4,7 +4,7 @@ import json
 from gui import FrameContent, ButtonLeftText, ButtonTopText
 from login import Login
 from widgets.summary import Summary
-from widgets.research import Research
+from widgets.filter import Filter
 from widgets.table import Table
 
 
@@ -108,7 +108,7 @@ frame_second.columnconfigure(0, weight=1)
 
 
 Widget_summary = Summary(Frame_dashboard, 1)
-Widget_resarch = Research(Frame_research, 1)
+Widget_resarch = Filter(Frame_research, 1)
 Widget_resarch.configure_settings(0, 0, "Nom")
 Widget_resarch.configure_settings(0, 1, "Prenom")
 Widget_resarch.configure_settings(0, 2, "Id")
