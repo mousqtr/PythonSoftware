@@ -119,7 +119,7 @@ class Summary:
         frame.rowconfigure(0, weight=1)
         frame.rowconfigure((1, 2), weight=4)
 
-        self.title = tk.Label(frame,text="Summary", bg="#333333",fg="white", compound="c", borderwidth=1, relief="raised")
+        self.title = tk.Label(frame,text="Summary", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
         self.title.grid(row=0, column=0, columnspan=5, sticky="nwe", ipadx=10, ipady=5)
         self.title.config(font=("Calibri bold", 12))
 

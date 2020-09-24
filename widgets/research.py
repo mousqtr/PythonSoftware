@@ -21,7 +21,7 @@ import pandas as pd
 
 class Research:
     def __init__(self, p_parent, p_row):
-        frame_height = 220
+        frame_height = 200
         frame_width = 780
         frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
         frame.grid_propagate(False)
@@ -31,25 +31,30 @@ class Research:
         frame.columnconfigure((0, 1, 2, 3), weight=1)
 
         self.title = tk.Label(frame,text="Paramètres", bg="#333333",fg="white", compound="c", borderwidth=1, relief="raised")
-        self.title.grid(row=0, column=0, columnspan=4, sticky="nwe", ipadx=10, ipady=1, pady=(0,10))
+        self.title.grid(row=0, column=0, columnspan=4, sticky="nwe", ipadx=10, ipady=1, pady=(0, 0))
         self.title.config(font=("Calibri bold", 12))
 
         self.nb_column = 4
         self.nb_row = 2
         self.frames_settings = [[tk.Frame() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         self.labels_settings = [[tk.Label() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
+        self.entry_settings = [[tk.Entry() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
+        self.var_username = [[tk.StringVar(value='') for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         self.frame_entry_width = int(frame_width/self.nb_column)
         self.frame_entry_height = 60
         for i in range(0, self.nb_row):
             for j in range(0, self.nb_column):
-                self.frames_settings[i][j] = tk.Frame(frame, width=self.frame_entry_width, height=self.frame_entry_height, highlightthickness=1)
-                self.frames_settings[i][j].grid(row=i+1, column=j, padx=(5, 5), pady=(10, 5))
+                self.frames_settings[i][j] = tk.Frame(frame, width=self.frame_entry_width, height=self.frame_entry_height)
+                self.frames_settings[i][j].grid(row=i+1, column=j, padx=(5, 5), pady=(5, 5))
                 self.frames_settings[i][j].columnconfigure(0, weight=1)
-                self.frames_settings[i][j].rowconfigure((0,1), weight=1)
+                self.frames_settings[i][j].rowconfigure((0, 1), weight=1)
                 self.frames_settings[i][j].grid_propagate(False)
                 self.labels_settings[i][j] = tk.Label(self.frames_settings[i][j], text=" ", borderwidth=1, relief="flat")
                 self.labels_settings[i][j].grid(row=0, column=0, sticky='nw')
                 self.labels_settings[i][j].config(font=("Calibri bold", 10))
+                self.entry_settings[i][j] = tk.Entry(self.frames_settings[i][j], bg="white", width=30, textvariable=self.var_username[i][j])
+                self.entry_settings[i][j].grid(row=1, column=0, sticky='nw')
+                self.entry_settings[i][j].config(font=("Calibri bold", 10))
                 # self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
 
         button_validate = tk.Button(frame, width=30, height=1, text="Rechercher")

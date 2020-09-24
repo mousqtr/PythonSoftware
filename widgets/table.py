@@ -13,17 +13,27 @@ df = pd.read_csv('csv/csv_test.csv')
 nb_row = df.shape[0]
 nb_column = df.shape[1]
 
+def color_line(p_table, p_row):
+    """
+    Function that colors a line
+    :param line: A line of the table
+    :return: None
+    """
+    for i in range(0, nb_row):
+        for j in range(0, nb_column):
+            if i == p_row:
+                p_table.buttons[i][j].config(bg="beige")
+            else:
+                p_table.buttons[i][j].config(bg="white")
+
 class Table:
     def __init__(self, p_parent, p_row):
-        frame_height = 300
+        frame_height = 400
         frame_width = 780
         frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
         frame.grid_propagate(False)
         frame.config(highlightbackground="grey")
         frame.grid(row=p_row, column=0, pady=(5, 5))
-        frame.update_idletasks()  # to display good dimensions with .winfo_width()
-        # frame.columnconfigure((0, 1, 2, 3,4,5), weight=1)
-        # frame.rowconfigure((2, 3, 4, 5, 6), weight=1)
 
         self.title = tk.Label(frame, text="Table", bg="#333333",fg="white", compound="c", borderwidth=1, relief="raised", height=1)
         self.title.grid(row=0, column=0, columnspan=6, sticky="nwe", ipadx=10, ipady=1)
@@ -73,13 +83,12 @@ class Table:
 
         self.buttons = [[tk.Button() for j in range(nb_column)] for i in range(nb_row)]
 
-        print(nb_row)
         button_width = 15
         for i in range(0, nb_row):
             for j in range(0, nb_column):
                 self.buttons[i][j] = tk.Button(frame_buttons, width=button_width, text=(df.iloc[i][j]))
                 self.buttons[i][j].config(bg="white")
-                # self.buttons[i][j]['command'] = partial(color_line, i)
+                self.buttons[i][j]['command'] = partial(color_line, self, i)
                 self.buttons[i][j].grid(row=i, column=j)
                 self.buttons[i][j].config(borderwidth=2, relief="groove")
 
@@ -88,7 +97,7 @@ class Table:
 
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
         first5columns_width = sum([self.buttons[0][j].winfo_width() for j in range(0, nb_column)])
-        first5rows_height = sum([self.buttons[i][0].winfo_height() for i in range(0, 8)])
+        first5rows_height = sum([self.buttons[i][0].winfo_height() for i in range(0, 12)])
         frame_canvas.config(width=first5columns_width + vsb.winfo_width(),
                             height=first5rows_height)
 

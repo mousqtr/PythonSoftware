@@ -111,7 +111,9 @@ Widget_summary = Summary(Frame_dashboard, 1)
 Widget_resarch = Research(Frame_research, 1)
 Widget_resarch.configure_settings(0, 0, "Nom")
 Widget_resarch.configure_settings(0, 1, "Prenom")
-Widget_resarch.configure_settings(0, 3, "Id")
+Widget_resarch.configure_settings(0, 2, "Id")
+Widget_resarch.configure_settings(0, 3, "Materiel")
+
 Widget_table = Table(Frame_research, 2)
 
 
