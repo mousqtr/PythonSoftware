@@ -5,6 +5,7 @@ from gui import FrameContent, ButtonLeftText, ButtonTopText
 from login import Login
 from widgets.summary import Summary
 from widgets.research import Research
+from widgets.table import Table
 
 
 with open('settings.json') as json_file:
@@ -108,6 +109,7 @@ frame_second.columnconfigure(0, weight=1)
 
 Widget_summary = Summary(Frame_dashboard, 1)
 Research_summary = Research(Frame_research, 1)
+Research_table = Table(Frame_research, 2)
 
 
 
