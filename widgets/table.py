@@ -41,16 +41,16 @@ def settings_window(p_parent):
     window_settings.iconphoto(False, window_icon)
     # login_window_width = settings['dimensions']['window_login_width']
     # login_window_height = settings['dimensions']['window_login_height']
-    login_window_width = 500
-    login_window_height = 220
+    window_settings_width = 550
+    window_settings_height = 260
     screen_width = p_parent.winfo_screenwidth()
     screen_height = p_parent.winfo_screenheight()
-    x_cord = int((screen_width / 2) - (login_window_width / 2))
-    y_cord = int((screen_height / 2) - (login_window_height / 2))
-    window_settings.geometry("{}x{}+{}+{}".format(login_window_width, login_window_height, x_cord, y_cord))
+    x_cord = int((screen_width / 2) - (window_settings_width / 2))
+    y_cord = int((screen_height / 2) - (window_settings_height / 2))
+    window_settings.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
     window_settings.columnconfigure((0, 1), weight=1)
 
-    # Title of the login window
+    # Title - Settings
     bg_identification = settings['colors']['bg_identification']
     label_login_title = tk.Label(window_settings, text="Paramètres", bg=bg_identification, fg="white")
     label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
@@ -58,20 +58,31 @@ def settings_window(p_parent):
     font_size_login_title = settings['font_size']['font_size_login_title']
     label_login_title.config(font=(font_login_title, font_size_login_title))
 
+    # Title - choice of the columns
+    label_login_title = tk.Label(window_settings, text="Choix des colonnes")
+    label_login_title.grid(row=1, sticky='nw', padx=10, pady=(0, 10))
+    label_login_title.config(font=("Calibri bold", 12))
+
     # Column choice label
     nb_column_max = 6
     labels_column_choice = [tk.Label() for j in range(nb_column)]
     combo_column_choice= [ttk.Combobox() for j in range(nb_column)]
-    list_color = [" ", "red", "orange", "blue", "green", "white"]
+    list_headers = list(df.head())
+    list_headers.insert(0, " ")
     for j in range(nb_column_max):
         label_text = "Column " + str(j+1)
         labels_column_choice[j] = tk.Label(window_settings, text=label_text)
-        labels_column_choice[j].grid(row=j+1, column=0, sticky='ne', padx=30)
+        labels_column_choice[j].grid(row=j+2, column=0, sticky='ne', padx=30, pady=1)
         labels_column_choice[j].config(font=("Calibri bold", 10))
-        combo_column_choice[j] = ttk.Combobox(window_settings, values=list_color)
-        combo_column_choice[j].grid(row=j+1, column=1, sticky='nw', padx=10)
+        combo_column_choice[j] = ttk.Combobox(window_settings, values=list_headers)
+        combo_column_choice[j].grid(row=j+2, column=1, sticky='nw', padx=10, pady=1)
         combo_column_choice[j].config(font=("Calibri bold", 10))
         combo_column_choice[j].current(0)
+
+    # Button - Validation
+    button_validate = tk.Button(window_settings, width=30, height=1, text="Appliquer")
+    button_validate.config(font=("Calibri", 10))
+    button_validate.grid(row=nb_column_max+2, column=1, sticky="ne", padx=10, pady=(10,0))
 
 
 
@@ -106,7 +117,6 @@ class Table:
         frame_headers = tk.Frame(frame, bg="white")
         frame_headers.grid(row=2, padx=40)
         frame.columnconfigure((0, 1, 2, 3, 4, 5), weight=1)
-
 
         headers_width = 15
         buttons_header = [tk.Button() for j in range(nb_column)]
