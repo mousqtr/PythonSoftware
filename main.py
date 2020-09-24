@@ -31,7 +31,7 @@ root = tk.Tk()
 root.title("Gestionnaire d'inventaire")
 root.resizable(False, False)
 root.minsize(700, 700)
-window_icon = tk.PhotoImage(file="img/inventory.png")
+window_icon = tk.PhotoImage(file="img/box.png")
 root.iconphoto(False, window_icon)
 
 # Window size

@@ -1,6 +1,12 @@
 import tkinter as tk
 import pandas as pd
 from functools import partial
+import json
+from tkinter import ttk
+
+
+with open('settings.json') as json_file:
+    settings = json.load(json_file)
 
 def display_data():
     df = pd.read_csv('csv/csv_test.csv')
@@ -26,6 +32,51 @@ def color_line(p_table, p_row):
             else:
                 p_table.buttons[i][j].config(bg="white")
 
+def settings_window(p_parent):
+    # Window handle
+    window_settings = tk.Toplevel(p_parent)
+    window_settings.resizable(False, False)
+    window_settings.title("Paramètres")
+    window_icon = tk.PhotoImage(file="img/settings.png")
+    window_settings.iconphoto(False, window_icon)
+    # login_window_width = settings['dimensions']['window_login_width']
+    # login_window_height = settings['dimensions']['window_login_height']
+    login_window_width = 500
+    login_window_height = 220
+    screen_width = p_parent.winfo_screenwidth()
+    screen_height = p_parent.winfo_screenheight()
+    x_cord = int((screen_width / 2) - (login_window_width / 2))
+    y_cord = int((screen_height / 2) - (login_window_height / 2))
+    window_settings.geometry("{}x{}+{}+{}".format(login_window_width, login_window_height, x_cord, y_cord))
+    window_settings.columnconfigure((0, 1), weight=1)
+
+    # Title of the login window
+    bg_identification = settings['colors']['bg_identification']
+    label_login_title = tk.Label(window_settings, text="Paramètres", bg=bg_identification, fg="white")
+    label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
+    font_login_title = settings['font']['font_login_title']
+    font_size_login_title = settings['font_size']['font_size_login_title']
+    label_login_title.config(font=(font_login_title, font_size_login_title))
+
+    # Column choice label
+    nb_column_max = 6
+    labels_column_choice = [tk.Label() for j in range(nb_column)]
+    combo_column_choice= [ttk.Combobox() for j in range(nb_column)]
+    list_color = [" ", "red", "orange", "blue", "green", "white"]
+    for j in range(nb_column_max):
+        label_text = "Column " + str(j+1)
+        labels_column_choice[j] = tk.Label(window_settings, text=label_text)
+        labels_column_choice[j].grid(row=j+1, column=0, sticky='ne', padx=30)
+        labels_column_choice[j].config(font=("Calibri bold", 10))
+        combo_column_choice[j] = ttk.Combobox(window_settings, values=list_color)
+        combo_column_choice[j].grid(row=j+1, column=1, sticky='nw', padx=10)
+        combo_column_choice[j].config(font=("Calibri bold", 10))
+        combo_column_choice[j].current(0)
+
+
+
+
+
 class Table:
     def __init__(self, p_parent, p_row):
         frame_height = 400
@@ -46,6 +97,7 @@ class Table:
         button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
         button_settings.config(font=("Calibri", 10))
         button_settings.grid(row=4, column=0, sticky="nw", padx=(40,0), pady=5)
+        button_settings['command'] = partial(settings_window, frame)
 
         button_export = tk.Button(frame_buttons, width=20, height=1, text="Exporter")
         button_export.config(font=("Calibri", 10))
@@ -57,13 +109,13 @@ class Table:
 
 
         headers_width = 15
-        headers_buttons = [tk.Button() for j in range(nb_column)]
+        buttons_header = [tk.Button() for j in range(nb_column)]
         for j in range(0, nb_column):
-            headers_buttons[j] = tk.Button(frame_headers, width=headers_width, text=list(df)[j],
+            buttons_header[j] = tk.Button(frame_headers, width=headers_width, text=list(df)[j],
                                            font=("Consolas bold", 10))
-            headers_buttons[j].config(bg="green", fg="white")
-            headers_buttons[j].grid(row=0, column=j)
-            headers_buttons[j].config(borderwidth=2, relief="ridge")
+            buttons_header[j].config(bg="green", fg="white")
+            buttons_header[j].grid(row=0, column=j)
+            buttons_header[j].config(borderwidth=2, relief="ridge")
 
         # Create a frame for the canvas with non-zero row&column weights
         frame_canvas = tk.Frame(frame)
