@@ -14,7 +14,8 @@ df = pd.read_csv('csv/csv_test.csv')
 
 
 class Filter:
-    def __init__(self, p_parent, p_row):
+    def __init__(self, p_parent, p_row, p_update):
+        self.update = p_update
         frame_height = 200
         frame_width = 780
         self.frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
@@ -51,7 +52,7 @@ class Filter:
                 self.entry_settings[i][j].config(font=("Calibri bold", 10))
                 # self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
 
-        frame_buttons = tk.Frame(self.frame, height=40, bg="white")
+        frame_buttons = tk.Frame(self.frame, height=30, bg="white")
         frame_buttons.grid(row=4, column=0, columnspan=6, sticky="nwe")
         frame_buttons.grid_propagate(False)
 
@@ -72,8 +73,11 @@ class Filter:
         # str_df_lowercase = df.str.lower()
         str_df_lowercase = df.applymap(lambda s:s.lower() if type(s) == str else s)
         str_df = str_df_lowercase.applymap(str)
-        rows_to_draw = []
+        rows_found = []
+        rows_found_numbers = []
 
+
+        # Find all possibilities
         for i in range(0, 2):
             for j in range(0, 4):
                 column_name = self.labels_settings[i][j]['text']
@@ -81,13 +85,33 @@ class Filter:
                     text_entry = self.entry_settings[i][j].get()
                     text_entry_lowercase = text_entry.lower()
                     row_research = str_df.index[str_df[column_name] == text_entry_lowercase].tolist()
-                    for x in row_research:
-                        rows_to_draw.append(x)
+                    if row_research != []:
+                        rows_found.append(row_research)
 
+        # print("rows_found : ", rows_found)
 
-        print(rows_to_draw)
+        # Creation of a possibility list
+        for list_row in rows_found:
+            for number in list_row:
+                rows_found_numbers.append(number)
 
-        # print(df.index[df['Nom'] == "Dupont"].tolist())
+        # Correlation of each possibility list (we keep only the numbers present in all list)
+        presence = 0
+        rows_to_draw = []
+        # print("rows_found_numbers : ", rows_found_numbers)
+        for number in rows_found_numbers:
+            for list_row in rows_found:
+                if number in list_row:
+                    presence += 1
+            # print("presence : ", presence)
+            if presence == len(rows_found):
+                rows_to_draw.append(number)
+            presence = 0
+
+        rows_to_draw = list(set(rows_to_draw))
+
+        self.update.update_table(rows_to_draw)
+        # print("rows_to_draw : ", rows_to_draw)
 
 
     def settings_window(self):

@@ -103,16 +103,28 @@ frame_second.config(highlightbackground="grey")
 frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
+Widget_table = Table(Frame_research, 2)
 
+
+class Update:
+    def __init__(self):
+        print("Initialization - Update class")
+
+    def update_table(self, p_rows_to_draw):
+        Widget_table.update(p_rows_to_draw)
+
+
+update = Update()
 
 Widget_summary = Summary(Frame_dashboard, 1)
-Widget_resarch = Filter(Frame_research, 1)
-Widget_resarch.configure_settings(0, 0, "Nom")
-Widget_resarch.configure_settings(0, 1, "Prenom")
-Widget_resarch.configure_settings(0, 2, "Id")
-Widget_resarch.configure_settings(0, 3, "Materiel")
 
-Widget_table = Table(Frame_research, 2)
+Widget_resarch = Filter(Frame_research, 1, update)
+
+
+
+
+
+
 
 
 

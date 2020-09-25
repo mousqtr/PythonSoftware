@@ -15,15 +15,19 @@ def display_data():
     # print(df)
     # df.to_csv('csv/laptop.csv', index=False)
 
+# Initialization of the dataframe
 df = pd.read_csv('csv/csv_test.csv')
 nb_row_df = df.shape[0]
 nb_column_df = df.shape[1]
-nb_column_to_show = 6
-column_width = 15
+
 nb_column_max = 6
 list_width = [98, 48, 32, 23, 18, 15]
+
+# Initial values
+initial_nb_column = 6
+initial_column_width = 15
 initial_list_columns = [0, 1, 2, 3, 4, 5]
-# nb_column = df.shape[1]
+initial_list_rows = [i for i in range(0, nb_row_df)]
 
 
 
@@ -47,6 +51,7 @@ class Table:
         self.title = tk.Label(self.frame, text="Table", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised", height=1)
         self.title.grid(row=0, column=0, columnspan=6, sticky="nwe", ipadx=10, ipady=1)
         self.title.config(font=("Calibri bold", 12))
+
 
 
 
@@ -75,10 +80,10 @@ class Table:
         self.frame_buttons = tk.Frame(self.canvas, bg="grey")
         self.canvas.create_window((0, 0), window=self.frame_buttons, anchor='nw')
 
-        self.buttons_header = [tk.Button() for j in range(nb_column_to_show)]
-        self.buttons_table = [[tk.Button() for j in range(nb_column_to_show)] for i in range(nb_row_df)]
+        self.buttons_header = [tk.Button() for j in range(initial_nb_column)]
+        self.buttons_table = [[tk.Button() for j in range(initial_nb_column)] for i in range(nb_row_df)]
 
-        self.create_table(nb_column_to_show, column_width, initial_list_columns)
+        self.create_table(initial_nb_column, initial_column_width, initial_list_columns, initial_list_rows)
 
         # Buttons
         frame_buttons = tk.Frame(self.frame, height=40, bg="white")
@@ -94,9 +99,18 @@ class Table:
         button_export.config(font=("Calibri", 10))
         button_export.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
 
+        # Useful for the update
+        self.width_column = initial_column_width
+        self.column_displayed = initial_list_columns
+        self.nb_column = initial_nb_column
+        self.list_rows = initial_list_rows
 
 
-    def create_table(self, p_nb_column, p_width_column, p_list_col):
+
+    def create_table(self, p_nb_column, p_width_column, p_list_col, p_list_rows):
+        self.width_column = p_width_column
+        self.column_displayed = p_list_col
+        self.nb_column = p_nb_column
 
         headers_width = p_width_column
         self.buttons_header = [tk.Button() for j in range(p_nb_column)]
@@ -115,11 +129,14 @@ class Table:
         for j in p_list_col:
             current_col += 1
             for i in range(0, nb_row_df):
-                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=button_width, text=(df.iloc[i][j-1]))
+                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=button_width,
+                                                               text=(df.iloc[i][j - 1]))
                 self.buttons_table[i][current_col].config(bg="white")
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i, p_nb_column)
                 self.buttons_table[i][current_col].grid(row=i, column=current_col)
                 self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
+                if i not in p_list_rows:
+                    self.buttons_table[i][current_col].config(bg="black")
 
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
         self.frame_buttons.update_idletasks()
@@ -216,7 +233,7 @@ class Table:
         width_col = list_width[number_col-1]
         if number_col != 0:
             self.delete_buttons()
-            self.create_table(number_col, width_col, list_columns)
+            self.create_table(number_col, width_col, list_columns, self.list_rows)
 
     def delete_buttons(self):
 
@@ -226,3 +243,6 @@ class Table:
         for widget in self.frame_buttons.winfo_children():
             widget.destroy()
 
+    def update(self, p_rows):
+        self.list_rows = p_rows
+        self.create_table(self.nb_column, self.width_column, self.column_displayed, self.list_rows)
