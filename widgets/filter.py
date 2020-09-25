@@ -72,17 +72,20 @@ class Filter:
         # str_df_lowercase = df.str.lower()
         str_df_lowercase = df.applymap(lambda s:s.lower() if type(s) == str else s)
         str_df = str_df_lowercase.applymap(str)
-        print(str_df)
+        rows_to_draw = []
 
         for i in range(0, 2):
             for j in range(0, 4):
                 column_name = self.labels_settings[i][j]['text']
                 if column_name != " ":
                     text_entry = self.entry_settings[i][j].get()
-                    print(column_name)
-                    print(text_entry)
-                    print(str_df.index[str_df[column_name] == text_entry].tolist())
-                    print("        ")
+                    text_entry_lowercase = text_entry.lower()
+                    row_research = str_df.index[str_df[column_name] == text_entry_lowercase].tolist()
+                    for x in row_research:
+                        rows_to_draw.append(x)
+
+
+        print(rows_to_draw)
 
         # print(df.index[df['Nom'] == "Dupont"].tolist())
 
