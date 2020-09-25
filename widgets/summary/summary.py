@@ -6,7 +6,7 @@ from tkinter import ttk
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
-with open('widgets/widgets_data.json') as json_file:
+with open('widgets/summary/summary_data.json') as json_file:
     widgets_data = json.load(json_file)
 
 
@@ -16,7 +16,7 @@ def save_summary(p_row, p_column, p_data, p_color):
     value_color = {key: p_color}
     widgets_data['summary_data'].update(value_data)
     widgets_data['summary_color'].update(value_color)
-    with open('widgets/widgets_data.json', 'w') as outfile:
+    with open('widgets/summary/summary_data.json', 'w') as outfile:
         json.dump(widgets_data, outfile, indent=4)
 
 

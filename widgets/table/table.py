@@ -8,12 +8,6 @@ from tkinter import ttk
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
-def display_data():
-    df = pd.read_csv('csv/csv_test.csv')
-    print(df)
-    # df.at[0, 'Prenom'] = 'Edouard'
-    # print(df)
-    # df.to_csv('csv/laptop.csv', index=False)
 
 # Initialization of the dataframe
 df = pd.read_csv('csv/csv_test.csv')

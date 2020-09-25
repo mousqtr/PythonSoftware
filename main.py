@@ -3,9 +3,9 @@ import json
 
 from gui import FrameContent, ButtonLeftText, ButtonTopText
 from login import Login
-from widgets.summary import Summary
-from widgets.filter import Filter
-from widgets.table import Table
+from widgets.summary.summary import Summary
+from widgets.filters.filters import Filters
+from widgets.table.table import Table
 
 
 with open('settings.json') as json_file:
@@ -120,7 +120,7 @@ class Update:
 
 # Widgets where we can change value and updates others widgets
 update = Update()
-Widget_resarch = Filter(Frame_research, 1, update)
+Widget_resarch = Filters(Frame_research, 1, update)
 
 
 

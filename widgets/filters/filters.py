@@ -10,10 +10,18 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
+with open('widgets/filters/filters_data.json') as json_file:
+    filters_data = json.load(json_file)
+
+
+
+
+
+
 df = pd.read_csv('csv/csv_test.csv')
 
 
-class Filter:
+class Filters:
     def __init__(self, p_parent, p_row, p_update):
         self.update = p_update
         frame_height = 200
@@ -51,6 +59,8 @@ class Filter:
                 self.entry_settings[i][j].grid(row=1, column=0, sticky='nw')
                 self.entry_settings[i][j].config(font=("Calibri bold", 10))
                 # self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
+
+        self.load_labels()
 
         frame_buttons = tk.Frame(self.frame, height=30, bg="white")
         frame_buttons.grid(row=4, column=0, columnspan=6, sticky="nwe")
@@ -187,5 +197,22 @@ class Filter:
                 index = p_combo[i][j].current()
                 self.configure_settings(i, j, text)
 
+                self.save_labels(i, j, text)
+
     def configure_settings(self, p_row, p_column, p_text):
         self.labels_settings[p_row][p_column]['text'] = p_text
+
+    def save_labels(self, p_row, p_column, p_data):
+        key = str(p_row) + ',' + str(p_column)
+        value_data = {key: p_data}
+        filters_data['filters_label'].update(value_data)
+        with open('widgets/filters/filters_data.json', 'w') as outfile:
+            json.dump(filters_data, outfile, indent=4)
+
+    def load_labels(self):
+        for x in filters_data['filters_label']:
+            coord = x.split(',')
+            row = int(coord[0])
+            column = int(coord[1])
+            text = filters_data['filters_label'][x]
+            self.labels_settings[row][column]['text'] = text
