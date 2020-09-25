@@ -22,6 +22,7 @@ nb_column_to_show = 6
 column_width = 15
 nb_column_max = 6
 list_width = [98, 48, 32, 23, 18, 15]
+initial_list_columns = [0, 1, 2, 3, 4, 5]
 # nb_column = df.shape[1]
 
 
@@ -88,11 +89,11 @@ class Table:
         self.buttons_header = [tk.Button() for j in range(nb_column_to_show)]
         self.buttons_table = [[tk.Button() for j in range(nb_column_to_show)] for i in range(nb_row_df)]
 
-        self.create_table(nb_column_to_show, column_width)
+        self.create_table(nb_column_to_show, column_width, initial_list_columns)
 
 
 
-    def create_table(self, p_nb_column, p_width_column):
+    def create_table(self, p_nb_column, p_width_column, p_list_col):
 
         headers_width = p_width_column
         self.buttons_header = [tk.Button() for j in range(p_nb_column)]
@@ -105,13 +106,16 @@ class Table:
 
         button_width = p_width_column
         self.buttons_table = [[tk.Button() for j in range(p_nb_column)] for i in range(nb_row_df)]
-        for i in range(0, nb_row_df):
-            for j in range(0, p_nb_column):
-                self.buttons_table[i][j] = tk.Button(self.frame_buttons, width=button_width, text=(df.iloc[i][j]))
-                self.buttons_table[i][j].config(bg="white")
-                self.buttons_table[i][j]['command'] = partial(self.color_line, i, p_nb_column)
-                self.buttons_table[i][j].grid(row=i, column=j)
-                self.buttons_table[i][j].config(borderwidth=2, relief="groove")
+        current_col = -1
+        for j in p_list_col:
+            current_col += 1
+            for i in range(0, nb_row_df):
+                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=button_width, text=(df.iloc[i][j]))
+                self.buttons_table[i][current_col].config(bg="white")
+                self.buttons_table[i][current_col]['command'] = partial(self.color_line, i, p_nb_column)
+                self.buttons_table[i][current_col].grid(row=i, column=current_col)
+                self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
+                print(current_col)
 
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
         self.frame_buttons.update_idletasks()
@@ -180,7 +184,7 @@ class Table:
             labels_column_choice[j] = tk.Label(window_settings, text=label_text)
             labels_column_choice[j].grid(row=j + 2, column=0, sticky='ne', padx=30, pady=1)
             labels_column_choice[j].config(font=("Calibri bold", 10))
-            combo_column_choice[j] = ttk.Combobox(window_settings, values=list_headers)
+            combo_column_choice[j] = ttk.Combobox(window_settings, values=list_headers, state="readonly")
             combo_column_choice[j].grid(row=j + 2, column=1, sticky='nw', padx=10, pady=1)
             combo_column_choice[j].config(font=("Calibri bold", 10))
             combo_column_choice[j].current(0)
@@ -192,17 +196,23 @@ class Table:
         button_validate['command'] = partial(self.change_column, combo_column_choice)
 
     def change_column(self, p_combo):
-        list_columns = []
+        list_columns = []                   # List of column number non empty
         for j in range(nb_column_max):
-            col = p_combo[j].get()
-            if col != " ":
-                list_columns.append(j)
+            col = p_combo[j].current()
+            if (col != 0) and (col not in list_columns):
+                list_columns.append(col)
+
+        # offset
+        for x in list_columns:
+            x -= 1
+
+        list_columns.sort()
 
         number_col = len(list_columns)
         width_col = list_width[number_col-1]
         if number_col != 0:
             self.delete_buttons()
-            self.create_table(number_col, width_col)
+            self.create_table(number_col, width_col, list_columns)
 
     def delete_buttons(self):
 
