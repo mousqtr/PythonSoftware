@@ -3,6 +3,9 @@ import json
 from functools import partial
 from tkinter import ttk
 import pandas as pd
+import warnings
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -62,7 +65,26 @@ class Filter:
         button_validate = tk.Button(frame_buttons, width=30, height=1, text="Rechercher")
         button_validate.config(font=("Calibri", 10))
         button_validate.grid(row=0, column=1, sticky="ne", padx=10)
+        button_validate['command'] = self.research
 
+    def research(self):
+        # str_df = df.applymap(str)
+        # str_df_lowercase = df.str.lower()
+        str_df_lowercase = df.applymap(lambda s:s.lower() if type(s) == str else s)
+        str_df = str_df_lowercase.applymap(str)
+        print(str_df)
+
+        for i in range(0, 2):
+            for j in range(0, 4):
+                column_name = self.labels_settings[i][j]['text']
+                if column_name != " ":
+                    text_entry = self.entry_settings[i][j].get()
+                    print(column_name)
+                    print(text_entry)
+                    print(str_df.index[str_df[column_name] == text_entry].tolist())
+                    print("        ")
+
+        # print(df.index[df['Nom'] == "Dupont"].tolist())
 
 
     def settings_window(self):
