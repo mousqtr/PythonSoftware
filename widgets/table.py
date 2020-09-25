@@ -30,14 +30,6 @@ initial_list_columns = [0, 1, 2, 3, 4, 5]
 initial_list_rows = [i for i in range(0, nb_row_df)]
 
 
-
-
-
-
-
-
-
-
 class Table:
     def __init__(self, p_parent, p_row):
         frame_height = 400
@@ -48,10 +40,10 @@ class Table:
         self.frame.grid(row=p_row, column=0, pady=(5, 5))
         self.frame.columnconfigure((0, 1, 2, 3, 4), weight=1)
 
+        # Title - Table
         self.title = tk.Label(self.frame, text="Table", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised", height=1)
         self.title.grid(row=0, column=0, columnspan=6, sticky="nwe", ipadx=10, ipady=1)
         self.title.config(font=("Calibri bold", 12))
-
 
         # Useful for the update
         self.width_column = initial_column_width
@@ -59,16 +51,15 @@ class Table:
         self.nb_column = initial_nb_column
         self.list_rows = initial_list_rows
 
+        # Frame that contains headers of the table
         self.frame_headers = tk.Frame(self.frame, bg="white")
         self.frame_headers.grid(row=1, padx=40, pady=(10,0))
 
-        # Create a frame for the canvas with non-zero row&column weights
+        # Frame that will contain the table
         self.frame_canvas = tk.Frame(self.frame)
         self.frame_canvas.grid(row=2, column=0, padx=(40, 0), pady=(0, 0), sticky='nw')
         self.frame_canvas.grid_rowconfigure(0, weight=1)
         self.frame_canvas.grid_columnconfigure(0, weight=1)
-
-        # Set grid_propagate to False to allow 5-by-5 buttons resizing later
         self.frame_canvas.grid_propagate(False)
 
         # Add a canvas in that frame
@@ -80,32 +71,28 @@ class Table:
         self.vsb.grid(row=0, column=1, sticky='ns')
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
-        # Create a frame to contain the buttons
+        # Objects specific to the table
         self.frame_buttons = tk.Frame(self.canvas, bg="grey")
         self.canvas.create_window((0, 0), window=self.frame_buttons, anchor='nw')
-
         self.buttons_header = [tk.Button() for j in range(initial_nb_column)]
         self.buttons_table = [[tk.Button() for j in range(initial_nb_column)] for i in range(nb_row_df)]
-
         self.create_table(initial_nb_column, initial_column_width, initial_list_columns, initial_list_rows)
 
-        # Buttons
+        # Create frame containing buttons
         frame_buttons = tk.Frame(self.frame, height=40, bg="white")
         frame_buttons.grid(row=3, column=0, columnspan=6, sticky="nwe", pady=(10,0))
         frame_buttons.grid_propagate(False)
 
+        # Button - Settings (column choice)
         button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
         button_settings.config(font=("Calibri", 10))
         button_settings.grid(row=0, column=0, sticky="nw", padx=(40, 0))
         button_settings['command'] = self.settings_window
 
+        # Button - Export
         button_export = tk.Button(frame_buttons, width=20, height=1, text="Exporter")
         button_export.config(font=("Calibri", 10))
         button_export.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
-
-
-
-
 
     def create_table(self, p_nb_column, p_width_column, p_list_col, p_list_rows):
         self.width_column = p_width_column
