@@ -4,7 +4,6 @@ from functools import partial
 from tkinter import ttk
 import pandas as pd
 
-
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
@@ -28,7 +27,6 @@ class Filter:
 
         self.nb_column = 4
         self.nb_row = 2
-        self.nb_filtres = self.nb_column * self.nb_row
         self.frames_settings = [[tk.Frame() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         self.labels_settings = [[tk.Label() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         self.entry_settings = [[tk.Entry() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
@@ -77,8 +75,8 @@ class Filter:
         window_settings.iconphoto(False, window_icon)
         # login_window_width = settings['dimensions']['window_login_width']
         # login_window_height = settings['dimensions']['window_login_height']
-        window_settings_width = 550
-        window_settings_height = 300
+        window_settings_width = 700
+        window_settings_height = 270
         screen_width = self.frame.winfo_screenwidth()
         screen_height = self.frame.winfo_screenheight()
         x_cord = int((screen_width / 2) - (window_settings_width / 2))
@@ -100,22 +98,39 @@ class Filter:
         label_login_title.config(font=("Calibri bold", 12))
 
         # Column choice label
-        labels_column_choice = [tk.Label() for j in range(self.nb_filtres)]
-        combo_column_choice = [ttk.Combobox() for j in range(self.nb_filtres)]
+        frames = [tk.Frame() for j in range(0, 2)]
+        frames[0] = tk.Frame(window_settings, height=100, width=window_settings_width/2)
+        frames[0].grid(row=2, column=0, sticky="n")
+        frames[0].grid_propagate(False)
+        frames[1] = tk.Frame(window_settings, height=100, width=window_settings_width/2)
+        frames[1].grid(row=2, column=1, sticky="n")
+        frames[1].grid_propagate(False)
+        labels_column_choice = [[tk.Label() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
+        combo_column_choice = [[ttk.Combobox() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         list_headers = list(df.head())
         list_headers.insert(0, " ")
-        for j in range(self.nb_filtres):
-            label_text = "Filtre " + str(j + 1)
-            labels_column_choice[j] = tk.Label(window_settings, text=label_text)
-            labels_column_choice[j].grid(row=j + 2, column=0, sticky='ne', padx=30, pady=1)
-            labels_column_choice[j].config(font=("Calibri bold", 10))
-            combo_column_choice[j] = ttk.Combobox(window_settings, values=list_headers, state="readonly")
-            combo_column_choice[j].grid(row=j + 2, column=1, sticky='nw', padx=10, pady=1)
-            combo_column_choice[j].config(font=("Calibri bold", 10))
-            combo_column_choice[j].current(0)
+        num_filter = 1
+        for i in range(0, 2):
+            for j in range(0, 4):
+                label_text = "Filtre " + str(num_filter)
+                labels_column_choice[i][j] = tk.Label(frames[i], text=label_text)
+                labels_column_choice[i][j].grid(row=j, column=0, sticky='nw', padx=(70, 0), pady=1)
+                labels_column_choice[i][j].config(font=("Calibri bold", 10))
+                combo_column_choice[i][j] = ttk.Combobox(frames[i], values=list_headers, state="readonly")
+                combo_column_choice[i][j].grid(row=j, column=1, sticky='nw', padx=(5, 0), pady=1)
+                combo_column_choice[i][j].config(font=("Calibri bold", 10))
+                combo_column_choice[i][j].current(0)
+                num_filter += 1
 
         # Button - Validation
         button_validate = tk.Button(window_settings, width=30, height=1, text="Appliquer")
         button_validate.config(font=("Calibri", 10))
-        button_validate.grid(row=self.nb_filtres + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
-        # button_validate['command'] = partial(self.change_column, combo_column_choice)
+        button_validate.grid(row=6, column=0, columnspan=2, sticky="nw", padx=(250,0), pady=(30, 0))
+        # button_validate['command'] = partial(self.change_filters, combo_column_choice)
+
+    # def change_filters(self):
+    #     for i in range(0, 2):
+    #         for j in range(0, 4):
+    #     text = combo_column_choice[i][j].get()
+    #     col = p_combo[j].current()
+
