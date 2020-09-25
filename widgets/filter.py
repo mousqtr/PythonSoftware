@@ -57,9 +57,20 @@ class Filter:
                 self.entry_settings[i][j].config(font=("Calibri bold", 10))
                 # self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
 
-        button_validate = tk.Button(frame, width=30, height=1, text="Rechercher")
+        frame_buttons = tk.Frame(frame, height=40, bg="white")
+        frame_buttons.grid(row=4, column=0, columnspan=6, sticky="nwe")
+        frame_buttons.grid_propagate(False)
+
+        # Button - Settings
+        button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
+        button_settings.config(font=("Calibri", 10))
+        button_settings.grid(row=0, column=0, sticky="nw", padx=(40, 300))
+        button_settings['command'] = None
+
+        # Button - Research
+        button_validate = tk.Button(frame_buttons, width=30, height=1, text="Rechercher")
         button_validate.config(font=("Calibri", 10))
-        button_validate.grid(row=4, column=0, columnspan=4, sticky="ne", padx=10)
+        button_validate.grid(row=0, column=1, sticky="ne", padx=10)
 
     def configure_settings(self, p_row, p_column, p_text):
         self.labels_settings[p_row][p_column]['text'] = p_text

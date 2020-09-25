@@ -70,7 +70,7 @@ frame_top_menu.columnconfigure(0, weight=1)
 Frame_dashboard = FrameContent(frame_right, "Dashboard", "#e8e8e8")
 Frame_research = FrameContent(frame_right, "Recherche", "#e8e8e8")
 Frame_settings = FrameContent(frame_right, "Paramètres", "#e8e8e8")
-Frame_attribution = FrameContent(frame_right, "Attribution", "green")
+Frame_attribution = FrameContent(frame_right, "Attribution", "#e8e8e8")
 Frame_help = FrameContent(frame_right, "Aide", "purple")
 Frame_dashboard.frame.lift()
 
@@ -85,8 +85,6 @@ Button_settings = ButtonLeftText("Paramètres", 6, frame_left, bg_left_menu, (0,
 # Initialization of the top menu buttons (include in frame_top_menu)
 Window_login = Login(root)
 Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Window_login.create_login_window)
-
-
 
 
 

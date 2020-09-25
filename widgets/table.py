@@ -48,25 +48,14 @@ class Table:
         self.title.grid(row=0, column=0, columnspan=6, sticky="nwe", ipadx=10, ipady=1)
         self.title.config(font=("Calibri bold", 12))
 
-        frame_buttons = tk.Frame(self.frame, height=40, bg="white")
-        frame_buttons.grid(row=1, column=0, columnspan=6, sticky="nwe")
-        frame_buttons.grid_propagate(False)
 
-        button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
-        button_settings.config(font=("Calibri", 10))
-        button_settings.grid(row=4, column=0, sticky="nw", padx=(40, 0), pady=5)
-        button_settings['command'] = self.settings_window
-
-        button_export = tk.Button(frame_buttons, width=20, height=1, text="Exporter")
-        button_export.config(font=("Calibri", 10))
-        button_export.grid(row=4, column=1,  sticky="nw", padx=(10,0), pady=5)
 
         self.frame_headers = tk.Frame(self.frame, bg="white")
-        self.frame_headers.grid(row=2, padx=40)
+        self.frame_headers.grid(row=1, padx=40, pady=(10,0))
 
         # Create a frame for the canvas with non-zero row&column weights
         self.frame_canvas = tk.Frame(self.frame)
-        self.frame_canvas.grid(row=3, column=0, padx=(40, 0), pady=(0, 0), sticky='nw')
+        self.frame_canvas.grid(row=2, column=0, padx=(40, 0), pady=(0, 0), sticky='nw')
         self.frame_canvas.grid_rowconfigure(0, weight=1)
         self.frame_canvas.grid_columnconfigure(0, weight=1)
 
@@ -90,6 +79,20 @@ class Table:
         self.buttons_table = [[tk.Button() for j in range(nb_column_to_show)] for i in range(nb_row_df)]
 
         self.create_table(nb_column_to_show, column_width, initial_list_columns)
+
+        # Buttons
+        frame_buttons = tk.Frame(self.frame, height=40, bg="white")
+        frame_buttons.grid(row=3, column=0, columnspan=6, sticky="nwe", pady=(10,0))
+        frame_buttons.grid_propagate(False)
+
+        button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
+        button_settings.config(font=("Calibri", 10))
+        button_settings.grid(row=0, column=0, sticky="nw", padx=(40, 0))
+        button_settings['command'] = self.settings_window
+
+        button_export = tk.Button(frame_buttons, width=20, height=1, text="Exporter")
+        button_export.config(font=("Calibri", 10))
+        button_export.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
 
 
 
@@ -117,7 +120,6 @@ class Table:
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i, p_nb_column)
                 self.buttons_table[i][current_col].grid(row=i, column=current_col)
                 self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
-                print(current_col)
 
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
         self.frame_buttons.update_idletasks()
