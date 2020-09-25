@@ -63,8 +63,7 @@ class Filter:
         button_validate.config(font=("Calibri", 10))
         button_validate.grid(row=0, column=1, sticky="ne", padx=10)
 
-    def configure_settings(self, p_row, p_column, p_text):
-        self.labels_settings[p_row][p_column]['text'] = p_text
+
 
     def settings_window(self):
         # Window handle
@@ -126,11 +125,14 @@ class Filter:
         button_validate = tk.Button(window_settings, width=30, height=1, text="Appliquer")
         button_validate.config(font=("Calibri", 10))
         button_validate.grid(row=6, column=0, columnspan=2, sticky="nw", padx=(250,0), pady=(30, 0))
-        # button_validate['command'] = partial(self.change_filters, combo_column_choice)
+        button_validate['command'] = partial(self.change_filters, combo_column_choice)
 
-    # def change_filters(self):
-    #     for i in range(0, 2):
-    #         for j in range(0, 4):
-    #     text = combo_column_choice[i][j].get()
-    #     col = p_combo[j].current()
+    def change_filters(self, p_combo):
+        for i in range(0, 2):
+            for j in range(0, 4):
+                text = p_combo[i][j].get()
+                index = p_combo[i][j].current()
+                self.configure_settings(i, j, text)
 
+    def configure_settings(self, p_row, p_column, p_text):
+        self.labels_settings[p_row][p_column]['text'] = p_text
