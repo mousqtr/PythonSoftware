@@ -20,6 +20,8 @@ nb_row_df = df.shape[0]
 nb_column_df = df.shape[1]
 nb_column_to_show = 6
 column_width = 15
+nb_column_max = 6
+list_width = [98, 48, 32, 23, 18, 15]
 # nb_column = df.shape[1]
 
 
@@ -89,6 +91,7 @@ class Table:
         self.create_table(nb_column_to_show, column_width)
 
 
+
     def create_table(self, p_nb_column, p_width_column):
 
         headers_width = p_width_column
@@ -135,7 +138,6 @@ class Table:
                 else:
                     self.buttons_table[i][j].config(bg="white")
 
-
     def settings_window(self):
         # Window handle
         window_settings = tk.Toplevel(self.frame)
@@ -168,7 +170,7 @@ class Table:
         label_login_title.config(font=("Calibri bold", 12))
 
         # Column choice label
-        nb_column_max = 6
+
         labels_column_choice = [tk.Label() for j in range(nb_column_max)]
         combo_column_choice = [ttk.Combobox() for j in range(nb_column_max)]
         list_headers = list(df.head())
@@ -187,7 +189,20 @@ class Table:
         button_validate = tk.Button(window_settings, width=30, height=1, text="Appliquer")
         button_validate.config(font=("Calibri", 10))
         button_validate.grid(row=nb_column_max + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
-        button_validate['command'] = self.delete_buttons
+        button_validate['command'] = partial(self.change_column, combo_column_choice)
+
+    def change_column(self, p_combo):
+        list_columns = []
+        for j in range(nb_column_max):
+            col = p_combo[j].get()
+            if col != " ":
+                list_columns.append(j)
+
+        number_col = len(list_columns)
+        width_col = list_width[number_col-1]
+        if number_col != 0:
+            self.delete_buttons()
+            self.create_table(number_col, width_col)
 
     def delete_buttons(self):
 
@@ -197,5 +212,3 @@ class Table:
         for widget in self.frame_buttons.winfo_children():
             widget.destroy()
 
-
-        self.create_table(3, 32)
