@@ -97,12 +97,14 @@ class Table:
 
         headers_width = p_width_column
         self.buttons_header = [tk.Button() for j in range(p_nb_column)]
-        for j in range(0, p_nb_column):
-            self.buttons_header[j] = tk.Button(self.frame_headers, width=headers_width, text=list(df)[j],
+        current_col0 = -1
+        for j in p_list_col:
+            current_col0 += 1
+            self.buttons_header[current_col0] = tk.Button(self.frame_headers, width=headers_width, text=list(df)[j-1],
                                           font=("Consolas bold", 10))
-            self.buttons_header[j].config(bg="green", fg="white")
-            self.buttons_header[j].grid(row=0, column=j)
-            self.buttons_header[j].config(borderwidth=2, relief="ridge")
+            self.buttons_header[current_col0].config(bg="green", fg="white")
+            self.buttons_header[current_col0].grid(row=0, column=current_col0)
+            self.buttons_header[current_col0].config(borderwidth=2, relief="ridge")
 
         button_width = p_width_column
         self.buttons_table = [[tk.Button() for j in range(p_nb_column)] for i in range(nb_row_df)]
@@ -110,7 +112,7 @@ class Table:
         for j in p_list_col:
             current_col += 1
             for i in range(0, nb_row_df):
-                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=button_width, text=(df.iloc[i][j]))
+                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=button_width, text=(df.iloc[i][j-1]))
                 self.buttons_table[i][current_col].config(bg="white")
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i, p_nb_column)
                 self.buttons_table[i][current_col].grid(row=i, column=current_col)
