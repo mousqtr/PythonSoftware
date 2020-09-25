@@ -110,6 +110,10 @@ class Filter:
 
         rows_to_draw = list(set(rows_to_draw))
 
+        nb_row_df = df.shape[0]
+        if rows_to_draw == []:
+            rows_to_draw = [i for i in range(0, nb_row_df)]
+
         self.update.update_table(rows_to_draw)
         # print("rows_to_draw : ", rows_to_draw)
 
