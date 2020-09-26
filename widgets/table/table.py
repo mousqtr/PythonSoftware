@@ -169,7 +169,6 @@ class Table:
         Function that colors a line
 
         :param p_row: A line of the table
-        :param p_nb_column: Number of columns
         """
         for i in range(0, nb_row_df):
             for j in range(0, self.nb_column):
