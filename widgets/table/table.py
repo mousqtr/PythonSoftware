@@ -4,7 +4,7 @@ from functools import partial
 import json
 from tkinter import ttk
 
-
+# Open the settings file
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
@@ -14,6 +14,7 @@ df = pd.read_csv('csv/csv_test.csv')
 nb_row_df = df.shape[0]
 nb_column_df = df.shape[1]
 
+# Table property
 nb_column_max = 6
 list_width = [98, 48, 32, 23, 18, 15]
 
@@ -25,13 +26,29 @@ initial_list_rows = [i for i in range(0, nb_row_df)]
 
 
 class Table:
+    """ Widget that displays a table """
+
     def __init__(self, p_parent, p_row, p_id):
+        """
+        Initialization of the table widget that shows a table
+
+        :param p_parent: Page that will contain this table widget
+        :param p_row: Row of the page where the widget will be placed
+        :param p_id: Identifier of the widget (each widget is unique)
+        """
+
+        # Saving the parameters to use them in each function
+        self.parent = p_parent
+        self.row = p_row
+        self.id = p_id
+
+        # Properties of the widget
         frame_height = 400
         frame_width = 780
-        self.frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
+        self.frame = tk.Frame(self.parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
-        self.frame.grid(row=p_row, column=0, pady=(5, 5))
+        self.frame.grid(row=self.row, column=0, pady=(5, 5))
         self.frame.columnconfigure((0, 1, 2, 3, 4), weight=1)
 
         # Title - Table
@@ -89,31 +106,41 @@ class Table:
         button_export.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
 
     def create_table(self, p_nb_column, p_width_column, p_list_col, p_list_rows):
+        """
+        Function that creates of the table
+
+        :param p_nb_column: Number of column of the table
+        :param p_width_column: Width of each column
+        :param p_list_col: List which contains the column name of the table
+        :param p_list_rows: List which contains the rows to draw
+        """
+
+        #Update values
         self.width_column = p_width_column
         self.list_columns = p_list_col
         self.nb_column = p_nb_column
+        self.list_rows = p_list_rows
 
-        headers_width = p_width_column
-        self.buttons_header = [tk.Button() for j in range(p_nb_column)]
-        current_col0 = -1
+        # Creation of the header
+        self.buttons_header = [tk.Button() for j in range(self.nb_column)]
+        current_col = 0
         for j in self.list_columns:
-            current_col0 += 1
-            self.buttons_header[current_col0] = tk.Button(self.frame_headers, width=headers_width, text=list(df)[j-1],
+            self.buttons_header[current_col] = tk.Button(self.frame_headers, width=self.width_column, text=list(df)[j-1],
                                           font=("Consolas bold", 10))
-            self.buttons_header[current_col0].config(bg="green", fg="white")
-            self.buttons_header[current_col0].grid(row=0, column=current_col0)
-            self.buttons_header[current_col0].config(borderwidth=2, relief="ridge")
+            self.buttons_header[current_col].config(bg="green", fg="white")
+            self.buttons_header[current_col].grid(row=0, column=current_col)
+            self.buttons_header[current_col].config(borderwidth=2, relief="ridge")
+            current_col += 1
 
-        button_width = p_width_column
-        self.buttons_table = [[tk.Button() for j in range(p_nb_column)] for i in range(nb_row_df)]
-        current_col = -1
+        # Creation of the table content
+        self.buttons_table = [[tk.Button() for j in range(self.nb_column)] for i in range(nb_row_df)]
+        current_col = 0
         current_row = len(self.list_rows)
         for j in self.list_columns:
-            current_col += 1
             for i in range(0, nb_row_df):
-                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=button_width,
+                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=self.width_column,
                                                                text=(df.iloc[i][j - 1]))
-                self.buttons_table[i][current_col]['command'] = partial(self.color_line, i, p_nb_column)
+                self.buttons_table[i][current_col]['command'] = partial(self.color_line, i)
                 self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
                 if i in p_list_rows:
                     self.buttons_table[i][current_col].config(fg="black")
@@ -123,12 +150,13 @@ class Table:
                     self.buttons_table[i][current_col].config(state = tk.DISABLED, disabledforeground="SystemButtonFace")
                     current_row += 1
             current_row = len(self.list_rows)
+            current_col += 1
 
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
         self.frame_buttons.update_idletasks()
 
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
-        first5columns_width = sum([self.buttons_table[0][j].winfo_width() for j in range(0, p_nb_column)])
+        first5columns_width = sum([self.buttons_table[0][j].winfo_width() for j in range(0, self.nb_column)])
         first5rows_height = sum([self.buttons_table[i][0].winfo_height() for i in range(0, 11)])
         self.frame_canvas.config(width=first5columns_width + self.vsb.winfo_width(),
                             height=first5rows_height)
@@ -136,20 +164,25 @@ class Table:
         # Set the canvas scrolling region
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
-    def color_line(self, p_row, p_nb_column):
+    def color_line(self, p_row):
         """
         Function that colors a line
+
         :param p_row: A line of the table
-        :return: None
+        :param p_nb_column: Number of columns
         """
         for i in range(0, nb_row_df):
-            for j in range(0, p_nb_column):
+            for j in range(0, self.nb_column):
                 if i == p_row:
                     self.buttons_table[i][j].config(bg="beige")
                 else:
                     self.buttons_table[i][j].config(bg="SystemButtonFace")
 
     def settings_window(self):
+        """
+        Functions called when the user clicks on validate button
+        """
+
         # Window handle
         window_settings = tk.Toplevel(self.frame)
         window_settings.resizable(False, False)
@@ -181,7 +214,6 @@ class Table:
         label_login_title.config(font=("Calibri bold", 12))
 
         # Column choice label
-
         labels_column_choice = [tk.Label() for j in range(nb_column_max)]
         combo_column_choice = [ttk.Combobox() for j in range(nb_column_max)]
         list_headers = list(df.head())
@@ -203,7 +235,12 @@ class Table:
         button_validate['command'] = partial(self.change_column, combo_column_choice)
 
     def change_column(self, p_combo):
-        list_columns = []                   # List of column number non empty
+        """
+        Functions called when the user clicks on validate button - Change columns
+        """
+
+        # List of combobox indexes selected by the user
+        list_columns = []
         for j in range(nb_column_max):
             col = p_combo[j].current()
             if (col != 0) and (col not in list_columns):
@@ -213,8 +250,10 @@ class Table:
         for x in list_columns:
             x -= 1
 
+        # sort columns in order
         list_columns.sort()
 
+        # Replace columns with new ones
         number_col = len(list_columns)
         width_col = list_width[number_col-1]
         if number_col != 0:
@@ -222,13 +261,22 @@ class Table:
             self.create_table(number_col, width_col, list_columns, self.list_rows)
 
     def delete_buttons(self):
+        """
+        Functions that deletes headers and table buttons
+        """
 
+        # Destruction of the headers buttons
         for widget in self.frame_headers.winfo_children():
             widget.destroy()
 
+        # Destruction of the headers buttons
         for widget in self.frame_buttons.winfo_children():
             widget.destroy()
 
     def update(self, p_rows):
+        """
+        Functions that create a new table with new rows
+        """
+
         self.list_rows = p_rows
         self.create_table(self.nb_column, self.width_column, self.list_columns, self.list_rows)

@@ -7,7 +7,7 @@ from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
 from widgets.table.table import Table
 
-
+# Open the settings file
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
@@ -18,13 +18,14 @@ top_menu_height = settings['dimensions']['top_menu_height']
 left_menu_width = settings['dimensions']['left_menu_width']
 
 company_name = settings['company_name']
+font_company_name = settings['font']['font_company_name']
+font_size_company_name = settings['font_size']['font_size_company_name']
+
 bg_company_name = settings['colors']['bg_company_name']
 bg_top_menu = settings['colors']['bg_top_menu']
 bg_left_menu = settings['colors']['bg_left_menu']
 bg_connect = settings['colors']['bg_connect']
 
-font_company_name = settings['font']['font_company_name']
-font_size_company_name = settings['font_size']['font_size_company_name']
 
 # Root initialization
 root = tk.Tk()
@@ -86,45 +87,36 @@ Button_settings = ButtonLeftText("Paramètres", 6, frame_left, bg_left_menu, (0,
 Window_login = Login(root)
 Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Window_login.create_login_window)
 
-
-
-
-# First frame
-frame_first_width = 780
-frame_first = tk.Frame(Frame_settings.frame, bg="white", width=frame_first_width, height=200, highlightthickness=1)
-frame_first.grid_propagate(False)
-frame_first.config(highlightbackground="grey")
-frame_first.grid(row=1, sticky='new', padx=10, pady=(5, 10))
-frame_first.columnconfigure(0, weight=1)
-
-# Second frame
-frame_second = tk.Frame(Frame_settings.frame, bg="white", height=395, highlightthickness=1)
-frame_second.config(highlightbackground="grey")
-frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
-frame_second.columnconfigure(0, weight=1)
-
 # Widgets that can be updated
 Widget_table_1 = Table(Frame_research, 2, 1)
 Widget_table_2 = Table(Frame_attribution, 2, 2)
 Widget_summary = Summary(Frame_dashboard, 1, 1)
 
 
-
 class Update:
+    """ Upade objet that will be share between widgets """
+
     def __init__(self):
-        print("Initialization > Update class")
+        """ Initialization of the update object """
+
         self.table1 = Widget_table_1
         self.table2 = Widget_table_2
         self.summury1 = Widget_summary
 
     def update_table(self, p_rows_to_draw):
+        """
+        Function that update all tables from the research widget
+
+        :param p_rows_to_draw: Rows that will be displayed
+        """
+
         self.table1.update(p_rows_to_draw)
         self.table2.update(p_rows_to_draw)
 
 
 # Widgets where we can change value and updates others widgets
 update = Update()
-Widget_resarch = Filters(Frame_research, 1, update)
+Widget_resarch = Filters(Frame_research, 1, 1, update)
 
 
 

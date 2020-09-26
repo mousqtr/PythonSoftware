@@ -9,10 +9,18 @@ class Login:
     """ In that class, the login window will be managed"""
 
     def __init__(self, p_parent):
+        """
+        Initialization of a login window
+
+        :param p_parent: Parent page of this login window
+        """
+
         self.root = p_parent
 
     def create_login_window(self):
-        """ Creation of the login window """
+        """
+        Creation of the login window
+        """
 
         # Window handle
         window_login = tk.Toplevel(self.root)

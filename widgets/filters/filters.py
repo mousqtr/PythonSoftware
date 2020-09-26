@@ -5,34 +5,56 @@ from tkinter import ttk
 import pandas as pd
 import warnings
 
+# Ignore the FutureWarning message
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+# Open the settings file
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
+# Open the data file
 with open('widgets/filters/filters_data.json') as json_file:
     filters_data = json.load(json_file)
 
-
+# Open the csv file
 df = pd.read_csv('csv/csv_test.csv')
 
 
 class Filters:
-    def __init__(self, p_parent, p_row, p_update):
+    """ Widget where the user use and custom filters """
+
+    def __init__(self, p_parent, p_row, p_id, p_update):
+        """
+        Initialization of the summary widget that shows some label and data
+
+        :param p_parent: Page that will contain this summary widget
+        :param p_row: Row of the page where the widget will be placed
+        :param p_id: Identifier of the widget (each widget is unique)
+        :param p_update: Object used to synchronize widgets
+        """
+
+        # Saving the parameters to use them in each function
+        self.parent = p_parent
+        self.row = p_row
+        self.id = p_id
         self.update = p_update
+
+        # Properties of the widget
         frame_height = 200
         frame_width = 780
-        self.frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
+        self.frame = tk.Frame(self.parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
-        self.frame.grid(row=p_row, column=0, pady=(5, 5))
+        self.frame.grid(row=self.row, column=0, pady=(5, 5))
         self.frame.update_idletasks()  # to display good dimensions with .winfo_width()
         self.frame.columnconfigure((0, 1, 2, 3), weight=1)
 
+        # Title of the page
         self.title = tk.Label(self.frame,text="Filtres", bg="#333333",fg="white", compound="c", borderwidth=1, relief="raised")
         self.title.grid(row=0, column=0, columnspan=4, sticky="nwe", ipadx=10, ipady=1, pady=(0, 0))
         self.title.config(font=("Calibri bold", 12))
 
+        # Construction of the filters
         self.nb_column = 4
         self.nb_row = 2
         self.frames_settings = [[tk.Frame() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
@@ -56,8 +78,10 @@ class Filters:
                 self.entry_settings[i][j].config(font=("Calibri bold", 10))
                 # self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
 
-        self.load_labels()
+        # Load the saving filters
+        self.load()
 
+        # Buttons under the filters
         frame_buttons = tk.Frame(self.frame, height=30, bg="white")
         frame_buttons.grid(row=4, column=0, columnspan=6, sticky="nwe")
         frame_buttons.grid_propagate(False)
@@ -75,13 +99,17 @@ class Filters:
         button_validate['command'] = self.research
 
     def research(self):
-        # str_df = df.applymap(str)
-        # str_df_lowercase = df.str.lower()
+        """
+        Functions called when the user clicks on research button
+        """
+
+        # Transform the dataframe in string and lowercase
         str_df_lowercase = df.applymap(lambda s:s.lower() if type(s) == str else s)
         str_df = str_df_lowercase.applymap(str)
+
+        # Rows list that contains research results
         rows_found = []
         rows_found_numbers = []
-
 
         # Find all possibilities
         for i in range(0, 2):
@@ -94,8 +122,6 @@ class Filters:
                     if row_research != []:
                         rows_found.append(row_research)
 
-        # print("rows_found : ", rows_found)
-
         # Creation of a possibility list
         for list_row in rows_found:
             for number in list_row:
@@ -104,27 +130,30 @@ class Filters:
         # Correlation of each possibility list (we keep only the numbers present in all list)
         presence = 0
         rows_to_draw = []
-        # print("rows_found_numbers : ", rows_found_numbers)
         for number in rows_found_numbers:
             for list_row in rows_found:
                 if number in list_row:
                     presence += 1
-            # print("presence : ", presence)
             if presence == len(rows_found):
                 rows_to_draw.append(number)
             presence = 0
 
+        # Transform the research list into a list with unique values
         rows_to_draw = list(set(rows_to_draw))
 
+        # Case of an empty list
         nb_row_df = df.shape[0]
         if rows_to_draw == []:
             rows_to_draw = [i for i in range(0, nb_row_df)]
 
+        # Update the content of the table
         self.update.update_table(rows_to_draw)
-        # print("rows_to_draw : ", rows_to_draw)
-
 
     def settings_window(self):
+        """
+        Functions called when the user clicks on settings button
+        """
+
         # Window handle
         window_settings = tk.Toplevel(self.frame)
         window_settings.resizable(False, False)
@@ -187,25 +216,40 @@ class Filters:
         button_validate['command'] = partial(self.change_filters, combo_column_choice)
 
     def change_filters(self, p_combo):
+        """
+        Functions called when the user clicks on validate button
+
+        :param p_combo: Combobox that contains filter choices
+        """
         for i in range(0, 2):
             for j in range(0, 4):
                 text = p_combo[i][j].get()
-                index = p_combo[i][j].current()
-                self.configure_settings(i, j, text)
+                self.labels_settings[i][j]['text'] = text
+                self.save(i, j, text)
 
-                self.save_labels(i, j, text)
+    def save(self, p_row, p_column, p_data):
+        """
+        Functions that saves the filters properties
 
-    def configure_settings(self, p_row, p_column, p_text):
-        self.labels_settings[p_row][p_column]['text'] = p_text
-
-    def save_labels(self, p_row, p_column, p_data):
+        :param p_row: Row of the filter
+        :param p_column: Column of the filter
+        :param p_data: Name of the data
+        """
+        # Build the texts that will be add to the saving file
         key = str(p_row) + ',' + str(p_column)
         value_data = {key: p_data}
+
+        # Update the saving file (.json) with these data
         filters_data['filters_label'].update(value_data)
         with open('widgets/filters/filters_data.json', 'w') as outfile:
             json.dump(filters_data, outfile, indent=4)
 
-    def load_labels(self):
+    def load(self):
+        """
+        Function that loads the content of each filter
+        """
+
+        # Get all the data contain in the "filters_label" of the saving file
         for x in filters_data['filters_label']:
             coord = x.split(',')
             row = int(coord[0])
