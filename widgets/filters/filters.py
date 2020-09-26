@@ -110,15 +110,25 @@ class Filters:
         # Rows list that contains research results
         rows_found = []
         rows_found_numbers = []
+        row_research = []
 
         # Find all possibilities
+        index = 0
         for i in range(0, 2):
             for j in range(0, 4):
                 column_name = self.labels_settings[i][j]['text']
-                if column_name != " ":
-                    text_entry = self.entry_settings[i][j].get()
-                    text_entry_lowercase = text_entry.lower()
-                    row_research = str_df.index[str_df[column_name] == text_entry_lowercase].tolist()
+                text_entry = self.entry_settings[i][j].get()
+                text_entry_lowercase = text_entry.lower()
+
+                if (column_name != " ") and (text_entry_lowercase != " ") and (text_entry_lowercase != ""):
+                    for elt in str_df[column_name].tolist():
+                        if text_entry_lowercase in elt:
+                            row_research.append(index)
+                        index += 1
+                    # row_research = str_df.index[str_df[column_name] == text_entry_lowercase].tolist()
+                    # print(row_research)
+                    print(row_research)
+
                     if row_research != []:
                         rows_found.append(row_research)
 
