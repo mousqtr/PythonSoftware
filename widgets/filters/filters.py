@@ -14,10 +14,6 @@ with open('widgets/filters/filters_data.json') as json_file:
     filters_data = json.load(json_file)
 
 
-
-
-
-
 df = pd.read_csv('csv/csv_test.csv')
 
 

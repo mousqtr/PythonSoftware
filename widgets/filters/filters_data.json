@@ -1,14 +1,8 @@
 {
-    "data": {
-        " ": " ",
-        "Nombre de PC": 25,
-        "Nombre ecrans": 28,
-        "Nombre de casques": 155
-    },
     "filters_label": {
-        "0,0": "Nom",
-        "0,1": "Prenom",
-        "0,2": "Id",
+        "0,0": "Id",
+        "0,1": " ",
+        "0,2": " ",
         "0,3": " ",
         "1,0": " ",
         "1,1": " ",

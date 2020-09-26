@@ -25,7 +25,7 @@ initial_list_rows = [i for i in range(0, nb_row_df)]
 
 
 class Table:
-    def __init__(self, p_parent, p_row):
+    def __init__(self, p_parent, p_row, p_id):
         frame_height = 400
         frame_width = 780
         self.frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)

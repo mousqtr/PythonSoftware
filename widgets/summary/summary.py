@@ -10,104 +10,13 @@ with open('widgets/summary/summary_data.json') as json_file:
     widgets_data = json.load(json_file)
 
 
-def save_summary(p_row, p_column, p_data, p_color):
-    key = str(p_row) + ',' + str(p_column)
-    value_data = {key: p_data}
-    value_color = {key: p_color}
-    widgets_data['summary_data'].update(value_data)
-    widgets_data['summary_color'].update(value_color)
-    with open('widgets/summary/summary_data.json', 'w') as outfile:
-        json.dump(widgets_data, outfile, indent=4)
 
-
-def load_summary(p_buttons):
-    for x in widgets_data['summary_data']:
-        coord = x.split(',')
-        row = int(coord[0])
-        column = int(coord[1])
-        data = widgets_data['summary_data'][x]
-        color = widgets_data['summary_color'][x]
-        if data == ' ':
-            data_text = data
-        else:
-            data_text = data + '\n' + str(widgets_data['data'][data])
-        p_buttons[row][column]['text'] = data_text
-        p_buttons[row][column]['bg'] = color
-
-
-def change_button(p_row, p_column, p_summary, p_combo_data, p_combo_color):
-    data = p_combo_data.get()
-    color = p_combo_color.get()
-    if data == ' ':
-        data_text = data
-        color = "SystemButtonFace"
-    else :
-        data_text = data + '\n' + str(widgets_data['data'][data])
-    p_summary.buttons[p_row][p_column]['text'] = data_text
-    p_summary.buttons[p_row][p_column]['bg'] = color
-
-    save_summary(p_row, p_column, data, color)
-
-
-def choose_data(p_parent, p_row, p_column, p_summary):
-    # Window handle
-    login_window = tk.Toplevel(p_parent.frame)
-    login_window.resizable(False, False)
-    # login_window_width = settings['dimensions']['window_login_width']
-    # login_window_height = settings['dimensions']['window_login_height']
-    login_window_width = 500
-    login_window_height = 220
-    screen_width = p_parent.frame.winfo_screenwidth()
-    screen_height = p_parent.frame.winfo_screenheight()
-    x_cord = int((screen_width / 2) - (login_window_width / 2))
-    y_cord = int((screen_height / 2) - (login_window_height / 2))
-    login_window.geometry("{}x{}+{}+{}".format(login_window_width, login_window_height, x_cord, y_cord))
-    login_window.columnconfigure((0, 1), weight=1)
-
-    # Title of the login window
-    bg_identification = settings['colors']['bg_identification']
-    label_login_title = tk.Label(login_window, text="Ajouter une donnée", bg=bg_identification, fg="white")
-    label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 0))
-    font_login_title = settings['font']['font_login_title']
-    font_size_login_title = settings['font_size']['font_size_login_title']
-    label_login_title.config(font=(font_login_title, font_size_login_title))
-
-    # Label - Choose data to draw
-    label_data = tk.Label(login_window, text="Choisir la donnée \n à afficher")
-    label_data.grid(row=1, column=0, pady=20, sticky='n')
-    font_add_label_data = settings['font']['font_login_username']
-    font_size_add_label_data = settings['font_size']['font_size_login_username']
-    label_data.config(font=(font_add_label_data, font_size_add_label_data))
-
-    # Combobox - Choose data to draw
-    list_data = []
-    for x in widgets_data['data']:
-        list_data.append(x)
-    # list_data = ["Laptop", "Imprimante", "Tablette", "SmartPhone"]
-    combo_data = ttk.Combobox(login_window, values=list_data)
-    combo_data.current(0)
-    combo_data.grid(row=2, column=0)
-
-    # Label - Choose color
-    label_color = tk.Label(login_window, text="Choisir la couleur \n associée")
-    label_color.grid(row=1, column=1, pady=20, sticky='n')
-    font_add_label_color = settings['font']['font_login_password']
-    font_size_add_label_color = settings['font_size']['font_size_login_password']
-    label_color.config(font=(font_add_label_color, font_size_add_label_color))
-
-    # Combobox - Choose data to draw
-    list_color = [" ", "red", "orange", "blue", "green", "white"]
-    combo_color = ttk.Combobox(login_window, values=list_color)
-    combo_color.current(0)
-    combo_color.grid(row=2, column=1)
-
-    button_validate = tk.Button(login_window, text="Valider", width=30)
-    button_validate.grid(row=3, columnspan=2, pady=(30, 0))
-    button_validate['command'] = partial(change_button, p_row, p_column, p_summary, combo_data, combo_color)
 
 
 class Summary:
-    def __init__(self, p_parent, p_row):
+    def __init__(self, p_parent, p_row, p_id):
+        self.parent = p_parent
+        self.id = p_id
         frame_height = 200
         frame_width = 780
         frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
@@ -133,6 +42,101 @@ class Summary:
                 self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ", fg="white")
                 self.buttons[i][j].grid(row=i+1, column=j, padx=(10, 10), pady=(10, 10))
                 self.buttons[i][j].config(font=("Calibri bold", 10))
-                self.buttons[i][j]['command'] = partial(choose_data, p_parent, i, j, self)
+                self.buttons[i][j]['command'] = partial(self.choose_data, i, j)
 
-        load_summary(self.buttons)
+        self.load_summary()
+
+    def choose_data(self, p_i, p_j):
+        # Window handle
+        login_window = tk.Toplevel(self.parent.frame)
+        login_window.resizable(False, False)
+        # login_window_width = settings['dimensions']['window_login_width']
+        # login_window_height = settings['dimensions']['window_login_height']
+        login_window_width = 500
+        login_window_height = 220
+        screen_width = self.parent.frame.winfo_screenwidth()
+        screen_height = self.parent.frame.winfo_screenheight()
+        x_cord = int((screen_width / 2) - (login_window_width / 2))
+        y_cord = int((screen_height / 2) - (login_window_height / 2))
+        login_window.geometry("{}x{}+{}+{}".format(login_window_width, login_window_height, x_cord, y_cord))
+        login_window.columnconfigure((0, 1), weight=1)
+
+        # Title of the login window
+        bg_identification = settings['colors']['bg_identification']
+        label_login_title = tk.Label(login_window, text="Ajouter une donnée", bg=bg_identification, fg="white")
+        label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 0))
+        font_login_title = settings['font']['font_login_title']
+        font_size_login_title = settings['font_size']['font_size_login_title']
+        label_login_title.config(font=(font_login_title, font_size_login_title))
+
+        # Label - Choose data to draw
+        label_data = tk.Label(login_window, text="Choisir la donnée \n à afficher")
+        label_data.grid(row=1, column=0, pady=20, sticky='n')
+        font_add_label_data = settings['font']['font_login_username']
+        font_size_add_label_data = settings['font_size']['font_size_login_username']
+        label_data.config(font=(font_add_label_data, font_size_add_label_data))
+
+        # Combobox - Choose data to draw
+        list_data = []
+        for x in widgets_data['data']:
+            list_data.append(x)
+        # list_data = ["Laptop", "Imprimante", "Tablette", "SmartPhone"]
+        combo_data = ttk.Combobox(login_window, values=list_data)
+        combo_data.current(0)
+        combo_data.grid(row=2, column=0)
+
+        # Label - Choose color
+        label_color = tk.Label(login_window, text="Choisir la couleur \n associée")
+        label_color.grid(row=1, column=1, pady=20, sticky='n')
+        font_add_label_color = settings['font']['font_login_password']
+        font_size_add_label_color = settings['font_size']['font_size_login_password']
+        label_color.config(font=(font_add_label_color, font_size_add_label_color))
+
+        # Combobox - Choose data to draw
+        list_color = [" ", "red", "orange", "blue", "green", "white"]
+        combo_color = ttk.Combobox(login_window, values=list_color)
+        combo_color.current(0)
+        combo_color.grid(row=2, column=1)
+
+        button_validate = tk.Button(login_window, text="Valider", width=30)
+        button_validate.grid(row=3, columnspan=2, pady=(30, 0))
+        button_validate['command'] = partial(self.change_button, p_i, p_j, combo_data, combo_color)
+
+    def change_button(self, p_row, p_column, p_combo_data, p_combo_color):
+        data = p_combo_data.get()
+        color = p_combo_color.get()
+        if data == ' ':
+            data_text = data
+            color = "SystemButtonFace"
+        else:
+            data_text = data + '\n' + str(widgets_data['data'][data])
+        self.buttons[p_row][p_column]['text'] = data_text
+        self.buttons[p_row][p_column]['bg'] = color
+
+        self.save_summary(p_row, p_column, data, color)
+
+    def save_summary(self, p_row, p_column, p_data, p_color):
+        key = str(p_row) + ',' + str(p_column)
+        value_data = {key: p_data}
+        value_color = {key: p_color}
+        widgets_data['summary_data'].update(value_data)
+        widgets_data['summary_color'].update(value_color)
+        with open('widgets/summary/summary_data.json', 'w') as outfile:
+            json.dump(widgets_data, outfile, indent=4)
+
+    def load_summary(self):
+        for x in widgets_data['summary_data']:
+            coord = x.split(',')
+            row = int(coord[0])
+            column = int(coord[1])
+            data = widgets_data['summary_data'][x]
+            color = widgets_data['summary_color'][x]
+            if data == ' ':
+                data_text = data
+            else:
+                data_text = data + '\n' + str(widgets_data['data'][data])
+            self.buttons[row][column]['text'] = data_text
+            self.buttons[row][column]['bg'] = color
+
+
+

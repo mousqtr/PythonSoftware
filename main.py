@@ -104,18 +104,22 @@ frame_second.grid(row=2, sticky='new', padx=(10, 10), pady=(5, 10))
 frame_second.columnconfigure(0, weight=1)
 
 # Widgets that can be updated
-Widget_table = Table(Frame_research, 2)
-Widget_summary = Summary(Frame_dashboard, 1)
+Widget_table_1 = Table(Frame_research, 2, 1)
+Widget_table_2 = Table(Frame_attribution, 2, 2)
+Widget_summary = Summary(Frame_dashboard, 1, 1)
+
 
 
 class Update:
     def __init__(self):
         print("Initialization > Update class")
-        self.table1 = Widget_table
+        self.table1 = Widget_table_1
+        self.table2 = Widget_table_2
         self.summury1 = Widget_summary
 
     def update_table(self, p_rows_to_draw):
         self.table1.update(p_rows_to_draw)
+        self.table2.update(p_rows_to_draw)
 
 
 # Widgets where we can change value and updates others widgets
