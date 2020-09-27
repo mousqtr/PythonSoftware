@@ -106,10 +106,11 @@ class Table:
         button_settings.grid(row=0, column=0, sticky="nw", padx=(40, 0))
         button_settings['command'] = self.settings_window
 
-        # Button - Export
-        button_export = tk.Button(frame_buttons, width=20, height=1, text="Exporter")
-        button_export.config(font=("Calibri", 10))
-        button_export.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
+        # Button - Details
+        button_details = tk.Button(frame_buttons, width=20, height=1, text="Détails")
+        button_details.config(font=("Calibri", 10))
+        button_details.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
+        button_details['command'] = self.details_window
 
     def create_table(self, p_list_col, p_list_rows):
         """
@@ -153,7 +154,7 @@ class Table:
                     self.buttons_table[i][current_col].grid(row=self.list_rows.index(i), column=current_col)
                 else:
                     self.buttons_table[i][current_col].grid(row=current_row, column=current_col)
-                    self.buttons_table[i][current_col].config(state = tk.DISABLED, disabledforeground="SystemButtonFace")
+                    self.buttons_table[i][current_col].config(state=tk.DISABLED, disabledforeground="SystemButtonFace")
                     current_row += 1
             current_row = len(self.list_rows)
             current_col += 1
@@ -242,6 +243,57 @@ class Table:
         button_validate.grid(row=nb_column_max + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
         button_validate['command'] = partial(self.change_column, combo_column_choice)
 
+    def details_window(self):
+        """
+        Functions called when the user clicks on details button
+        """
+
+        # Window handle
+        window_details = tk.Toplevel(self.frame)
+        window_details.resizable(False, False)
+        window_details.title("Détails")
+        window_icon = tk.PhotoImage(file="img/loupe.png")
+        window_details.iconphoto(False, window_icon)
+        # login_window_width = settings['dimensions']['window_login_width']
+        # login_window_height = settings['dimensions']['window_login_height']
+        window_settings_width = 550
+        window_settings_height = 260
+        screen_width = self.frame.winfo_screenwidth()
+        screen_height = self.frame.winfo_screenheight()
+        x_cord = int((screen_width / 2) - (window_settings_width / 2))
+        y_cord = int((screen_height / 2) - (window_settings_height / 2))
+        window_details.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
+        window_details.columnconfigure((0, 1), weight=1)
+
+        # Title - Details
+        bg_identification = settings['colors']['bg_identification']
+        label_login_title = tk.Label(window_details, text="Détails", bg=bg_identification, fg="white")
+        label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
+        font_login_title = settings['font']['font_login_title']
+        font_size_login_title = settings['font_size']['font_size_login_title']
+        label_login_title.config(font=(font_login_title, font_size_login_title))
+
+        nb_column = len(self.list_columns)
+        row_colored = 0
+        for i in range(0, nb_row_df):
+            for j in range(0, nb_column):
+                if self.buttons_table[i][j]['bg'] == "beige":
+                    row_colored = i
+
+        print(df.loc[[row_colored]])
+
+        # Label - Details
+        labels_1 = [tk.Label() for j in range(nb_column_max)]
+        labels_2 = [tk.Label() for j in range(nb_column_max)]
+        list_headers = list(df.head())
+        for j in range(nb_column_max):
+            labels_1[j] = tk.Label(window_details, text=list_headers[j])
+            labels_1[j].grid(row=j + 2, column=0, sticky='nw', padx=30, pady=1)
+            labels_1[j].config(font=("Calibri bold", 10))
+            labels_2[j] = tk.Label(window_details, text=df.loc[row_colored][j])
+            labels_2[j].grid(row=j + 2, column=1, sticky='nw', padx=30, pady=1)
+            labels_2[j].config(font=("Calibri bold", 10))
+
     def change_column(self, p_combo):
         """
         Functions called when the user clicks on validate button - Change columns
@@ -263,7 +315,6 @@ class Table:
 
         # Replace columns with new ones
         number_col = len(list_columns)
-        width_col = list_width[number_col-1]
         if number_col != 0:
             self.delete_buttons()
             self.create_table(list_columns, self.list_rows)
@@ -304,8 +355,6 @@ class Table:
 
         with open('widgets/table/table_data.json', 'w') as outfile:
             json.dump(table_data, outfile, indent=4)
-
-
 
     def load(self):
         """
