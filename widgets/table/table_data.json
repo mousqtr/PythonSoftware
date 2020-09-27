@@ -1,11 +1,16 @@
 {
-    "table1_columns": {
-        "nb_column": 2,
-        "width_column": 48,
+    "table_1": {
         "list_columns": [
             1,
-            2
+            4,
+            5,
+            6
         ]
     },
-    "table2_columns": {}
+    "table_2": {
+        "list_columns": [
+            2,
+            6
+        ]
+    }
 }

@@ -23,7 +23,7 @@ list_width = [98, 48, 32, 23, 18, 15]
 
 # Initial values
 initial_nb_column = 6
-initial_column_width = 15
+initial_column_width = list_width[nb_column_max - 1]
 initial_list_columns = [0, 1, 2, 3, 4, 5]
 initial_list_rows = [i for i in range(0, nb_row_df)]
 
@@ -60,10 +60,8 @@ class Table:
         self.title.config(font=("Calibri bold", 12))
 
         # Useful for the update
-        self.width_column = initial_column_width
-        self.list_columns = initial_list_columns
-        self.nb_column = initial_nb_column
         self.list_rows = initial_list_rows
+        self.list_columns = initial_list_columns
 
         # Update these previous values with saving ones
         self.load()
@@ -93,7 +91,9 @@ class Table:
         self.canvas.create_window((0, 0), window=self.frame_buttons, anchor='nw')
         self.buttons_header = [tk.Button() for j in range(initial_nb_column)]
         self.buttons_table = [[tk.Button() for j in range(initial_nb_column)] for i in range(nb_row_df)]
-        self.create_table(self.nb_column, self.width_column, self.list_columns, self.list_rows)
+
+        # Creation of the table
+        self.create_table(self.list_columns, self.list_rows)
 
         # Create frame containing buttons
         frame_buttons = tk.Frame(self.frame, height=40, bg="white")
@@ -111,7 +111,7 @@ class Table:
         button_export.config(font=("Calibri", 10))
         button_export.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
 
-    def create_table(self, p_nb_column, p_width_column, p_list_col, p_list_rows):
+    def create_table(self, p_list_col, p_list_rows):
         """
         Function that creates of the table
 
@@ -122,16 +122,16 @@ class Table:
         """
 
         #Update values
-        self.width_column = p_width_column
-        self.list_columns = p_list_col
-        self.nb_column = p_nb_column
         self.list_rows = p_list_rows
+        self.list_columns = p_list_col
+        nb_column = len(p_list_col)
+        width_column = list_width[nb_column - 1]
 
         # Creation of the header
-        self.buttons_header = [tk.Button() for j in range(self.nb_column)]
+        self.buttons_header = [tk.Button() for j in range(nb_column)]
         current_col = 0
         for j in self.list_columns:
-            self.buttons_header[current_col] = tk.Button(self.frame_headers, width=self.width_column, text=list(df)[j-1],
+            self.buttons_header[current_col] = tk.Button(self.frame_headers, width=width_column, text=list(df)[j-1],
                                           font=("Consolas bold", 10))
             self.buttons_header[current_col].config(bg="green", fg="white")
             self.buttons_header[current_col].grid(row=0, column=current_col)
@@ -139,12 +139,12 @@ class Table:
             current_col += 1
 
         # Creation of the table content
-        self.buttons_table = [[tk.Button() for j in range(self.nb_column)] for i in range(nb_row_df)]
+        self.buttons_table = [[tk.Button() for j in range(nb_column)] for i in range(nb_row_df)]
         current_col = 0
         current_row = len(self.list_rows)
         for j in self.list_columns:
             for i in range(0, nb_row_df):
-                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=self.width_column,
+                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=width_column,
                                                                text=(df.iloc[i][j - 1]))
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i)
                 self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
@@ -162,7 +162,7 @@ class Table:
         self.frame_buttons.update_idletasks()
 
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
-        first5columns_width = sum([self.buttons_table[0][j].winfo_width() for j in range(0, self.nb_column)])
+        first5columns_width = sum([self.buttons_table[0][j].winfo_width() for j in range(0, nb_column)])
         first5rows_height = sum([self.buttons_table[i][0].winfo_height() for i in range(0, 11)])
         self.frame_canvas.config(width=first5columns_width + self.vsb.winfo_width(),
                             height=first5rows_height)
@@ -176,8 +176,11 @@ class Table:
 
         :param p_row: A line of the table
         """
+        #Update values
+        nb_column = len(self.list_columns)
+
         for i in range(0, nb_row_df):
-            for j in range(0, self.nb_column):
+            for j in range(0, nb_column):
                 if i == p_row:
                     self.buttons_table[i][j].config(bg="beige")
                 else:
@@ -263,7 +266,7 @@ class Table:
         width_col = list_width[number_col-1]
         if number_col != 0:
             self.delete_buttons()
-            self.create_table(number_col, width_col, list_columns, self.list_rows)
+            self.create_table(list_columns, self.list_rows)
 
         # Save the columns state
         self.save(p_combo)
@@ -287,7 +290,7 @@ class Table:
         """
 
         self.list_rows = p_rows
-        self.create_table(self.nb_column, self.width_column, self.list_columns, self.list_rows)
+        self.create_table(self.list_columns, self.list_rows)
 
     def save(self, p_combo):
         """
@@ -296,9 +299,8 @@ class Table:
         :param p_combo: Combobox with column choices
         """
 
-        table_data['table1_columns'].update({"nb_column": self.nb_column})
-        table_data['table1_columns'].update({"width_column": self.width_column})
-        table_data['table1_columns'].update({"list_columns": self.list_columns})
+        table_name = "table_" + str(self.id)
+        table_data[table_name].update({"list_columns": self.list_columns})
 
         with open('widgets/table/table_data.json', 'w') as outfile:
             json.dump(table_data, outfile, indent=4)
@@ -311,6 +313,5 @@ class Table:
         """
 
         # Get all the data contain in the the saving file
-        self.nb_column = table_data['table1_columns']['nb_column']
-        self.width_column = table_data['table1_columns']['width_column']
-        self.list_columns = table_data['table1_columns']['list_columns']
+        table_name = "table_" + str(self.id)
+        self.list_columns = table_data[table_name]['list_columns']
