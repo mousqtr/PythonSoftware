@@ -125,9 +125,6 @@ class Filters:
                         if text_entry_lowercase in elt:
                             row_research.append(index)
                         index += 1
-                    # row_research = str_df.index[str_df[column_name] == text_entry_lowercase].tolist()
-                    # print(row_research)
-                    print(row_research)
 
                     if row_research != []:
                         rows_found.append(row_research)

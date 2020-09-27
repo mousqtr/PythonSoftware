@@ -8,6 +8,9 @@ from tkinter import ttk
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
+# Open the data file
+with open('widgets/table/table_data.json') as json_file:
+    table_data = json.load(json_file)
 
 # Initialization of the dataframe
 df = pd.read_csv('csv/csv_test.csv')
@@ -62,6 +65,9 @@ class Table:
         self.nb_column = initial_nb_column
         self.list_rows = initial_list_rows
 
+        # Update these previous values with saving ones
+        self.load()
+
         # Frame that contains headers of the table
         self.frame_headers = tk.Frame(self.frame, bg="white")
         self.frame_headers.grid(row=1, padx=40, pady=(10,0))
@@ -87,7 +93,7 @@ class Table:
         self.canvas.create_window((0, 0), window=self.frame_buttons, anchor='nw')
         self.buttons_header = [tk.Button() for j in range(initial_nb_column)]
         self.buttons_table = [[tk.Button() for j in range(initial_nb_column)] for i in range(nb_row_df)]
-        self.create_table(initial_nb_column, initial_column_width, initial_list_columns, initial_list_rows)
+        self.create_table(self.nb_column, self.width_column, self.list_columns, self.list_rows)
 
         # Create frame containing buttons
         frame_buttons = tk.Frame(self.frame, height=40, bg="white")
@@ -259,6 +265,9 @@ class Table:
             self.delete_buttons()
             self.create_table(number_col, width_col, list_columns, self.list_rows)
 
+        # Save the columns state
+        self.save(p_combo)
+
     def delete_buttons(self):
         """
         Functions that deletes headers and table buttons
@@ -279,3 +288,29 @@ class Table:
 
         self.list_rows = p_rows
         self.create_table(self.nb_column, self.width_column, self.list_columns, self.list_rows)
+
+    def save(self, p_combo):
+        """
+        Functions that saves the filters properties
+
+        :param p_combo: Combobox with column choices
+        """
+
+        table_data['table1_columns'].update({"nb_column": self.nb_column})
+        table_data['table1_columns'].update({"width_column": self.width_column})
+        table_data['table1_columns'].update({"list_columns": self.list_columns})
+
+        with open('widgets/table/table_data.json', 'w') as outfile:
+            json.dump(table_data, outfile, indent=4)
+
+
+
+    def load(self):
+        """
+        Function that loads the content of each filter
+        """
+
+        # Get all the data contain in the the saving file
+        self.nb_column = table_data['table1_columns']['nb_column']
+        self.width_column = table_data['table1_columns']['width_column']
+        self.list_columns = table_data['table1_columns']['list_columns']
