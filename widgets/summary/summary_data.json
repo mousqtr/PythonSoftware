@@ -1,28 +1,39 @@
 {
     "data": {
         " ": " ",
-        "Nombre de PC": 25,
-        "Nombre ecrans": 28,
-        "Nombre de casques": 155
+        "Ordinateurs": 6,
+        "Telephones": 8,
+        "Utilisateurs sur Paris": 4,
+        "Ordinateurs et telephones": 14
     },
     "summary_data": {
-        "0,1": "Nombre de PC",
+        "0,1": "Telephones",
         "1,3": " ",
-        "0,3": "Nombre ecrans",
-        "1,0": "Nombre ecrans",
-        "0,0": "Nombre de casques",
-        "0,2": "Nombre de casques",
+        "0,3": " ",
+        "1,0": " ",
+        "0,0": "Ordinateurs",
+        "0,2": " ",
         "1,1": " ",
         "1,2": " "
     },
-    "summary_color": {
+    "summary_bg_color": {
         "0,1": "blue",
         "1,3": "SystemButtonFace",
-        "0,3": "red",
-        "1,0": "green",
+        "0,3": "SystemButtonFace",
+        "1,0": "SystemButtonFace",
         "0,0": "orange",
-        "0,2": "green",
+        "0,2": "SystemButtonFace",
         "1,1": "SystemButtonFace",
         "1,2": "SystemButtonFace"
+    },
+    "summary_fg_color": {
+        "0,1": "white",
+        "1,3": "black",
+        "0,3": "black",
+        "1,0": "black",
+        "0,0": "white",
+        "0,2": "black",
+        "1,1": "black",
+        "1,2": "black"
     }
 }
