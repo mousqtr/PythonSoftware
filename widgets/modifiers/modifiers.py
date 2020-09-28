@@ -1,6 +1,7 @@
 import tkinter as tk
 import json
 import pandas as pd
+from csv import writer
 
 # Open the settings file
 with open('settings.json') as json_file:
@@ -10,8 +11,7 @@ with open('settings.json') as json_file:
 with open('widgets/filters/filters_data.json') as json_file:
     filters_data = json.load(json_file)
 
-# Open the csv file
-df = pd.read_csv('csv/csv_test.csv')
+filename = 'csv/csv_test.csv'
 
 
 class Modifiers:
@@ -26,6 +26,8 @@ class Modifiers:
         :param p_id: Identifier of the widget (each widget is unique)
         :param p_update: Object used to synchronize widgets
         """
+        # Open the csv file
+        self.df = pd.read_csv(filename)
 
         # Saving the parameters to use them in each function
         self.parent = p_parent
@@ -61,17 +63,24 @@ class Modifiers:
                 self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ")
                 self.buttons[i][j].grid(row=i+1, column=j, padx=(10, 10), pady=(10, 10))
                 self.buttons[i][j].config(font=("Calibri bold", 10))
-                self.buttons[i][j].config(state=tk.DISABLED)
 
         self.buttons[0][0].config(text="Ajouter un \n utilisateur")
+        self.buttons[0][0]['command'] = self.add_line
         self.buttons[0][1].config(text="Supprimer un \n utilisateur")
+        self.buttons[0][1]['command'] = self.delete_line
         self.buttons[0][2].config(text="Modifier")
+        self.buttons[0][2]['command'] = self.modify_line
 
-        def add_line(self):
-            print("Add line")
+    def add_line(self):
+        list_elt = ["Koulibaly", "Ali", "25", "41", "casque", "Grenoble"]
+        with open(filename, 'a+', newline='') as write_obj:
+            csv_writer = writer(write_obj)
+            csv_writer.writerow(list_elt)
 
-        def delete_line(self):
-            print("Delete line")
+    def delete_line(self):
+        self.df.drop(self.df.index[1], inplace=True)
+        self.df.to_csv(filename, index=False)
+        self.df = pd.read_csv(filename)
 
-        def modify_line(self):
-            print("Modify line")
+    def modify_line(self):
+        print("Modify line")
