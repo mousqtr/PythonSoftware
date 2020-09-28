@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from gui import FrameContent, ButtonLeftText, ButtonTopText
+from gui import FrameContent, ButtonLeftText, ButtonTopText, WidgetGroup
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
@@ -89,37 +89,19 @@ Button_settings = ButtonLeftText("Paramètres", 6, frame_left, bg_left_menu, (0,
 Window_login = Login(root)
 Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Window_login.create_login_window)
 
-# Widgets that can be updated
-Widget_table_1 = Table(Frame_research, 2, 1)
-Widget_table_2 = Table(Frame_modification, 2, 2)
-Widget_summary = Summary(Frame_dashboard, 1, 1)
+# Widget group
+Widget_group_1 = WidgetGroup(1)
+Widget_group_2 = WidgetGroup(2)
+
+# Widgets
+Widget_summary = Summary(Frame_dashboard, Widget_group_1, 1)
+Widget_research = Filters(Frame_research, Widget_group_1, 1)
+Widget_table_1 = Table(Frame_research, Widget_group_1, 2)
+Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
+Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
 
 
-class Update:
-    """ Upade objet that will be share between widgets """
 
-    def __init__(self):
-        """ Initialization of the update object """
-
-        self.table1 = Widget_table_1
-        self.table2 = Widget_table_2
-        self.summury1 = Widget_summary
-
-    def update_table(self, p_rows_to_draw):
-        """
-        Function that update all tables from the research widget
-
-        :param p_rows_to_draw: Rows that will be displayed
-        """
-
-        self.table1.update(p_rows_to_draw)
-        self.table2.update(p_rows_to_draw)
-
-
-# Widgets where we can change value and updates others widgets
-update = Update()
-Widget_research = Filters(Frame_research, 1, 1, update)
-Widget_modifier = Modifiers(Frame_modification, 1, 1, update)
 
 
 

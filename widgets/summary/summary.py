@@ -17,19 +17,23 @@ with open('widgets/summary/summary_data.json') as json_file:
 class Summary:
     """ Widget that shows some label and data """
 
-    def __init__(self, p_parent, p_row, p_id):
+    def __init__(self, p_parent, p_widget_group, p_row):
         """
         Initialization of the summary widget that shows some label and data
 
         :param p_parent: Page that will contain this summary widget
         :param p_row: Row of the page where the widget will be placed
-        :param p_id: Identifier of the widget (each widget is unique)
+        :param p_widget_group: Group containing this widget
         """
 
         # Saving the parameters to use them in each function
         self.parent = p_parent
         self.row = p_row
-        self.id = p_id
+        self.widget_group = p_widget_group
+
+        # Add this widget to p_parent widgets
+        self.widget_group.widgets.append(self)
+        self.type = "Summary"
 
         # Properties of the widget-
         frame_height = 200
@@ -229,3 +233,6 @@ class Summary:
             self.buttons[row][column]['text'] = data_text
             self.buttons[row][column]['bg'] = bg_color
             self.buttons[row][column]['fg'] = fg_color
+
+    def update(self):
+        print("Update Summary")

@@ -17,14 +17,13 @@ filename = 'csv/csv_test.csv'
 class Modifiers:
     """ Widget where the user can modify a table """
 
-    def __init__(self, p_parent, p_row, p_id, p_update):
+    def __init__(self, p_parent, p_widget_group, p_row):
         """
         Initialization of the modifier widget that shows some label and data
 
         :param p_parent: Page that will contain this modifier widget
         :param p_row: Row of the page where the widget will be placed
-        :param p_id: Identifier of the widget (each widget is unique)
-        :param p_update: Object used to synchronize widgets
+        :param p_widget_group: Group containing this widget
         """
         # Open the csv file
         self.df = pd.read_csv(filename)
@@ -32,8 +31,11 @@ class Modifiers:
         # Saving the parameters to use them in each function
         self.parent = p_parent
         self.row = p_row
-        self.id = p_id
-        self.update = p_update
+        self.widget_group = p_widget_group
+
+        # Add this widget to p_parent widgets
+        self.widget_group.widgets.append(self)
+        self.type = "Modifiers"
 
         # Properties of the widget-
         frame_height = 200
@@ -84,3 +86,6 @@ class Modifiers:
 
     def modify_line(self):
         print("Modify line")
+
+    def update(self):
+        print("Update Modifiers")

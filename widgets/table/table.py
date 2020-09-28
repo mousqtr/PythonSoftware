@@ -31,19 +31,23 @@ initial_list_rows = [i for i in range(0, nb_row_df)]
 class Table:
     """ Widget that displays a table """
 
-    def __init__(self, p_parent, p_row, p_id):
+    def __init__(self, p_parent, p_widget_group, p_row):
         """
         Initialization of the table widget that shows a table
 
         :param p_parent: Page that will contain this table widget
+        :param p_widget_group: Group containing this widget
         :param p_row: Row of the page where the widget will be placed
-        :param p_id: Identifier of the widget (each widget is unique)
         """
 
         # Saving the parameters to use them in each function
         self.parent = p_parent
         self.row = p_row
-        self.id = p_id
+        self.widget_group = p_widget_group
+
+        # Add this widget to p_parent widgets
+        self.widget_group.widgets.append(self)
+        self.type = "Table"
 
         # Properties of the widget
         frame_height = 400
@@ -122,7 +126,7 @@ class Table:
         :param p_list_rows: List which contains the rows to draw
         """
 
-        #Update values
+        # Update values
         self.list_rows = p_list_rows
         self.list_columns = p_list_col
         nb_column = len(p_list_col)
@@ -335,11 +339,16 @@ class Table:
         for widget in self.frame_buttons.winfo_children():
             widget.destroy()
 
-    def update(self, p_rows):
+    def update(self):
         """
         Functions that create a new table with new rows
         """
 
+        print("Update Table")
+        p_rows = self.list_rows
+        for w in self.widget_group.widgets :
+            if w.type == "Filters" :
+                p_rows = w.row_to_draw
         self.list_rows = p_rows
         self.create_table(self.list_columns, self.list_rows)
 
@@ -349,8 +358,8 @@ class Table:
 
         :param p_combo: Combobox with column choices
         """
-
-        table_name = "table_" + str(self.id)
+        num_id = self.widget_group.id
+        table_name = "table_" + str(num_id)
         table_data[table_name].update({"list_columns": self.list_columns})
 
         with open('widgets/table/table_data.json', 'w') as outfile:
@@ -362,5 +371,6 @@ class Table:
         """
 
         # Get all the data contain in the the saving file
-        table_name = "table_" + str(self.id)
+        num_id = self.widget_group.id
+        table_name = "table_" + str(num_id)
         self.list_columns = table_data[table_name]['list_columns']

@@ -12,32 +12,41 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
-# Open the data file
+# Open the filters data file
 with open('widgets/filters/filters_data.json') as json_file:
     filters_data = json.load(json_file)
 
+# Open the table data file
+with open('widgets/table/table_data.json') as json_file:
+    table_data = json.load(json_file)
+
 # Open the csv file
 df = pd.read_csv('csv/csv_test.csv')
-
+nb_row_df = df.shape[0]
 
 class Filters:
     """ Widget where the user use and custom filters """
 
-    def __init__(self, p_parent, p_row, p_id, p_update):
+    def __init__(self, p_parent, p_widget_group, p_row):
         """
         Initialization of the summary widget that shows some label and data
 
         :param p_parent: Page that will contain this summary widget
         :param p_row: Row of the page where the widget will be placed
-        :param p_id: Identifier of the widget (each widget is unique)
-        :param p_update: Object used to synchronize widgets
+        :param p_widget_group: Group containing this widget
         """
 
         # Saving the parameters to use them in each function
         self.parent = p_parent
         self.row = p_row
-        self.id = p_id
-        self.update = p_update
+        self.widget_group = p_widget_group
+
+        # Add this widget to p_parent widgets
+        self.widget_group.widgets.append(self)
+        self.type = "Filters"
+
+        # Rows to draw after research
+        self.row_to_draw = [i for i in range(0, nb_row_df)]
 
         # Properties of the widget
         frame_height = 200
@@ -111,6 +120,7 @@ class Filters:
         rows_found = []
         rows_found_numbers = []
         row_research = []
+        self.row_to_draw = []
 
         # Find all possibilities
         index = 0
@@ -136,25 +146,33 @@ class Filters:
 
         # Correlation of each possibility list (we keep only the numbers present in all list)
         presence = 0
-        rows_to_draw = []
         for number in rows_found_numbers:
             for list_row in rows_found:
                 if number in list_row:
                     presence += 1
             if presence == len(rows_found):
-                rows_to_draw.append(number)
+                self.row_to_draw.append(number)
             presence = 0
 
         # Transform the research list into a list with unique values
-        rows_to_draw = list(set(rows_to_draw))
+        self.row_to_draw = list(set(self.row_to_draw))
 
         # Case of an empty list
-        nb_row_df = df.shape[0]
-        if rows_to_draw == []:
-            rows_to_draw = [i for i in range(0, nb_row_df)]
+        if self.row_to_draw == []:
+            self.row_to_draw = [i for i in range(0, nb_row_df)]
 
-        # Update the content of the table
-        self.update.update_table(rows_to_draw)
+        # # Update the content of the table
+        # num_id = self.widget_group.id
+        # key = "row_to_draw_" + num_id
+        # value_data = {key: self.row_to_draw}
+        # table_data['rows_to_draw'].update(value_data)
+        # with open('widgets/table/table_data.json', 'w') as outfile:
+        #     json.dump(table_data, outfile, indent=4)
+
+        # Updating
+        self.widget_group.update_widgets()
+
+
 
     def settings_window(self):
         """
@@ -263,3 +281,6 @@ class Filters:
             column = int(coord[1])
             text = filters_data['filters_label'][x]
             self.labels_settings[row][column]['text'] = text
+
+    def update(self):
+        print("Update Filters")

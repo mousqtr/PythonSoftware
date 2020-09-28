@@ -28,6 +28,16 @@ class FrameContent:
         self.label_page_title.config(font=(font_right_frame_title, font_size_right_frame_title))
 
 
+class WidgetGroup:
+    def __init__(self, p_id):
+        self.id = p_id
+        self.widgets = []
+
+    def update_widgets(self):
+        for w in self.widgets:
+            w.update()
+
+
 class ButtonLeftText:
     """ Text buttons located in the left of the window """
 
