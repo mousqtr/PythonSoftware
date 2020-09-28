@@ -44,7 +44,7 @@ class Summary:
         frame.rowconfigure((1, 2), weight=4)
 
         # Title of the page
-        title = tk.Label(frame,text="Summary", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
+        title = tk.Label(frame,text="Sommaire", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
         title.grid(row=0, column=0, columnspan=5, sticky="nwe", ipadx=10, ipady=5)
         title.config(font=("Calibri bold", 12))
 

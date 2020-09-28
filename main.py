@@ -5,6 +5,7 @@ from gui import FrameContent, ButtonLeftText, ButtonTopText
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
+from widgets.modifiers.modifiers import Modifiers
 from widgets.table.table import Table
 
 # Open the settings file
@@ -71,15 +72,16 @@ frame_top_menu.columnconfigure(0, weight=1)
 Frame_dashboard = FrameContent(frame_right, "Dashboard", "#e8e8e8")
 Frame_research = FrameContent(frame_right, "Recherche", "#e8e8e8")
 Frame_settings = FrameContent(frame_right, "Paramètres", "#e8e8e8")
-Frame_attribution = FrameContent(frame_right, "Attribution", "#e8e8e8")
-Frame_help = FrameContent(frame_right, "Aide", "purple")
+Frame_modification = FrameContent(frame_right, "Modification", "#e8e8e8")
+Frame_historic = FrameContent(frame_right, "Historique", "#e8e8e8")
+Frame_help = FrameContent(frame_right, "Aide", "#e8e8e8")
 Frame_dashboard.frame.lift()
 
 # Initialization of the left menu buttons (include in left_frame)
 Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
 Button_research = ButtonLeftText("Recherche", 2, frame_left, bg_left_menu, (0, 10), Frame_research.frame.lift)
-Button_attribution = ButtonLeftText("Attribution", 3, frame_left, bg_left_menu, (0, 10), Frame_attribution.frame.lift)
-Button_historic = ButtonLeftText("Historique", 4, frame_left, bg_left_menu, (0, 10), Frame_attribution.frame.lift)
+Button_modification = ButtonLeftText("Modification", 3, frame_left, bg_left_menu, (0, 10), Frame_modification.frame.lift)
+Button_historic = ButtonLeftText("Historique", 4, frame_left, bg_left_menu, (0, 10), Frame_historic.frame.lift)
 Button_help = ButtonLeftText("Aide", 5, frame_left, bg_left_menu, (340, 10), Frame_help.frame.lift)
 Button_settings = ButtonLeftText("Paramètres", 6, frame_left, bg_left_menu, (0, 0), Frame_settings.frame.lift)
 
@@ -89,7 +91,7 @@ Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Wind
 
 # Widgets that can be updated
 Widget_table_1 = Table(Frame_research, 2, 1)
-Widget_table_2 = Table(Frame_attribution, 2, 2)
+Widget_table_2 = Table(Frame_modification, 2, 2)
 Widget_summary = Summary(Frame_dashboard, 1, 1)
 
 
@@ -116,7 +118,8 @@ class Update:
 
 # Widgets where we can change value and updates others widgets
 update = Update()
-Widget_resarch = Filters(Frame_research, 1, 1, update)
+Widget_research = Filters(Frame_research, 1, 1, update)
+Widget_modifier = Modifiers(Frame_modification, 1, 1, update)
 
 
 
