@@ -28,7 +28,7 @@ class Modifiers:
         """
         # Open the csv file
         self.df = pd.read_csv(filename)
-        self.nb_row_df = self.df.shape[1]
+        self.nb_col_df = self.df.shape[1]
 
         # Saving the parameters to use them in each function
         self.parent = p_parent
@@ -73,13 +73,10 @@ class Modifiers:
         self.buttons[0][1].config(text="Supprimer un \n utilisateur")
         self.buttons[0][1]['command'] = self.delete_line
         self.buttons[0][2].config(text="Modifier")
-        self.buttons[0][2]['command'] = self.modify_line
+        self.buttons[0][2]['command'] = self.modify_line_window
 
     def add_line(self, p_list_elt):
 
-        # self.add_line_window()
-
-        # list_elt = ["Koulibaly", "Ali", "25", "41", "casque", "Grenoble"]
         list_elt = []
         for elt in p_list_elt:
             if len(elt.get()) == 0:
@@ -103,11 +100,11 @@ class Modifiers:
         Functions called when the user clicks on details button
         """
         # Window handle
-        window_settings = tk.Toplevel(self.frame)
-        window_settings.resizable(False, False)
-        window_settings.title("Ajouter une donnée")
+        window_add_line = tk.Toplevel(self.frame)
+        window_add_line.resizable(False, False)
+        window_add_line.title("Ajouter une donnée")
         window_icon = tk.PhotoImage(file="img/add.png")
-        window_settings.iconphoto(False, window_icon)
+        window_add_line.iconphoto(False, window_icon)
         # login_window_width = settings['dimensions']['window_login_width']
         # login_window_height = settings['dimensions']['window_login_height']
         window_settings_width = 550
@@ -116,45 +113,45 @@ class Modifiers:
         screen_height = self.frame.winfo_screenheight()
         x_cord = int((screen_width / 2) - (window_settings_width / 2))
         y_cord = int((screen_height / 2) - (window_settings_height / 2))
-        window_settings.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
-        window_settings.columnconfigure((0, 1), weight=1)
+        window_add_line.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
+        window_add_line.columnconfigure((0, 1), weight=1)
 
         # Title - Settings
         bg_identification = settings['colors']['bg_identification']
-        label_login_title = tk.Label(window_settings, text="Ajouter une donnée", bg=bg_identification, fg="white")
+        label_login_title = tk.Label(window_add_line, text="Ajouter une donnée", bg=bg_identification, fg="white")
         label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
         font_login_title = settings['font']['font_login_title']
         font_size_login_title = settings['font_size']['font_size_login_title']
         label_login_title.config(font=(font_login_title, font_size_login_title))
 
         # Title - choice of the columns
-        label_login_title = tk.Label(window_settings, text="Entrée les données")
+        label_login_title = tk.Label(window_add_line, text="Entrée les données")
         label_login_title.grid(row=1, sticky='nw', padx=10, pady=(0, 10))
         label_login_title.config(font=("Calibri bold", 12))
 
         # Column choice label
-        labels_column_choice = [tk.Label() for j in range(self.nb_row_df)]
-        entry_column_choice = [tk.Entry() for j in range(self.nb_row_df)]
-        var_username = [tk.StringVar(value='') for j in range(self.nb_row_df)]
+        labels_column_choice = [tk.Label() for j in range(self.nb_col_df)]
+        entry_column_choice = [tk.Entry() for j in range(self.nb_col_df)]
+        var_username = [tk.StringVar(value='') for j in range(self.nb_col_df)]
         list_headers = list(self.df.head())
         list_headers.insert(0, " ")
-        for j in range(self.nb_row_df):
+        for j in range(self.nb_col_df):
             label_text = list_headers[j+1]
-            labels_column_choice[j] = tk.Label(window_settings, text=label_text)
+            labels_column_choice[j] = tk.Label(window_add_line, text=label_text)
             labels_column_choice[j].grid(row=j + 2, column=0, sticky='ne', padx=30, pady=1)
             labels_column_choice[j].config(font=("Calibri bold", 10))
-            entry_column_choice[j] = tk.Entry(window_settings, bg="white", width=30, textvariable=var_username[j])
+            entry_column_choice[j] = tk.Entry(window_add_line, bg="white", width=30, textvariable=var_username[j])
             entry_column_choice[j].grid(row=j + 2, column=1, sticky='nw', padx=10, pady=1)
             entry_column_choice[j].config(font=("Calibri bold", 10))
 
         # Button - Validation
-        button_validate = tk.Button(window_settings, width=30, height=1, text="Appliquer")
+        button_validate = tk.Button(window_add_line, width=30, height=1, text="Appliquer")
         button_validate.config(font=("Calibri", 10))
-        button_validate.grid(row=self.nb_row_df + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
+        button_validate.grid(row=self.nb_col_df + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
         button_validate['command'] = partial(self.add_line, var_username)
 
 
-    def delete_line(self):
+    def delete_line(self, p_list_elt):
 
         # Find the table in the same page
         row = -1
@@ -162,6 +159,7 @@ class Modifiers:
             if w.type == "Table":
                 row = w.selected_row
 
+        # Drop the selected row
         if row != -1:
             self.df.drop(self.df.index[row], inplace=True)
             self.df.to_csv(filename, index=False)
@@ -170,8 +168,95 @@ class Modifiers:
         # Update widgets of the same group
         self.widget_group.update_widgets()
 
-    def modify_line(self):
+
+    def modify_line_window(self):
+        """
+        Functions called when the user clicks on details button
+        """
+
+        # Find the table in the same page
+        row = -1
+        for w in self.widget_group.widgets:
+            if w.type == "Table":
+                row = w.selected_row
+
+        if row != -1:
+
+            # Window handle
+            window_modify_line = tk.Toplevel(self.frame)
+            window_modify_line.resizable(False, False)
+            window_modify_line.title("Modifier une donnée")
+            window_icon = tk.PhotoImage(file="img/modify.png")
+            window_modify_line.iconphoto(False, window_icon)
+            # login_window_width = settings['dimensions']['window_login_width']
+            # login_window_height = settings['dimensions']['window_login_height']
+            window_settings_width = 550
+            window_settings_height = 260
+            screen_width = self.frame.winfo_screenwidth()
+            screen_height = self.frame.winfo_screenheight()
+            x_cord = int((screen_width / 2) - (window_settings_width / 2))
+            y_cord = int((screen_height / 2) - (window_settings_height / 2))
+            window_modify_line.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
+            window_modify_line.columnconfigure((0, 1), weight=1)
+
+            # Title - Settings
+            bg_identification = settings['colors']['bg_identification']
+            label_login_title = tk.Label(window_modify_line, text="Modifier une donnée", bg=bg_identification, fg="white")
+            label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
+            font_login_title = settings['font']['font_login_title']
+            font_size_login_title = settings['font_size']['font_size_login_title']
+            label_login_title.config(font=(font_login_title, font_size_login_title))
+
+            # Title - choice of the columns
+            label_login_title = tk.Label(window_modify_line, text="Entrée les données")
+            label_login_title.grid(row=1, sticky='nw', padx=10, pady=(0, 10))
+            label_login_title.config(font=("Calibri bold", 12))
+
+            # Column choice label
+            labels_column_choice = [tk.Label() for j in range(self.nb_col_df)]
+            entry_column_choice = [tk.Entry() for j in range(self.nb_col_df)]
+            var_username = [tk.StringVar(value='') for j in range(self.nb_col_df)]
+            list_headers = list(self.df.head())
+            list_headers.insert(0, " ")
+            for j in range(self.nb_col_df):
+                label_text = list_headers[j+1]
+                labels_column_choice[j] = tk.Label(window_modify_line, text=label_text)
+                labels_column_choice[j].grid(row=j + 2, column=0, sticky='ne', padx=30, pady=1)
+                labels_column_choice[j].config(font=("Calibri bold", 10))
+                entry_column_choice[j] = tk.Entry(window_modify_line, bg="white", width=30, textvariable=var_username[j])
+                var_username[j].set(self.df.iloc[row][j])
+                entry_column_choice[j].grid(row=j + 2, column=1, sticky='nw', padx=10, pady=1)
+                entry_column_choice[j].config(font=("Calibri bold", 10))
+
+            # Button - Validation
+            button_validate = tk.Button(window_modify_line, width=30, height=1, text="Appliquer")
+            button_validate.config(font=("Calibri", 10))
+            button_validate.grid(row=self.nb_col_df + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
+            button_validate['command'] = partial(self.modify_line, var_username, row)
+
+    def modify_line(self, p_list_elt, p_row):
         print("Modify line")
+
+        # Row after modification
+        list_elt = []
+        for elt in p_list_elt:
+            if len(elt.get()) == 0:
+                list_elt.append("None")
+            else:
+                list_elt.append(elt.get())
+
+        # Drop the selected row
+        for j in range(self.nb_col_df):
+            self.df.iloc[p_row][j] = list_elt[j]
+
+        self.df.to_csv(filename, index=False)
+        self.df = pd.read_csv(filename)
+
+        # Update widgets of the same group
+        self.widget_group.update_widgets()
+
+        # Update widgets of the same group
+        self.widget_group.update_widgets()
 
     def update(self):
         print("Update Modifiers")
