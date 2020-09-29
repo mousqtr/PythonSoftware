@@ -79,6 +79,8 @@ class Modifiers:
             csv_writer = writer(write_obj)
             csv_writer.writerow(list_elt)
 
+        self.widget_group.update_widgets()
+
     def delete_line(self):
         self.df.drop(self.df.index[1], inplace=True)
         self.df.to_csv(filename, index=False)

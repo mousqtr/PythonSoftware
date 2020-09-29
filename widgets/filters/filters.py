@@ -20,9 +20,7 @@ with open('widgets/filters/filters_data.json') as json_file:
 with open('widgets/table/table_data.json') as json_file:
     table_data = json.load(json_file)
 
-# Open the csv file
-df = pd.read_csv('csv/csv_test.csv')
-nb_row_df = df.shape[0]
+
 
 class Filters:
     """ Widget where the user use and custom filters """
@@ -45,8 +43,12 @@ class Filters:
         self.widget_group.widgets.append(self)
         self.type = "Filters"
 
+        # Open the csv file
+        self.df = pd.read_csv('csv/csv_test.csv')
+        self.nb_row_df = self.df.shape[0]
+
         # Rows to draw after research
-        self.row_to_draw = [i for i in range(0, nb_row_df)]
+        self.row_to_draw = [i for i in range(0, self.nb_row_df)]
 
         # Properties of the widget
         frame_height = 200
@@ -113,7 +115,7 @@ class Filters:
         """
 
         # Transform the dataframe in string and lowercase
-        str_df_lowercase = df.applymap(lambda s:s.lower() if type(s) == str else s)
+        str_df_lowercase = self.df.applymap(lambda s:s.lower() if type(s) == str else s)
         str_df = str_df_lowercase.applymap(str)
 
         # Rows list that contains research results
@@ -157,17 +159,9 @@ class Filters:
         # Transform the research list into a list with unique values
         self.row_to_draw = list(set(self.row_to_draw))
 
-        # Case of an empty list
-        if self.row_to_draw == []:
-            self.row_to_draw = [i for i in range(0, nb_row_df)]
-
-        # # Update the content of the table
-        # num_id = self.widget_group.id
-        # key = "row_to_draw_" + num_id
-        # value_data = {key: self.row_to_draw}
-        # table_data['rows_to_draw'].update(value_data)
-        # with open('widgets/table/table_data.json', 'w') as outfile:
-        #     json.dump(table_data, outfile, indent=4)
+        # # Case of an empty list
+        # if self.row_to_draw == []:
+        #     self.row_to_draw = [i for i in range(0, nb_row_df)]
 
         # Updating
         self.widget_group.update_widgets()
@@ -219,7 +213,7 @@ class Filters:
         frames[1].grid_propagate(False)
         labels_column_choice = [[tk.Label() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         combo_column_choice = [[ttk.Combobox() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
-        list_headers = list(df.head())
+        list_headers = list(self.df.head())
         list_headers.insert(0, " ")
         num_filter = 1
         for i in range(0, 2):
@@ -284,3 +278,7 @@ class Filters:
 
     def update(self):
         print("Update Filters")
+
+        # Update the database
+        self.df = pd.read_csv('csv/csv_test.csv')
+        self.nb_row_df = self.df.shape[0]

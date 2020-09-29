@@ -12,21 +12,6 @@ with open('settings.json') as json_file:
 with open('widgets/table/table_data.json') as json_file:
     table_data = json.load(json_file)
 
-# Initialization of the dataframe
-df = pd.read_csv('csv/csv_test.csv')
-nb_row_df = df.shape[0]
-nb_column_df = df.shape[1]
-
-# Table property
-nb_column_max = 6
-list_width = [98, 48, 32, 23, 18, 15]
-
-# Initial values
-initial_nb_column = 6
-initial_column_width = list_width[nb_column_max - 1]
-initial_list_columns = [0, 1, 2, 3, 4, 5]
-initial_list_rows = [i for i in range(0, nb_row_df)]
-
 
 class Table:
     """ Widget that displays a table """
@@ -39,11 +24,24 @@ class Table:
         :param p_widget_group: Group containing this widget
         :param p_row: Row of the page where the widget will be placed
         """
-
         # Saving the parameters to use them in each function
         self.parent = p_parent
         self.row = p_row
         self.widget_group = p_widget_group
+
+        # Initialization of the dataframe
+        self.df = pd.read_csv('csv/csv_test.csv')
+        self.nb_row_df = self.df.shape[0]
+        self.nb_column_df = self.df.shape[1]
+        self.list_rows = [i for i in range(0, self.nb_row_df)]
+
+        # Initial values
+        self.nb_column = 6
+        self.nb_column_max = 6
+        self.list_columns = [0, 1, 2, 3, 4, 5]
+
+        # Tempo values
+        self.list_width = [98, 48, 32, 23, 18, 15]
 
         # Add this widget to p_parent widgets
         self.widget_group.widgets.append(self)
@@ -62,10 +60,6 @@ class Table:
         self.title = tk.Label(self.frame, text="Table", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised", height=1)
         self.title.grid(row=0, column=0, columnspan=6, sticky="nwe", ipadx=10, ipady=1)
         self.title.config(font=("Calibri bold", 12))
-
-        # Useful for the update
-        self.list_rows = initial_list_rows
-        self.list_columns = initial_list_columns
 
         # Update these previous values with saving ones
         self.load()
@@ -93,8 +87,8 @@ class Table:
         # Objects specific to the table
         self.frame_buttons = tk.Frame(self.canvas, bg="grey")
         self.canvas.create_window((0, 0), window=self.frame_buttons, anchor='nw')
-        self.buttons_header = [tk.Button() for j in range(initial_nb_column)]
-        self.buttons_table = [[tk.Button() for j in range(initial_nb_column)] for i in range(nb_row_df)]
+        self.buttons_header = [tk.Button() for j in range(self.nb_column)]
+        self.buttons_table = [[tk.Button() for j in range(self.nb_column)] for i in range(self.nb_row_df)]
 
         # Creation of the table
         self.create_table(self.list_columns, self.list_rows)
@@ -130,13 +124,13 @@ class Table:
         self.list_rows = p_list_rows
         self.list_columns = p_list_col
         nb_column = len(p_list_col)
-        width_column = list_width[nb_column - 1]
+        width_column = self.list_width[nb_column - 1]
 
         # Creation of the header
         self.buttons_header = [tk.Button() for j in range(nb_column)]
         current_col = 0
         for j in self.list_columns:
-            self.buttons_header[current_col] = tk.Button(self.frame_headers, width=width_column, text=list(df)[j-1],
+            self.buttons_header[current_col] = tk.Button(self.frame_headers, width=width_column, text=list(self.df)[j-1],
                                           font=("Consolas bold", 10))
             self.buttons_header[current_col].config(bg="green", fg="white")
             self.buttons_header[current_col].grid(row=0, column=current_col)
@@ -144,13 +138,13 @@ class Table:
             current_col += 1
 
         # Creation of the table content
-        self.buttons_table = [[tk.Button() for j in range(nb_column)] for i in range(nb_row_df)]
+        self.buttons_table = [[tk.Button() for j in range(nb_column)] for i in range(self.nb_row_df)]
         current_col = 0
         current_row = len(self.list_rows)
         for j in self.list_columns:
-            for i in range(0, nb_row_df):
+            for i in range(0, self.nb_row_df):
                 self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=width_column,
-                                                               text=(df.iloc[i][j - 1]))
+                                                               text=(self.df.iloc[i][j - 1]))
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i)
                 self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
                 if i in p_list_rows:
@@ -184,7 +178,7 @@ class Table:
         #Update values
         nb_column = len(self.list_columns)
 
-        for i in range(0, nb_row_df):
+        for i in range(0, self.nb_row_df):
             for j in range(0, nb_column):
                 if i == p_row:
                     self.buttons_table[i][j].config(bg="beige")
@@ -227,11 +221,11 @@ class Table:
         label_login_title.config(font=("Calibri bold", 12))
 
         # Column choice label
-        labels_column_choice = [tk.Label() for j in range(nb_column_max)]
-        combo_column_choice = [ttk.Combobox() for j in range(nb_column_max)]
-        list_headers = list(df.head())
+        labels_column_choice = [tk.Label() for j in range(self.nb_column_max)]
+        combo_column_choice = [ttk.Combobox() for j in range(self.nb_column_max)]
+        list_headers = list(self.df.head())
         list_headers.insert(0, " ")
-        for j in range(nb_column_max):
+        for j in range(self.nb_column_max):
             label_text = "Column " + str(j + 1)
             labels_column_choice[j] = tk.Label(window_settings, text=label_text)
             labels_column_choice[j].grid(row=j + 2, column=0, sticky='ne', padx=30, pady=1)
@@ -244,7 +238,7 @@ class Table:
         # Button - Validation
         button_validate = tk.Button(window_settings, width=30, height=1, text="Appliquer")
         button_validate.config(font=("Calibri", 10))
-        button_validate.grid(row=nb_column_max + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
+        button_validate.grid(row=self.nb_column_max + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
         button_validate['command'] = partial(self.change_column, combo_column_choice)
 
     def details_window(self):
@@ -279,22 +273,22 @@ class Table:
 
         nb_column = len(self.list_columns)
         row_colored = 0
-        for i in range(0, nb_row_df):
+        for i in range(0, self.nb_row_df):
             for j in range(0, nb_column):
                 if self.buttons_table[i][j]['bg'] == "beige":
                     row_colored = i
 
-        print(df.loc[[row_colored]])
+        print(self.df.loc[[row_colored]])
 
         # Label - Details
-        labels_1 = [tk.Label() for j in range(nb_column_max)]
-        labels_2 = [tk.Label() for j in range(nb_column_max)]
-        list_headers = list(df.head())
-        for j in range(nb_column_max):
+        labels_1 = [tk.Label() for j in range(self.nb_column_max)]
+        labels_2 = [tk.Label() for j in range(self.nb_column_max)]
+        list_headers = list(self.df.head())
+        for j in range(self.nb_column_max):
             labels_1[j] = tk.Label(window_details, text=list_headers[j])
             labels_1[j].grid(row=j + 2, column=0, sticky='nw', padx=30, pady=1)
             labels_1[j].config(font=("Calibri bold", 10))
-            labels_2[j] = tk.Label(window_details, text=df.loc[row_colored][j])
+            labels_2[j] = tk.Label(window_details, text=self.df.loc[row_colored][j])
             labels_2[j].grid(row=j + 2, column=1, sticky='nw', padx=30, pady=1)
             labels_2[j].config(font=("Calibri bold", 10))
 
@@ -305,7 +299,7 @@ class Table:
 
         # List of combobox indexes selected by the user
         list_columns = []
-        for j in range(nb_column_max):
+        for j in range(self.nb_column_max):
             col = p_combo[j].current()
             if (col != 0) and (col not in list_columns):
                 list_columns.append(col)
@@ -345,12 +339,28 @@ class Table:
         """
 
         print("Update Table")
-        p_rows = self.list_rows
-        for w in self.widget_group.widgets :
-            if w.type == "Filters" :
-                p_rows = w.row_to_draw
-        self.list_rows = p_rows
-        self.create_table(self.list_columns, self.list_rows)
+
+        # Delete the table
+        self.delete_buttons()
+
+        # Update the database
+        self.df = pd.read_csv('csv/csv_test.csv')
+        self.nb_row_df = self.df.shape[0]
+        self.nb_column_df = self.df.shape[1]
+        self.list_rows = [i for i in range(0, self.nb_row_df)]
+
+        # # Update rows to draw
+        rows = self.list_rows
+        for w in self.widget_group.widgets:
+            if w.type == "Filters":
+                rows = w.row_to_draw
+
+        if rows == []:
+            rows = self.list_rows
+
+
+        # Recreate the table
+        self.create_table(self.list_columns, rows)
 
     def save(self, p_combo):
         """
