@@ -79,12 +79,26 @@ class Modifiers:
             csv_writer = writer(write_obj)
             csv_writer.writerow(list_elt)
 
+        self.df = pd.read_csv(filename)
+
         self.widget_group.update_widgets()
 
+        print(self.df)
+
     def delete_line(self):
-        self.df.drop(self.df.index[1], inplace=True)
-        self.df.to_csv(filename, index=False)
-        self.df = pd.read_csv(filename)
+
+        # Find the table in the same page
+        row = -1
+        for w in self.widget_group.widgets:
+            if w.type == "Table":
+                row = w.selected_row
+
+        if row != -1:
+            self.df.drop(self.df.index[row], inplace=True)
+            self.df.to_csv(filename, index=False)
+            self.df = pd.read_csv(filename)
+
+        self.widget_group.update_widgets()
 
     def modify_line(self):
         print("Modify line")

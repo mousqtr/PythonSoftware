@@ -42,6 +42,7 @@ class Table:
 
         # Tempo values
         self.list_width = [98, 48, 32, 23, 18, 15]
+        self.selected_row = -1
 
         # Add this widget to p_parent widgets
         self.widget_group.widgets.append(self)
@@ -177,6 +178,8 @@ class Table:
         """
         #Update values
         nb_column = len(self.list_columns)
+        self.selected_row = p_row
+        print(self.selected_row)
 
         for i in range(0, self.nb_row_df):
             for j in range(0, nb_column):
