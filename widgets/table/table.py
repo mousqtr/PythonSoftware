@@ -343,6 +343,8 @@ class Table:
         # Delete the table
         self.delete_buttons()
 
+        old_row = self.list_rows
+
         # Update the database
         self.df = pd.read_csv('csv/csv_test.csv')
         self.nb_row_df = self.df.shape[0]
@@ -353,11 +355,10 @@ class Table:
         rows = self.list_rows
         for w in self.widget_group.widgets:
             if w.type == "Filters":
-                rows = w.row_to_draw
-
-        if rows == []:
-            rows = self.list_rows
-
+                if w.row_to_draw == old_row or w.row_to_draw == []:
+                    rows = self.list_rows
+                else :
+                    rows = w.row_to_draw
 
         # Recreate the table
         self.create_table(self.list_columns, rows)
