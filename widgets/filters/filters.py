@@ -61,7 +61,7 @@ class Filters:
         self.frame.columnconfigure((0, 1, 2, 3), weight=1)
 
         # Title of the page
-        self.title = tk.Label(self.frame,text="Filtres", bg="#333333",fg="white", compound="c", borderwidth=1, relief="raised")
+        self.title = tk.Label(self.frame, text="Filtres", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
         self.title.grid(row=0, column=0, columnspan=4, sticky="nwe", ipadx=10, ipady=1, pady=(0, 0))
         self.title.config(font=("Calibri bold", 12))
 

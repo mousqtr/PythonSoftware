@@ -281,8 +281,6 @@ class Table:
                 if self.buttons_table[i][j]['bg'] == "beige":
                     row_colored = i
 
-        print(self.df.loc[[row_colored]])
-
         # Label - Details
         labels_1 = [tk.Label() for j in range(self.nb_column_max)]
         labels_2 = [tk.Label() for j in range(self.nb_column_max)]
