@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from gui import FrameContent, ButtonLeftText, ButtonTopText, WidgetGroup, Section
+from gui import RightFrame, FrameContent, ButtonLeftText, ButtonTopText, WidgetGroup, Section
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
@@ -19,6 +19,8 @@ window_height_initial = settings['dimensions']['window_height']
 top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = settings['dimensions']['left_menu_width']
 left_menu_height_initial = window_height_initial
+frame_right_width_initial = window_width_initial - left_menu_width_initial
+frame_right_height_initial = window_height_initial
 
 company_name = settings['company_name']
 font_company_name = settings['font']['font_company_name']
@@ -58,16 +60,12 @@ label_company_title = tk.Label(frame_left, text=company_name, bg=bg_company_name
 label_company_title.grid(row=0, sticky='new', pady=(0, 20))
 label_company_title.config(font=(font_company_name, font_size_company_name))
 
-# Right frame (right part of the window)
-frame_right_width_initial = window_width_initial - left_menu_width_initial
-frame_right = tk.Frame(root, bg="black", width=frame_right_width_initial, height=window_height_initial)
-frame_right.grid_propagate(False)
-frame_right.grid(row=0, column=1, sticky='n')
-frame_right.columnconfigure(0, weight=1)
+
+Frame_right = RightFrame(root)
 
 # Top menu (include in right_frame)
 top_menu_width = window_width_initial - left_menu_width_initial
-frame_top_menu = tk.Frame(frame_right, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
+frame_top_menu = tk.Frame(Frame_right.frame, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
 frame_top_menu.grid_propagate(False)
 frame_top_menu.grid(row=0, sticky='n')
 frame_top_menu.columnconfigure(0, weight=1)
@@ -103,14 +101,12 @@ frame_top_menu.columnconfigure(0, weight=1)
 # Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
 # Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
 
-
-
-
-Frame_dashboard = FrameContent(frame_right, "Dashboard", "#e8e8e8")
-Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
-
 nb_row = 3 # max 5
 nb_column = 4 # max 5
+
+Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8", nb_row, nb_column)
+Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
+
 
 section_width = int(frame_right_width_initial/nb_column)
 section_width2 = int(2*frame_right_width_initial/nb_column)
@@ -120,7 +116,7 @@ Sections = []
 section_id = 0
 for i in range(nb_row):
     for j in range(nb_column):
-        section = Section(Frame_dashboard, i, j, 1, section_width, section_height, section_id)
+        section = Section(Frame_dashboard, i, j, 1, 1, section_width, section_height, section_id)
         Sections.append(section)
         section_id += 1
 
@@ -130,25 +126,49 @@ Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Wind
 
 # Detect the window resize
 def window_resize(event):
-
-    # Update width
     offset_width = root.winfo_width() - window_width_initial
-    frame_right["width"] = frame_right_width_initial + offset_width
     frame_top_menu["width"] = frame_right_width_initial + offset_width
-    Frame_dashboard.frame["width"] = frame_right_width_initial + offset_width
-    for child in Frame_dashboard.childrens:
-        child.frame["width"] = section_width + offset_width/nb_column
-
-    # Update height
     frame_left["height"] = root.winfo_height()
-    frame_right["height"] = root.winfo_height()
-    Frame_dashboard.frame["height"] = root.winfo_height() - top_menu_height_initial
-    for child in Frame_dashboard.childrens:
-        child.frame["height"] = section_height + (root.winfo_height() - top_menu_height_initial) / nb_row
+
+    # print(Frame_dashboard.childrens[11].width)
+    # print(len(Frame_dashboard.childrens))
+
+    Frame_right.resize()
 
 
 
 
+def fusion_sections(id1, id2):
+
+    fusion_possible = False
+    section1 = Sections[id1]
+    section2 = Sections[id2]
+
+    if section1.row == section2.row:
+        section3_width = section1.width + section2.width
+        section3_height = section1.height
+        fusion_possible = True
+        rowspan = 1
+        columnspan = 2
+        print("row")
+
+    if section1.column == section2.column:
+        section3_width = section1.width
+        section3_height = section1.height + section2.height
+        fusion_possible = True
+        rowspan = 2
+        columnspan = 1
+        print("col")
+
+    if fusion_possible:
+        section3_id = len(Frame_dashboard.childrens)
+        Section(Frame_dashboard, section1.row, section1.column, rowspan, columnspan, section3_width, section3_height, section3_id)
+        section1.frame.grid_forget()
+        section2.frame.grid_forget()
+
+fusion_sections(0, 1)
+fusion_sections(6, 7)
+fusion_sections(4, 8)
 
 root.bind("<Configure>", window_resize)
 
