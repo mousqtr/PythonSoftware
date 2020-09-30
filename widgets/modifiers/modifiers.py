@@ -255,8 +255,6 @@ class Modifiers:
         # Update widgets of the same group
         self.widget_group.update_widgets()
 
-        # Update widgets of the same group
-        self.widget_group.update_widgets()
 
     def update(self):
         print("Update Modifiers")

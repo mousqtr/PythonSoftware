@@ -7,6 +7,7 @@ from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
 from widgets.modifiers.modifiers import Modifiers
 from widgets.table.table import Table
+from widgets.donut_chart.donut_chart import DonutChart
 
 # Open the settings file
 with open('settings.json') as json_file:
@@ -95,6 +96,7 @@ Widget_group_2 = WidgetGroup(2)
 
 # Widgets
 Widget_summary = Summary(Frame_dashboard, Widget_group_1, 1)
+Widget_donut_chart = DonutChart(Frame_dashboard, Widget_group_1, 2)
 Widget_research = Filters(Frame_research, Widget_group_1, 1)
 Widget_table_1 = Table(Frame_research, Widget_group_1, 2)
 Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
