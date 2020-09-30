@@ -9,23 +9,25 @@ class FrameContent:
     """ Right frame of the window"""
 
     def __init__(self, p_parent, p_title, p_background):
-        window_width = settings['dimensions']['window_width']
         window_height = settings['dimensions']['window_height']
         top_menu_height = settings['dimensions']['top_menu_height']
-        left_menu_width = settings['dimensions']['left_menu_width']
-        self.frame_width = window_width - left_menu_width
+        self.frame_width = p_parent["width"]
         self.frame_height = window_height - top_menu_height
         self.frame = tk.Frame(p_parent, bg=p_background, width=self.frame_width, height=self.frame_height)
-        self.frame.grid_propagate(False)
-        self.frame.grid(row=1, column=0)
-        self.frame.columnconfigure(0, weight=1)
+        self.frame.grid(row=1)
 
-        # Label page title
-        self.label_page_title = tk.Label(self.frame, bg=p_background, text=p_title)
-        self.label_page_title.grid(row=0, column=0, sticky='nw', padx=10, pady=(5, 5))
-        font_right_frame_title = settings['font']['font_right_frame_title']
-        font_size_right_frame_title = settings['font_size']['font_size_right_frame_title']
-        self.label_page_title.config(font=(font_right_frame_title, font_size_right_frame_title))
+        self.frame.grid_propagate(False)
+        self.frame.columnconfigure((0, 1, 2), weight=1)
+        self.frame.rowconfigure((0, 1, 2), weight=1)
+
+        self.childrens = []
+
+        # # Label page title
+        # self.label_page_title = tk.Label(self.frame, bg=p_background, text=p_title)
+        # self.label_page_title.grid(row=0, column=0, sticky='nw', padx=10, pady=(5, 5))
+        # font_right_frame_title = settings['font']['font_right_frame_title']
+        # font_size_right_frame_title = settings['font_size']['font_size_right_frame_title']
+        # self.label_page_title.config(font=(font_right_frame_title, font_size_right_frame_title))
 
 
 class WidgetGroup:
@@ -80,3 +82,17 @@ class ButtonTopText:
     def on_leave(self, e):
         self.button['bg'] = self.bg
         self.button['fg'] = 'white'
+
+
+class Section:
+    def __init__(self, p_parent, p_row, p_column, p_columnspan, p_w, p_h, p_id):
+
+        self.frame = tk.Frame(p_parent.frame, bg="red", width=p_w, height=p_h)
+        self.frame.grid(row=p_row, column=p_column, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
+        self.frame.grid_propagate(False)
+
+        self.label = tk.Label(self.frame, fg="white", bg="blue", text=str(p_id))
+        self.label.grid(row=0, column=0)
+        self.label.config(font=("Calibri bold", 14))
+
+        p_parent.childrens.append(self)
