@@ -108,17 +108,7 @@ Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8", nb_row, nb_c
 Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
 
 
-section_width = int(frame_right_width_initial/nb_column)
-section_width2 = int(2*frame_right_width_initial/nb_column)
-section_height = int(Frame_dashboard.frame["height"]/nb_row)
 
-Sections = []
-section_id = 0
-for i in range(nb_row):
-    for j in range(nb_column):
-        section = Section(Frame_dashboard, i, j, 1, 1, section_width, section_height, section_id)
-        Sections.append(section)
-        section_id += 1
 
 # Initialization of the top menu buttons (include in frame_top_menu)
 Window_login = Login(root)
@@ -129,92 +119,9 @@ def window_resize(event):
     offset_width = root.winfo_width() - window_width_initial
     frame_top_menu["width"] = frame_right_width_initial + offset_width
     frame_left["height"] = root.winfo_height()
-
-    # print(Frame_dashboard.childrens[11].width)
-    # print(len(Frame_dashboard.childrens))
-
     Frame_right.resize()
 
 
-def get_id_by_pos(p_row, p_col):
-    return p_row * nb_column + p_col
-
-
-# def fusion_sections(p_section1, p_section2):
-#     fusion_possible = False
-#
-#     id1 = p_section1.id
-#     id2 = p_section2.id
-#
-#     if p_section1.row == p_section2.row:
-#         p_gap = int(abs(id2 - id1) + 1)
-#         section3_width = p_gap * p_section1.width
-#         section3_height = p_section1.height
-#         fusion_possible = True
-#         rowspan = 1
-#         columnspan = p_gap
-#         print("row")
-#
-#     if p_section1.column == p_section2.column:
-#         p_gap = int((abs(id2 - id1)/nb_column) + 1)
-#         section3_width = p_section1.width
-#         section3_height = p_gap * p_section1.height
-#         fusion_possible = True
-#         rowspan = p_gap
-#         columnspan = 1
-#         print("col")
-#
-#     if fusion_possible:
-#         section3_id = len(Frame_dashboard.childrens)
-#         Section(Frame_dashboard, p_section1.row, p_section1.column, rowspan, columnspan, section3_width, section3_height, section3_id)
-#         p_section1.frame.grid_forget()
-#         p_section1.frame.grid_forget()
-
-
-# fusion_sections(Sections[0], Sections[2])
-# fusion_sections(Sections[3], Sections[7])
-# fusion_sections(Sections[8], Sections[12])
-
-def fusion_sections(p_section1, p_section2):
-    x1, x2 = p_section1.row, p_section2.row
-    y1, y2 = p_section1.column, p_section2.column
-
-    if x1 > x2:
-        x_max = x1
-        x_min = x2
-    else:
-        x_max = x2
-        x_min = x1
-
-    if y1 > y2:
-        y_max = y1
-        y_min = y2
-    else:
-        y_max = y2
-        y_min = y1
-
-    detected_sections = []
-    for i in range(x_min, x_max + 1):
-        for j in range(y_min, y_max + 1):
-            id = get_id_by_pos(i, j)
-            section = Sections[id]
-            detected_sections.append(section)
-
-    id1 = p_section1.id
-    id2 = p_section2.id
-    row_gap = x_max - x_min + 1
-    col_gap = y_max - y_min + 1
-
-    section3_width = col_gap * p_section1.width
-    section3_height = row_gap * p_section1.height
-    rowspan = row_gap
-    columnspan = col_gap
-    section3_id = len(Frame_dashboard.childrens2)
-    Section(Frame_dashboard, x_min, y_min, rowspan, columnspan, section3_width, section3_height, section3_id)
-
-fusion_sections(Sections[0], Sections[3])
-fusion_sections(Sections[4], Sections[12])
-fusion_sections(Sections[5], Sections[15])
 
 root.bind("<Configure>", window_resize)
 
