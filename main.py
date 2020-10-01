@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from gui import RightFrame, FrameContent, ButtonLeftText, ButtonTopText, WidgetGroup, Section
+from gui import RightFrame, FrameContent, ButtonLeftText, ButtonTopText, WidgetGroup, Section, NewPage
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
@@ -101,18 +101,25 @@ frame_top_menu.columnconfigure(0, weight=1)
 # Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
 # Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
 
-nb_row = 4 # max 5
-nb_column = 4 # max 5
-
-Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8", nb_row, nb_column)
-Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
-
-
-
 
 # Initialization of the top menu buttons (include in frame_top_menu)
 Window_login = Login(root)
 Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Window_login.create_login_window)
+
+
+# Initialization of the left menu buttons
+def create_page():
+    NewPage(root)
+
+
+Button_create_page = ButtonLeftText(" + ", 1, frame_left, bg_left_menu, (0, 10), create_page)
+
+# Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8", nb_row, nb_column)
+# Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
+
+
+
+
 
 # Detect the window resize
 def window_resize(event):
