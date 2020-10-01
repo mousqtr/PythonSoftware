@@ -140,42 +140,42 @@ def get_id_by_pos(p_row, p_col):
     return p_row * nb_column + p_col
 
 
-def fusion_sections(p_section1, p_section2):
-    fusion_possible = False
-
-    id1 = p_section1.id
-    id2 = p_section2.id
-
-    if p_section1.row == p_section2.row:
-        p_gap = int(abs(id2 - id1) + 1)
-        section3_width = p_gap * p_section1.width
-        section3_height = p_section1.height
-        fusion_possible = True
-        rowspan = 1
-        columnspan = p_gap
-        print("row")
-
-    if p_section1.column == p_section2.column:
-        p_gap = int((abs(id2 - id1)/nb_column) + 1)
-        section3_width = p_section1.width
-        section3_height = p_gap * p_section1.height
-        fusion_possible = True
-        rowspan = p_gap
-        columnspan = 1
-        print("col")
-
-    if fusion_possible:
-        section3_id = len(Frame_dashboard.childrens)
-        Section(Frame_dashboard, p_section1.row, p_section1.column, rowspan, columnspan, section3_width, section3_height, section3_id)
-        p_section1.frame.grid_forget()
-        p_section1.frame.grid_forget()
+# def fusion_sections(p_section1, p_section2):
+#     fusion_possible = False
+#
+#     id1 = p_section1.id
+#     id2 = p_section2.id
+#
+#     if p_section1.row == p_section2.row:
+#         p_gap = int(abs(id2 - id1) + 1)
+#         section3_width = p_gap * p_section1.width
+#         section3_height = p_section1.height
+#         fusion_possible = True
+#         rowspan = 1
+#         columnspan = p_gap
+#         print("row")
+#
+#     if p_section1.column == p_section2.column:
+#         p_gap = int((abs(id2 - id1)/nb_column) + 1)
+#         section3_width = p_section1.width
+#         section3_height = p_gap * p_section1.height
+#         fusion_possible = True
+#         rowspan = p_gap
+#         columnspan = 1
+#         print("col")
+#
+#     if fusion_possible:
+#         section3_id = len(Frame_dashboard.childrens)
+#         Section(Frame_dashboard, p_section1.row, p_section1.column, rowspan, columnspan, section3_width, section3_height, section3_id)
+#         p_section1.frame.grid_forget()
+#         p_section1.frame.grid_forget()
 
 
 # fusion_sections(Sections[0], Sections[2])
 # fusion_sections(Sections[3], Sections[7])
 # fusion_sections(Sections[8], Sections[12])
 
-def detect_sections(p_section1, p_section2):
+def fusion_sections(p_section1, p_section2):
     x1, x2 = p_section1.row, p_section2.row
     y1, y2 = p_section1.column, p_section2.column
 
@@ -200,12 +200,21 @@ def detect_sections(p_section1, p_section2):
             section = Sections[id]
             detected_sections.append(section)
 
-    for s in detected_sections:
-        print(s)
-        s.frame["bg"] = "green"
+    id1 = p_section1.id
+    id2 = p_section2.id
+    row_gap = x_max - x_min + 1
+    col_gap = y_max - y_min + 1
 
+    section3_width = col_gap * p_section1.width
+    section3_height = row_gap * p_section1.height
+    rowspan = row_gap
+    columnspan = col_gap
+    section3_id = len(Frame_dashboard.childrens2)
+    Section(Frame_dashboard, x_min, y_min, rowspan, columnspan, section3_width, section3_height, section3_id)
 
-detect_sections(Sections[0], Sections[2])
+fusion_sections(Sections[0], Sections[3])
+fusion_sections(Sections[4], Sections[12])
+fusion_sections(Sections[5], Sections[15])
 
 root.bind("<Configure>", window_resize)
 
