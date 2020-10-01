@@ -59,8 +59,16 @@ class FrameContent:
         self.frame.grid(row=1)
 
         self.frame.grid_propagate(False)
-        self.frame.columnconfigure((0, 1, 2, 3), weight=1)
-        self.frame.rowconfigure((0, 1, 2), weight=1)
+        t_row = []
+        t_column = []
+        for i in range(p_nb_row):
+            t_row.append(i)
+        for i in range(p_nb_column):
+            t_column.append(i)
+        print(t_row)
+        print(t_column)
+        self.frame.columnconfigure(tuple(t_column), weight=1)
+        self.frame.rowconfigure(tuple(t_row), weight=1)
 
         self.childrens = []
         self.childrens2 = []

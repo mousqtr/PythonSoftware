@@ -102,7 +102,7 @@ frame_top_menu.columnconfigure(0, weight=1)
 # Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
 
 nb_row = 3 # max 5
-nb_column = 4 # max 5
+nb_column = 3 # max 5
 
 Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8", nb_row, nb_column)
 Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
@@ -138,25 +138,27 @@ def window_resize(event):
 
 
 
-def fusion_sections(id1, id2):
+def fusion_sections(p_id1, p_id2):
 
     fusion_possible = False
-    section1 = Sections[id1]
-    section2 = Sections[id2]
+    section1 = Sections[p_id1]
+    section2 = Sections[p_id2]
 
     if section1.row == section2.row:
-        section3_width = section1.width + section2.width
+        p_gap = int(abs(p_id2 - p_id1) + 1)
+        section3_width = p_gap * section1.width
         section3_height = section1.height
         fusion_possible = True
         rowspan = 1
-        columnspan = 2
+        columnspan = p_gap
         print("row")
 
     if section1.column == section2.column:
+        p_gap = int((abs(p_id2 - p_id1)/nb_column) + 1)
         section3_width = section1.width
-        section3_height = section1.height + section2.height
+        section3_height = p_gap * section1.height
         fusion_possible = True
-        rowspan = 2
+        rowspan = p_gap
         columnspan = 1
         print("col")
 
@@ -166,9 +168,10 @@ def fusion_sections(id1, id2):
         section1.frame.grid_forget()
         section2.frame.grid_forget()
 
-fusion_sections(0, 1)
-fusion_sections(6, 7)
-fusion_sections(4, 8)
+
+# fusion_sections(0, 2)
+# fusion_sections(6, 7)
+# fusion_sections(4, 8)
 
 root.bind("<Configure>", window_resize)
 
