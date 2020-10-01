@@ -65,8 +65,6 @@ class FrameContent:
             t_row.append(i)
         for i in range(p_nb_column):
             t_column.append(i)
-        print(t_row)
-        print(t_column)
         self.frame.columnconfigure(tuple(t_column), weight=1)
         self.frame.rowconfigure(tuple(t_row), weight=1)
 
