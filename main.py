@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from gui import RightFrame, FrameContent, ButtonLeftText, ButtonTopText, WidgetGroup, Section, NewPage
+from gui import RightFrame, FrameContent, ButtonLeftText, ButtonTopText, NewPage
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
@@ -123,6 +123,7 @@ Button_create_page = ButtonLeftText(" + ", 1, frame_left, bg_left_menu, (0, 10),
 
 # Detect the window resize
 def window_resize(event):
+    """ Resize the window and intern elements """
     offset_width = root.winfo_width() - window_width_initial
     frame_top_menu["width"] = frame_right_width_initial + offset_width
     frame_left["height"] = root.winfo_height()

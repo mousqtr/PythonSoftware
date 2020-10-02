@@ -144,8 +144,11 @@ class ButtonTopText:
         self.button['fg'] = 'white'
 
 
-class Section:
+class ButtonSection:
+    """ Sections buttons located in the create page window """
+
     def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id):
+        """ Initialization of the create page section buttons """
 
         self.parent = p_parent
         self.row = p_row
@@ -162,13 +165,6 @@ class Section:
         self.button.bind("<Button-1>", self.left_click)
         self.button.bind("<Button-3>", self.right_click)
 
-        # self.button.grid_propagate(False)
-
-        # text = str(p_row) + "/" + str(p_column)
-        # self.label = tk.Label(self.frame, fg="white", bg="blue", text=text)
-        # self.label.grid(row=0, column=0)
-        # self.label.config(font=("Calibri bold", 14))
-
         if p_rowspan == 1 and p_columnspan == 1:
             p_parent.sections.append(self)
         else:
@@ -178,7 +174,7 @@ class Section:
         if self.rowspan == 1 and self.columspan == 1:
             self.button["bg"] = "green"
             self.parent.selected_sections.append(self)
-            self.parent.fusion()
+            self.parent.merge()
 
     def right_click(self, event):
         if self.rowspan != 1 or self.columspan != 1:
@@ -190,8 +186,10 @@ class Section:
 
 
 class NewPage:
+    """ Create a new page window """
+
     def __init__(self, p_parent):
-        print("create page")
+        """ Initialization of create page window """
 
         # Parameters
         self.parent = p_parent
@@ -222,7 +220,6 @@ class NewPage:
         font_new_page_title = settings['font']['font_login_title']
         font_size_new_page_title = settings['font_size']['font_size_login_title']
         label_new_page_title.config(font=(font_new_page_title, font_size_new_page_title))
-
 
         self.part_left = tk.Frame(self.window_new_page, bg="orange", width=200, height=400)
         self.part_left.grid(row=1, column=0, columnspan=1, padx=(5,5), pady=(5,5))
@@ -309,7 +306,7 @@ class NewPage:
         section_id = 0
         for i in range(self.nb_row):
             for j in range(self.nb_column):
-                section = Section(self, i, j, 1, 1, section_width, section_height, section_id)
+                ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
         # Frame right
@@ -322,15 +319,22 @@ class NewPage:
         self.button_apply.grid(padx=30)
 
     def apply(self):
+        """ Runs the creation of a page """
+
         print(self.new_sections)
 
     def update_grid(self):
+        """ Updates the grid when dimensions are changed """
+
+        # Destroy previous sections buttons
         for x in self.sections:
             x.button.grid_forget()
 
+        # Get the dimensions in the entries
         self.nb_row = int(self.entry_page_row.get())
         self.nb_column = int(self.entry_page_column.get())
 
+        # Configure row/column of the window to receive the grid
         t_row = []
         t_column = []
         for i in range(self.nb_row):
@@ -340,26 +344,35 @@ class NewPage:
         self.frame_sections.columnconfigure(tuple(t_column), weight=1)
         self.frame_sections.rowconfigure(tuple(t_row), weight=1)
 
+        # Calculate the size of a button section
         section_width = int(self.frame_sections["width"] / self.nb_column)
         section_height = int(self.frame_sections["width"] / self.nb_row)
 
-        self.sections = []
-        self.new_sections = []
-        self.selected_sections = []
+        # List of sections
+        self.sections = []              # Initial sections (rowspan = 1 and columnspan = 1)
+        self.new_sections = []          # Sections created after a merge of initial sections
+        self.selected_sections = []     # Sections selected by a click (green ones)
 
+        # Creation of initial sections
         section_id = 0
         for i in range(self.nb_row):
             for j in range(self.nb_column):
-                section = Section(self, i, j, 1, 1, section_width, section_height, section_id)
+                section = ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
     def get_id_by_pos(self, p_row, p_col):
+        """ Returns the id of a button section from its row and column number """
+
         return p_row * self.nb_column + p_col
 
-    def fusion_sections(self, p_section1, p_section2):
+    def merge_sections(self, p_section1, p_section2):
+        """ Merges two initial sections """
+
+        # Coordnates of both sections
         x1, x2 = p_section1.row, p_section2.row
         y1, y2 = p_section1.column, p_section2.column
 
+        # Calculate position extremums
         if x1 > x2:
             x_max = x1
             x_min = x2
@@ -374,6 +387,7 @@ class NewPage:
             y_max = y2
             y_min = y1
 
+        # Detect all sections between these extremums
         detected_sections = []
         for i in range(x_min, x_max + 1):
             for j in range(y_min, y_max + 1):
@@ -381,19 +395,25 @@ class NewPage:
                 section = self.sections[id]
                 detected_sections.append(section)
 
+        # Calculate the gap of this selection
         row_gap = x_max - x_min + 1
         col_gap = y_max - y_min + 1
 
+        # Calculate the parameters of the new section
         section3_width = col_gap * p_section1.width
         section3_height = row_gap * p_section1.height
         rowspan = row_gap
         columnspan = col_gap
         section3_id = len(self.new_sections)
-        Section(self, x_min, y_min, rowspan, columnspan, section3_width, section3_height, section3_id)
 
-    def fusion(self):
+        # Create the new section
+        ButtonSection(self, x_min, y_min, rowspan, columnspan, section3_width, section3_height, section3_id)
+
+    def merge(self):
+        """ Merges only when two sections are selected """
+
         if len(self.selected_sections) == 2:
-            self.fusion_sections(self.selected_sections[0], self.selected_sections[1])
+            self.merge_sections(self.selected_sections[0], self.selected_sections[1])
             self.selected_sections[0].button["bg"] = "#1E90FF"
             self.selected_sections[1].button["bg"] = "#1E90FF"
             self.selected_sections = []
