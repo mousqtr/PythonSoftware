@@ -227,7 +227,8 @@ class NewPage:
         self.part_left = tk.Frame(self.window_new_page, bg="orange", width=200, height=400)
         self.part_left.grid(row=1, column=0, columnspan=1, padx=(5,5), pady=(5,5))
         self.part_left.columnconfigure(0, weight=1)
-        self.part_left.rowconfigure((0, 1, 2, 3), weight=1)
+        self.part_left.rowconfigure((0, 3), weight=10)
+        self.part_left.rowconfigure((1, 2), weight=1)
         self.part_left.grid_propagate(False)
 
         self.first_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
@@ -245,18 +246,33 @@ class NewPage:
         self.second_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
         self.second_left_frame.grid(row=1, column=0)
 
-        self.label_grid = tk.Label(self.second_left_frame, text="Grille", bg="orange", fg="white")
+        self.label_grid = tk.Label(self.second_left_frame, text="Nombre de lignes", bg="orange", fg="white")
         self.label_grid.grid(row=0, sticky='nwe')
         self.label_grid.config(font=("Calibri bold", 12))
 
-        list_grille = ["1 x 1", "1 x 2", "2 x 1", "2 x 2", "2 x 3", "3 x 2", "3 x 3"]
-        self.combo_grille = ttk.Combobox(self.second_left_frame, values=list_grille, state="readonly", width=22)
-        self.combo_grille.grid(row=1, sticky='nwe')
+        str_nb_row = tk.StringVar()
+        str_nb_row.set(str(self.nb_row))
+        self.entry_page_row = tk.Entry(self.second_left_frame, width=18, textvariable=str_nb_row)
+        self.entry_page_row.grid(row=1, sticky='nwe')
+        self.entry_page_row.config(font=("Calibri bold", 12))
 
         self.third_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
         self.third_left_frame.grid(row=2, column=0)
 
-        self.button_apply = tk.Button(self.third_left_frame, text="Actualiser la grille", width=18, command=self.update_grid)
+        self.label_grid = tk.Label(self.third_left_frame, text="Nombre de colonnes", bg="orange", fg="white")
+        self.label_grid.grid(row=0, sticky='nwe')
+        self.label_grid.config(font=("Calibri bold", 12))
+
+        str_nb_column = tk.StringVar()
+        str_nb_column.set(str(self.nb_column))
+        self.entry_page_column = tk.Entry(self.third_left_frame, width=18, textvariable=str_nb_column)
+        self.entry_page_column.grid(row=1, sticky='nwe')
+        self.entry_page_column.config(font=("Calibri bold", 12))
+
+        self.fourth_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
+        self.fourth_left_frame.grid(row=3, column=0)
+
+        self.button_apply = tk.Button(self.fourth_left_frame, text="Actualiser la grille", width=18, command=self.update_grid)
         self.button_apply.grid(row=0, sticky='nwe')
 
         # Frame center
@@ -312,12 +328,8 @@ class NewPage:
         for x in self.sections:
             x.button.grid_forget()
 
-        text = self.combo_grille.get()
-        text_list = text.split(" x ")
-        self.nb_row = int(text_list[0])
-        self.nb_column = int(text_list[1])
-        print(self.nb_row)
-        print(self.nb_column)
+        self.nb_row = int(self.entry_page_row.get())
+        self.nb_column = int(self.entry_page_column.get())
 
         t_row = []
         t_column = []
