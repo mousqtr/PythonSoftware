@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from gui import RightFrame, FrameContent, ButtonLeftText, ButtonTopText, NewPage
+from gui import LeftFrame, RightFrame, FrameContent, ButtonLeftText, ButtonTopText, NewPage
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
@@ -41,7 +41,6 @@ window_icon = tk.PhotoImage(file="img/box.png")
 root.iconphoto(False, window_icon)
 root.grid_propagate(False)
 
-
 # Window size
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
@@ -49,29 +48,27 @@ x_cordinate = int((screen_width/2) - (window_width_initial/2))
 y_cordinate = int((screen_height/2) - (window_height_initial/2))
 root.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
 
-# Left menu
-frame_left = tk.Frame(root, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
-frame_left.grid_propagate(False)
-frame_left.grid(row=0, column=0, sticky='new')
-frame_left.columnconfigure(0, weight=1)
+# The window is splitted into 2 frames
+frame_left = LeftFrame(root)
+frame_right = RightFrame(root)
 
 # Company title
-label_company_title = tk.Label(frame_left, text=company_name, bg=bg_company_name, fg="white", height=2)
+label_company_title = tk.Label(frame_left.frame, text=company_name, bg=bg_company_name, fg="white", height=2)
 label_company_title.grid(row=0, sticky='new', pady=(0, 20))
 label_company_title.config(font=(font_company_name, font_size_company_name))
 
 
-Frame_right = RightFrame(root)
+
 
 # Top menu (include in right_frame)
 top_menu_width = window_width_initial - left_menu_width_initial
-frame_top_menu = tk.Frame(Frame_right.frame, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
+frame_top_menu = tk.Frame(frame_right.frame, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
 frame_top_menu.grid_propagate(False)
 frame_top_menu.grid(row=0, sticky='n')
 frame_top_menu.columnconfigure(0, weight=1)
 
 # # Initialization of right sub frames (include in right_frame)
-# Frame_dashboard = FrameContent(frame_right, "Dashboard", "#e8e8e8")
+# Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8")
 # Frame_research = FrameContent(frame_right, "Recherche", "#e8e8e8")
 # Frame_settings = FrameContent(frame_right, "Paramètres", "#e8e8e8")
 # Frame_modification = FrameContent(frame_right, "Modification", "#e8e8e8")
@@ -103,19 +100,18 @@ frame_top_menu.columnconfigure(0, weight=1)
 
 
 # Initialization of the top menu buttons (include in frame_top_menu)
-Window_login = Login(root)
-Button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, Window_login.create_login_window)
+window_login = Login(root)
+button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, window_login.create_login_window)
 
 
 # Initialization of the left menu buttons
 def create_page():
-    NewPage(root)
+    NewPage(root, frame_left, frame_right)
 
 
-Button_create_page = ButtonLeftText(" + ", 1, frame_left, bg_left_menu, (0, 10), create_page)
+Button_create_page = ButtonLeftText(" + ", 2, frame_left, bg_left_menu, (0, 10), create_page)
 
-# Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8", nb_row, nb_column)
-# Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
+
 
 
 
@@ -126,8 +122,8 @@ def window_resize(event):
     """ Resize the window and intern elements """
     offset_width = root.winfo_width() - window_width_initial
     frame_top_menu["width"] = frame_right_width_initial + offset_width
-    frame_left["height"] = root.winfo_height()
-    Frame_right.resize()
+    frame_left.frame["height"] = root.winfo_height()
+    frame_right.resize()
 
 
 

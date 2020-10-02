@@ -9,8 +9,11 @@ window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
 top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = settings['dimensions']['left_menu_width']
+left_menu_height_initial = window_height_initial
 frame_right_width_initial = window_width_initial - left_menu_width_initial
 frame_right_height_initial = window_height_initial
+bg_left_menu = settings['colors']['bg_left_menu']
+
 
 class RightFrame:
     """ Right frame of the window"""
@@ -20,10 +23,9 @@ class RightFrame:
         self.parent = p_parent
 
         self.frame = tk.Frame(p_parent, bg="black", width=frame_right_width_initial, height=frame_right_height_initial)
-        # self.frame.grid_propagate(False)
         self.frame.grid(row=0, column=1, sticky='n')
 
-        self.frameContent = []
+        self.frames_content = []
 
     def resize(self):
         offset_width = self.parent.winfo_width() - window_width_initial
@@ -31,20 +33,23 @@ class RightFrame:
         self.frame["height"] = self.parent.winfo_height()
 
         # Resize the frameContent part
-        for child_page in self.frameContent:
+        for child_page in self.frames_content:
             child_page.frame["width"] = frame_right_width_initial + offset_width
             child_page.frame["height"] = self.parent.winfo_height() - top_menu_height_initial
+            # child_page.frame_sections["width"] = frame_right_width_initial + offset_width
+            # child_page.frame_sections["height"] = child_page.frame["height"] - 20 #TODO
+
 
             # Resize sections
-            for child in child_page.childrens:
-                child.button["width"] = int(child.width + offset_width/child_page.nb_column)
-                child.button["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
+            for child in child_page.sections:
+                child.frame["width"] = int(child.width + offset_width/child_page.nb_column)
+                child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
                                                                            top_menu_height_initial) / child_page.nb_row)
 
             # Resize sections
-            for child in child_page.childrens2:
-                child.button["width"] = int(child.width + child.columspan*(offset_width/child_page.nb_column))
-                child.button["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
+            for child in child_page.new_sections:
+                child.frame["width"] = int(child.width + child.columspan*(offset_width/child_page.nb_column))
+                child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
                                                                        top_menu_height_initial) / child_page.nb_row)
 
 
@@ -53,32 +58,23 @@ class RightFrame:
 class FrameContent:
     """ Right frame content of the window"""
 
-    def __init__(self, p_parent, p_title, p_background, p_nb_row, p_nb_column):
+    def __init__(self, p_parent, p_title, p_background, p_nb_row, p_nb_column, p_new_page):
+
+        self.nb_row = p_nb_row
+        self.nb_column = p_nb_column
+        self.parent = p_parent
+        self.parent.frames_content.append(self)
+
         window_height = settings['dimensions']['window_height']
         top_menu_height = settings['dimensions']['top_menu_height']
         self.frame_width = p_parent.frame["width"]
         self.frame_height = window_height - top_menu_height
         self.frame = tk.Frame(p_parent.frame, bg=p_background, width=self.frame_width, height=self.frame_height)
         self.frame.grid(row=1)
-
         self.frame.grid_propagate(False)
-        t_row = []
-        t_column = []
-        for i in range(p_nb_row):
-            t_row.append(i)
-        for i in range(p_nb_column):
-            t_column.append(i)
-        self.frame.columnconfigure(tuple(t_column), weight=1)
-        self.frame.rowconfigure(tuple(t_row), weight=1)
-
-        self.sections = []
-        self.new_sections = []
-        self.nb_row = p_nb_row
-        self.nb_column = p_nb_column
-
-        p_parent.frameContent.append(self)
-
-
+        # self.frame.grid(row=1)
+        # self.frame.columnconfigure(0, weight=1)
+        #
         # # Label page title
         # self.label_page_title = tk.Label(self.frame, bg=p_background, text=p_title)
         # self.label_page_title.grid(row=0, column=0, sticky='nw', padx=10, pady=(5, 5))
@@ -86,9 +82,66 @@ class FrameContent:
         # font_size_right_frame_title = settings['font_size']['font_size_right_frame_title']
         # self.label_page_title.config(font=(font_right_frame_title, font_size_right_frame_title))
 
+        # self.frame_sections = tk.Frame(self.frame, bg="orange", width=self.frame_width, height=640)
+        # self.frame_sections.grid(row=1, column=0)
+        # self.frame_sections.grid_propagate(False)
+
+        t_row = []
+        t_column = []
+        for i in range(self.nb_row):
+            t_row.append(i)
+        for i in range(self.nb_column):
+            t_column.append(i)
+        self.frame.columnconfigure(tuple(t_column), weight=1)
+        self.frame.rowconfigure(tuple(t_row), weight=1)
+
+        section_width = int(self.frame["width"] / self.nb_column)
+        section_height = int(self.frame["width"] / self.nb_row)
+
+        self.sections = []
+        self.new_sections = []
+
+        # section_id = 0
+        # for i in range(self.nb_row):
+        #     for j in range(self.nb_column):
+        #         FrameSection(self, i, j, 1, 1, section_width, section_height, section_id)
+        #         section_id += 1
+
+        section_id = 0
+        for s1 in p_new_page.sections:
+            if s1 not in p_new_page.disappeared_sections:
+                section = FrameSection(self, s1.row, s1.column, s1.rowspan, s1.columspan, section_width, section_height, section_id)
+                section_id += 1
+                self.sections.append(section)
+
+        section_id = 0
+        for s1 in p_new_page.new_sections:
+            width = section_width * s1.columspan
+            height = section_height * s1.rowspan
+            section = FrameSection(self, s1.row, s1.column, s1.rowspan, s1.columspan, width, height, section_id)
+            self.new_sections.append(section)
+            section_id += 1
 
 
 
+class FrameSection:
+    """ Sections Frame located in main window """
+
+    def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id):
+        """ Initialization of these sections buttons """
+
+        self.parent = p_parent
+        self.row = p_row
+        self.column = p_column
+        self.rowspan = p_rowspan
+        self.columspan = p_columnspan
+        self.width = p_w
+        self.height = p_h
+        self.id = p_id
+
+        self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h)
+        self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
+        self.frame.config(highlightbackground="black", highlightthickness=1)
 
 class WidgetGroup:
     def __init__(self, p_id):
@@ -100,12 +153,23 @@ class WidgetGroup:
             w.update()
 
 
+class LeftFrame:
+    def __init__(self, p_parent):
+        self.frame = tk.Frame(p_parent, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
+        self.frame.grid_propagate(False)
+        self.frame.grid(row=0, column=0, sticky='new')
+        self.frame.columnconfigure(0, weight=1)
+
+        self.buttons_left = []
+
+
 class ButtonLeftText:
     """ Text buttons located in the left of the window """
 
     def __init__(self, p_text, p_row, p_parent, p_bg, p_pady, p_command):
         self.init_bg = p_bg
-        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", activebackground="green", borderwidth=1, command=p_command)
+
+        self.button = tk.Button(p_parent.frame, text=p_text, bg=p_bg, fg="white", activebackground="green", borderwidth=1, command=p_command)
         self.button.grid(row=p_row, sticky='new', pady=p_pady, padx=(5, 5))
         font_left_menu = settings['font']['font_left_menu']
         font_size_left_menu = settings['font_size']['font_size_left_menu']
@@ -188,13 +252,15 @@ class ButtonSection:
 class NewPage:
     """ Create a new page window """
 
-    def __init__(self, p_parent):
+    def __init__(self, p_parent, p_left_frame, p_right_frame):
         """ Initialization of create page window """
 
         # Parameters
         self.parent = p_parent
         self.nb_row = 5
         self.nb_column = 5
+        self.left_frame = p_left_frame
+        self.right_frame = p_right_frame
 
         # Window handle
         self.window_new_page = tk.Toplevel(self.parent)
@@ -302,6 +368,7 @@ class NewPage:
         self.sections = []
         self.new_sections = []
         self.selected_sections = []
+        self.disappeared_sections = []  # Sections that will disappear
 
         section_id = 0
         for i in range(self.nb_row):
@@ -321,7 +388,17 @@ class NewPage:
     def apply(self):
         """ Runs the creation of a page """
 
-        print(self.new_sections)
+        # Get the dimensions in the entries
+        self.nb_row = int(self.entry_page_row.get())
+        self.nb_column = int(self.entry_page_column.get())
+
+        new_frame_content = FrameContent(self.right_frame, "Dashboard", "#e8e8e8", self.nb_row, self.nb_column, self)
+        self.right_frame.frames_content.append(new_frame_content)
+
+        row = len(self.left_frame.buttons_left) + 1
+        name = self.entry_page_name.get()
+        new_button_left = ButtonLeftText(name, row, self.left_frame, bg_left_menu, (0, 10), new_frame_content.frame.lift)
+        self.left_frame.buttons_left.append(new_button_left)
 
     def update_grid(self):
         """ Updates the grid when dimensions are changed """
@@ -357,7 +434,7 @@ class NewPage:
         section_id = 0
         for i in range(self.nb_row):
             for j in range(self.nb_column):
-                section = ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
+                ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
     def get_id_by_pos(self, p_row, p_col):
@@ -394,6 +471,7 @@ class NewPage:
                 id = self.get_id_by_pos(i, j)
                 section = self.sections[id]
                 detected_sections.append(section)
+                self.disappeared_sections.append(section)
 
         # Calculate the gap of this selection
         row_gap = x_max - x_min + 1
@@ -417,3 +495,5 @@ class NewPage:
             self.selected_sections[0].button["bg"] = "#1E90FF"
             self.selected_sections[1].button["bg"] = "#1E90FF"
             self.selected_sections = []
+
+
