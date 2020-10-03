@@ -36,9 +36,6 @@ class RightFrame:
         for child_page in self.frames_content:
             child_page.frame["width"] = frame_right_width_initial + offset_width
             child_page.frame["height"] = self.parent.winfo_height() - top_menu_height_initial
-            # child_page.frame_sections["width"] = frame_right_width_initial + offset_width
-            # child_page.frame_sections["height"] = child_page.frame["height"] - 20 #TODO
-
 
             # Resize sections
             for child in child_page.sections:
@@ -51,8 +48,6 @@ class RightFrame:
                 child.frame["width"] = int(child.width + child.columspan*(offset_width/child_page.nb_column))
                 child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
                                                                        top_menu_height_initial) / child_page.nb_row)
-
-
 
 
 class FrameContent:
@@ -94,6 +89,8 @@ class FrameContent:
             t_column.append(i)
         self.frame.columnconfigure(tuple(t_column), weight=1)
         self.frame.rowconfigure(tuple(t_row), weight=1)
+        print(tuple(t_column))
+        print(tuple(t_row))
 
         section_width = int(self.frame["width"] / self.nb_column)
         section_height = int(self.frame["width"] / self.nb_row)
@@ -101,27 +98,22 @@ class FrameContent:
         self.sections = []
         self.new_sections = []
 
-        # section_id = 0
-        # for i in range(self.nb_row):
-        #     for j in range(self.nb_column):
-        #         FrameSection(self, i, j, 1, 1, section_width, section_height, section_id)
-        #         section_id += 1
-
         section_id = 0
         for s1 in p_new_page.sections:
-            if s1 not in p_new_page.disappeared_sections:
-                section = FrameSection(self, s1.row, s1.column, s1.rowspan, s1.columspan, section_width, section_height, section_id)
-                section_id += 1
-                self.sections.append(section)
+            section = FrameSection(self, s1.row, s1.column, s1.rowspan, s1.columspan, section_width, section_height, section_id)
+            section_id += 1
+            self.sections.append(section)
 
         section_id = 0
         for s1 in p_new_page.new_sections:
             width = section_width * s1.columspan
             height = section_height * s1.rowspan
+            print(s1.row)
+            print(s1.column)
+            print(s1.rowspan)
             section = FrameSection(self, s1.row, s1.column, s1.rowspan, s1.columspan, width, height, section_id)
             self.new_sections.append(section)
             section_id += 1
-
 
 
 class FrameSection:
@@ -192,7 +184,7 @@ class ButtonTopText:
     def __init__(self, p_text, p_col, p_parent, p_bg, p_command):
         self.bg = p_bg
         self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", borderwidth=1, command=p_command)
-        self.button.grid(row=0, column=p_col, sticky="e",  pady=(5, 5), padx=(10, 10), ipadx=15)
+        self.button.grid(row=0, column=p_col, sticky="ne",  pady=(5, 5), padx=(5, 5), ipadx=15)
         font_top_menu = settings['font']['font_top_menu']
         font_size_top_menu = settings['font_size']['font_size_top_menu']
         self.button.config(font=(font_top_menu, font_size_top_menu))
@@ -223,7 +215,8 @@ class ButtonSection:
         self.height = p_h
         self.id = p_id
 
-        self.button = tk.Button(p_parent.frame_sections, bg="#1E90FF", width=p_w, height=p_h)
+        bg_identification = settings['colors']['bg_identification']
+        self.button = tk.Button(p_parent.frame_sections, bg=bg_identification, width=p_w, height=p_h)
         self.button.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
 
         self.button.bind("<Button-1>", self.left_click)
@@ -492,8 +485,9 @@ class NewPage:
 
         if len(self.selected_sections) == 2:
             self.merge_sections(self.selected_sections[0], self.selected_sections[1])
-            self.selected_sections[0].button["bg"] = "#1E90FF"
-            self.selected_sections[1].button["bg"] = "#1E90FF"
+            bg_identification = settings['colors']['bg_identification']
+            self.selected_sections[0].button["bg"] = bg_identification
+            self.selected_sections[1].button["bg"] = bg_identification
             self.selected_sections = []
 
 

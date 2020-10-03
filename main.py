@@ -64,8 +64,14 @@ label_company_title.config(font=(font_company_name, font_size_company_name))
 top_menu_width = window_width_initial - left_menu_width_initial
 frame_top_menu = tk.Frame(frame_right.frame, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
 frame_top_menu.grid_propagate(False)
-frame_top_menu.grid(row=0, sticky='n')
-frame_top_menu.columnconfigure(0, weight=1)
+frame_top_menu.grid(row=0, sticky='new')
+frame_top_menu.columnconfigure((0, 1), weight=1)
+
+first_top_frame = tk.Frame(frame_top_menu, bg=bg_top_menu)
+first_top_frame.grid(row=0, column=0, sticky='news')
+second_top_frame = tk.Frame(frame_top_menu, bg=bg_top_menu)
+second_top_frame.grid(row=0, column=1, sticky='nes')
+# second_top_frame.columnconfigure((0, 1, 2), weight=1)
 
 # # Initialization of right sub frames (include in right_frame)
 # Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8")
@@ -100,9 +106,15 @@ frame_top_menu.columnconfigure(0, weight=1)
 
 
 # Initialization of the top menu buttons (include in frame_top_menu)
+button_settings = ButtonTopText("Paramètres", 1, second_top_frame, bg_connect, None)
 window_login = Login(root)
-button_login = ButtonTopText("Se connecter", 2, frame_top_menu, bg_connect, window_login.create_login_window)
+button_login = ButtonTopText("Se connecter", 2, second_top_frame, bg_connect, window_login.create_login_window)
 
+button_login2 = tk.Label(first_top_frame, text="Page 1", bg=bg_connect, fg="white")
+button_login2.grid(row=0, column=0, sticky="ns", pady=6, padx=10)
+font_top_menu = settings['font']['font_top_menu']
+font_size_top_menu = settings['font_size']['font_size_top_menu']
+button_login2.config(font=(font_top_menu, font_size_top_menu))
 
 # Initialization of the left menu buttons
 def create_page():
@@ -110,11 +122,6 @@ def create_page():
 
 
 Button_create_page = ButtonLeftText(" + ", 2, frame_left, bg_left_menu, (0, 10), create_page)
-
-
-
-
-
 
 
 # Detect the window resize
