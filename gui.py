@@ -39,15 +39,13 @@ class RightFrame:
 
             # Resize sections
             for child in child_page.sections:
-                child.frame["width"] = int(child.width + offset_width/child_page.nb_column)
-                child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
-                                                                           top_menu_height_initial) / child_page.nb_row)
+                child.frame["width"] = int(child_page.frame["width"]/child_page.nb_column)
+                child.frame["height"] = int(child_page.frame["height"] / child_page.nb_row)
 
-            # # Resize sections
+            # Resize sections
             for child in child_page.new_sections:
-                 child.frame["width"] = int(child.width + child.columspan*(offset_width/child_page.nb_column))
-                 # # child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
-                 #                                                       top_menu_height_initial) / child_page.nb_row)
+                child.frame["width"] = int(child_page.frame["width"]/child_page.nb_column)*child.columspan
+                child.frame["height"] = int(child_page.frame["height"]/child_page.nb_row)*child.rowspan
 
 
 class FrameContent:
@@ -121,12 +119,6 @@ class FrameContent:
         for s in p_new_page.new_sections:
             width = section_width * s.columspan
             height = section_height * s.rowspan
-            print(s.row)
-            print(s.column)
-            print(s.rowspan)
-            print(s.columspan)
-            print(width)
-            print(height)
             section = FrameSection(self, s.row, s.column, s.rowspan, s.columspan, width, height, section_id)
             self.new_sections.append(section)
             section_id += 1
