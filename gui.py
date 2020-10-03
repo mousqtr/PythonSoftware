@@ -43,11 +43,11 @@ class RightFrame:
                 child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
                                                                            top_menu_height_initial) / child_page.nb_row)
 
-            # Resize sections
+            # # Resize sections
             for child in child_page.new_sections:
-                child.frame["width"] = int(child.width + child.columspan*(offset_width/child_page.nb_column))
-                child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
-                                                                       top_menu_height_initial) / child_page.nb_row)
+                 child.frame["width"] = int(child.width + child.columspan*(offset_width/child_page.nb_column))
+                 # # child.frame["height"] = int(frame_right_height_initial + (self.parent.winfo_height() -
+                 #                                                       top_menu_height_initial) / child_page.nb_row)
 
 
 class FrameContent:
@@ -93,27 +93,58 @@ class FrameContent:
         print(tuple(t_row))
 
         section_width = int(self.frame["width"] / self.nb_column)
-        section_height = int(self.frame["width"] / self.nb_row)
+        section_height = int(self.frame["height"] / self.nb_row)
 
         self.sections = []
         self.new_sections = []
+        self.displayed_sections = []
+
+        # section_id = 0
+        # for s in p_new_page.sections:
+        #     section = FrameSection(self, s.row, s.column, s.rowspan, s.columspan, section_width, section_height, section_id)
+        #     section_id += 1
+        #     if s not in p_new_page.disappeared_sections:
+        #         self.sections.append(section)
+        #
+        # print(len(p_new_page.sections))
 
         section_id = 0
-        for s1 in p_new_page.sections:
-            section = FrameSection(self, s1.row, s1.column, s1.rowspan, s1.columspan, section_width, section_height, section_id)
-            section_id += 1
-            self.sections.append(section)
+        for i in range(p_new_page.nb_row):
+            for j in range(p_new_page.nb_column):
+                section = FrameSection(self, i, j, 1, 1, section_width, section_height, section_id)
+                section_id += 1
+                self.sections.append(section)
+
+        # section = FrameSection(self, 1, 0, 3, 5, 5*section_width, 3*section_height, 0)
 
         section_id = 0
-        for s1 in p_new_page.new_sections:
-            width = section_width * s1.columspan
-            height = section_height * s1.rowspan
-            print(s1.row)
-            print(s1.column)
-            print(s1.rowspan)
-            section = FrameSection(self, s1.row, s1.column, s1.rowspan, s1.columspan, width, height, section_id)
+        for s in p_new_page.new_sections:
+            width = section_width * s.columspan
+            height = section_height * s.rowspan
+            print(s.row)
+            print(s.column)
+            print(s.rowspan)
+            print(s.columspan)
+            print(width)
+            print(height)
+            section = FrameSection(self, s.row, s.column, s.rowspan, s.columspan, width, height, section_id)
             self.new_sections.append(section)
             section_id += 1
+
+        # self.displayed_sections = self.sections + self.new_sections
+
+        # index = 0
+        # for s in self.displayed_sections:
+        #     s.frame["bg"] = "blue"
+        #     # label = tk.Label(s.frame, text=str(index), bg="blue", fg="white")
+        #     # label.grid(row=0, column=0, sticky='n')
+        #     # label.config(font=("Calibri bold", 12))
+        #     # index += 1
+
+        # for i in range(len(self.displayed_sections)):
+        #     s = self.displayed_sections[i]
+        #     label = tk.Label(s.frame, text=str(i), bg="blue", fg="white")
+        #     label.grid(row=0, column=0, sticky='news')
 
 
 class FrameSection:
@@ -134,6 +165,10 @@ class FrameSection:
         self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h)
         self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
         self.frame.config(highlightbackground="black", highlightthickness=1)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.grid_propagate(False)
+
 
 class WidgetGroup:
     def __init__(self, p_id):
@@ -381,10 +416,6 @@ class NewPage:
     def apply(self):
         """ Runs the creation of a page """
 
-        # Get the dimensions in the entries
-        self.nb_row = int(self.entry_page_row.get())
-        self.nb_column = int(self.entry_page_column.get())
-
         new_frame_content = FrameContent(self.right_frame, "Dashboard", "#e8e8e8", self.nb_row, self.nb_column, self)
         self.right_frame.frames_content.append(new_frame_content)
 
@@ -398,6 +429,9 @@ class NewPage:
 
         # Destroy previous sections buttons
         for x in self.sections:
+            x.button.grid_forget()
+
+        for x in self.new_sections:
             x.button.grid_forget()
 
         # Get the dimensions in the entries
