@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from gui import LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText
+from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText
 from new_page import NewPage
 from login import Login
 from widgets.summary.summary import Summary
@@ -27,20 +27,8 @@ bg_connect = settings['colors']['bg_connect']
 bg_left_menu = settings['colors']['bg_left_menu']
 
 # Root initialization
-root = tk.Tk()
-root.title("Gestionnaire d'inventaire")
-root.resizable(True, True)
-root.minsize(700, 700)
-window_icon = tk.PhotoImage(file="img/box.png")
-root.iconphoto(False, window_icon)
-root.grid_propagate(False)
-
-# Window size
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-x_cordinate = int((screen_width/2) - (window_width_initial/2))
-y_cordinate = int((screen_height/2) - (window_height_initial/2))
-root.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
+main_window = MainWindow()
+root = main_window.frame
 
 # The window is splitted into 2 frames
 frame_left = LeftFrame(root)
@@ -86,6 +74,7 @@ button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_c
 # Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
 # Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
 
+
 def create_page():
     NewPage(root, frame_left, frame_right, frame_top)
 
@@ -96,6 +85,13 @@ button_create_page = ButtonLeftText(" + ", 20, frame_left, bg_left_menu, (0, 10)
 
 # Detect the window resize
 def window_resize(event):
+    width = main_window.frame.winfo_width()
+    height = main_window.frame.winfo_height()
+
+    if width != main_window.width or height != main_window.height:
+        main_window.width = width
+        main_window.height = height
+
     """ Resize the window and intern elements """
     offset_width = root.winfo_width() - window_width_initial
     frame_top.frame["width"] = frame_right_width_initial + offset_width
@@ -104,8 +100,6 @@ def window_resize(event):
 
 
 root.bind("<Configure>", window_resize)
-
-# display_data()
 
 # Launch the GUI
 root.mainloop()

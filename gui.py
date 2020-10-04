@@ -22,6 +22,29 @@ font_size_company_name = settings['font_size']['font_size_company_name']
 bg_company_name = settings['colors']['bg_company_name']
 
 
+class MainWindow:
+    def __init__(self):
+        self.frame = tk.Tk()
+        self.frame.title("Gestionnaire d'inventaire")
+        self.frame.resizable(True, True)
+        self.frame.minsize(700, 700)
+        window_icon = tk.PhotoImage(file="img/box.png")
+        self.frame.iconphoto(False, window_icon)
+        self.frame.grid_propagate(False)
+
+        # Window dimension
+        screen_width = self.frame.winfo_screenwidth()
+        screen_height = self.frame.winfo_screenheight()
+        x_cordinate = int((screen_width / 2) - (window_width_initial / 2))
+        y_cordinate = int((screen_height / 2) - (window_height_initial / 2))
+        self.frame.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
+
+        # Window size
+        self.width = self.frame.winfo_width()
+        self.height = self.frame.winfo_height()
+
+
+
 class TopFrame:
     def __init__(self, p_parent):
         # Top menu (include in right_frame)
@@ -121,6 +144,8 @@ class FrameContent:
             section_id += 1
             if s not in p_new_page.disappeared_sections:
                 self.sections.append(section)
+            if s in p_new_page.disappeared_sections:
+                s.button.grid_forget()
 
         section_id = 0
         for s in p_new_page.new_sections:
