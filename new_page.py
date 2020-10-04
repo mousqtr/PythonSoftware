@@ -152,7 +152,7 @@ class NewPage:
         row = len(self.left_frame.buttons_left) + 1
         name = self.entry_page_name.get()
         bg_left_menu = settings['colors']['bg_left_menu']
-        new_button_left = ButtonLeftText(name, row, self.left_frame, bg_left_menu, (0, 10), new_frame_content.change_page)
+        new_button_left = ButtonLeftText(name, row, self.left_frame.second_left_frame, bg_left_menu, new_frame_content.change_page)
         self.left_frame.buttons_left.append(new_button_left)
 
         self.top_frame.page_title["text"] = "Page : " + name

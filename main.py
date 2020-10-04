@@ -36,29 +36,14 @@ frame_right = RightFrame(root)
 frame_top = TopFrame(frame_right)
 
 # Initialization of the top menu buttons (include in frame_top_menu)
-button_settings = ButtonTopText("Paramètres", 1, frame_top.second_top_frame, bg_connect, None)
+
+button_edit_page = ButtonTopText("Editer la page", 0, frame_top.second_top_frame, bg_connect, None)
+button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.second_top_frame, bg_connect, None)
+button_settings = ButtonLeftText("Paramètres", 0, frame_left.third_left_frame, bg_connect, None)
 
 window_login = Login(root)
 button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_connect, window_login.create_login_window)
 
-
-
-# # Initialization of right sub frames (include in right_frame)
-# Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8")
-# Frame_research = FrameContent(frame_right, "Recherche", "#e8e8e8")
-# Frame_settings = FrameContent(frame_right, "Paramètres", "#e8e8e8")
-# Frame_modification = FrameContent(frame_right, "Modification", "#e8e8e8")
-# Frame_historic = FrameContent(frame_right, "Historique", "#e8e8e8")
-# Frame_help = FrameContent(frame_right, "Aide", "#e8e8e8")
-# Frame_dashboard.frame.lift()
-
-# # Initialization of the left menu buttons (include in left_frame)
-# Button_dashboard = ButtonLeftText("Dashboard", 1, frame_left, bg_left_menu, (0, 10), Frame_dashboard.frame.lift)
-# Button_research = ButtonLeftText("Recherche", 2, frame_left, bg_left_menu, (0, 10), Frame_research.frame.lift)
-# Button_modification = ButtonLeftText("Modification", 3, frame_left, bg_left_menu, (0, 10), Frame_modification.frame.lift)
-# Button_historic = ButtonLeftText("Historique", 4, frame_left, bg_left_menu, (0, 10), Frame_historic.frame.lift)
-# Button_help = ButtonLeftText("Aide", 5, frame_left, bg_left_menu, (340, 10), Frame_help.frame.lift)
-# Button_settings = ButtonLeftText("Paramètres", 6, frame_left, bg_left_menu, (0, 0), Frame_settings.frame.lift)
 
 
 
@@ -76,11 +61,13 @@ button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_c
 
 
 def create_page():
-    NewPage(root, frame_left, frame_right, frame_top)
+    nb_buttons_max = 10
+    if len(frame_left.buttons_left) < nb_buttons_max:
+        NewPage(root, frame_left, frame_right, frame_top)
 
 
 # Button create page
-button_create_page = ButtonLeftText(" + ", 20, frame_left, bg_left_menu, (0, 10), create_page)
+button_create_page = ButtonLeftText(" + ", 20, frame_left.second_left_frame, bg_left_menu, create_page)
 
 
 # Detect the window resize
@@ -97,6 +84,7 @@ def window_resize(event):
     frame_top.frame["width"] = frame_right_width_initial + offset_width
     frame_left.frame["height"] = root.winfo_height()
     frame_right.resize()
+    frame_left.resize()
 
 
 root.bind("<Configure>", window_resize)

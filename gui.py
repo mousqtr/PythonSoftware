@@ -27,7 +27,7 @@ class MainWindow:
         self.frame = tk.Tk()
         self.frame.title("Gestionnaire d'inventaire")
         self.frame.resizable(True, True)
-        self.frame.minsize(700, 700)
+        self.frame.minsize(800, 600)
         window_icon = tk.PhotoImage(file="img/box.png")
         self.frame.iconphoto(False, window_icon)
         self.frame.grid_propagate(False)
@@ -44,10 +44,9 @@ class MainWindow:
         self.height = self.frame.winfo_height()
 
 
-
 class TopFrame:
     def __init__(self, p_parent):
-        # Top menu (include in right_frame)
+
         top_menu_width = window_width_initial - left_menu_width_initial
         self.frame = tk.Frame(p_parent.frame, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
         self.frame.grid_propagate(False)
@@ -100,6 +99,46 @@ class RightFrame:
                 child.frame["height"] = int(child_page.frame["height"]/child_page.nb_row)*child.rowspan
 
 
+class LeftFrame:
+    def __init__(self, p_parent):
+        self.parent = p_parent
+
+        self.frame = tk.Frame(p_parent, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
+        self.frame.grid_propagate(False)
+        self.frame.grid(row=0, column=0)
+
+        self.first_left_frame = tk.Frame(self.frame, bg="black", height=60, width=200)
+        self.first_left_frame.grid(row=0, column=0)
+        self.first_left_frame.columnconfigure(0, weight=1)
+        self.first_left_frame.rowconfigure(0, weight=1)
+        self.first_left_frame.grid_propagate(False)
+
+        self.second_left_frame = tk.Frame(self.frame, bg="green", height=580, width=200)
+        self.second_left_frame.grid(row=1, column=0)
+        self.second_left_frame.columnconfigure(0, weight=1)
+        self.second_left_frame.grid_propagate(False)
+        self.second_height = 580
+
+        self.third_left_frame = tk.Frame(self.frame, bg="red", height=60, width=200)
+        self.third_left_frame.grid(row=2, column=0)
+        self.third_left_frame.grid_propagate(False)
+
+        # List which contains the buttons in the left menu
+        self.buttons_left = []
+
+        # Company title
+        label_company_title = tk.Label(self.first_left_frame, text=company_name, bg=bg_company_name, fg="white")
+        label_company_title.grid(row=0, column=0, sticky='news')
+        label_company_title.config(font=(font_company_name, font_size_company_name))
+
+    def resize(self):
+        offset = self.parent.winfo_height() - window_height_initial
+        # height = self.second_height + offset
+        # self.second_height = height
+        # print(self.second_height)
+        self.second_left_frame["height"] = self.second_height + offset
+
+
 class FrameContent:
     """ Right frame content of the window"""
 
@@ -128,8 +167,6 @@ class FrameContent:
             t_column.append(i)
         self.frame.columnconfigure(tuple(t_column), weight=1)
         self.frame.rowconfigure(tuple(t_row), weight=1)
-        print(tuple(t_column))
-        print(tuple(t_row))
 
         section_width = int(self.frame["width"] / self.nb_column)
         section_height = int(self.frame["height"] / self.nb_row)
@@ -167,63 +204,14 @@ class FrameContent:
         self.top_frame.page_title["text"] = "Page : " + self.name
 
 
-class FrameSection:
-    """ Sections Frame located in main window """
-
-    def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id):
-        """ Initialization of these sections buttons """
-
-        self.parent = p_parent
-        self.row = p_row
-        self.column = p_column
-        self.rowspan = p_rowspan
-        self.columspan = p_columnspan
-        self.width = p_w
-        self.height = p_h
-        self.id = p_id
-
-        self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h)
-        self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
-        self.frame.config(highlightbackground="black", highlightthickness=1)
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
-        self.frame.grid_propagate(False)
-
-
-class WidgetGroup:
-    def __init__(self, p_id):
-        self.id = p_id
-        self.widgets = []
-
-    def update_widgets(self):
-        for w in self.widgets:
-            w.update()
-
-
-class LeftFrame:
-    def __init__(self, p_parent):
-        self.frame = tk.Frame(p_parent, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
-        self.frame.grid_propagate(False)
-        self.frame.grid(row=0, column=0, sticky='new')
-        self.frame.columnconfigure(0, weight=1)
-
-        # List which contains the buttons in the left menu
-        self.buttons_left = []
-
-        # Company title
-        label_company_title = tk.Label(self.frame, text=company_name, bg=bg_company_name, fg="white", height=2)
-        label_company_title.grid(row=0, sticky='new', pady=(0, 20))
-        label_company_title.config(font=(font_company_name, font_size_company_name))
-
-
 class ButtonLeftText:
     """ Text buttons located in the left of the window """
 
-    def __init__(self, p_text, p_row, p_parent, p_bg, p_pady, p_command):
+    def __init__(self, p_text, p_row, p_parent, p_bg, p_command):
         self.init_bg = p_bg
 
-        self.button = tk.Button(p_parent.frame, text=p_text, bg=p_bg, fg="white", activebackground="green", borderwidth=1, command=p_command)
-        self.button.grid(row=p_row, sticky='new', pady=p_pady, padx=(5, 5))
+        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", width=18, activebackground="green", borderwidth=1, command=p_command)
+        self.button.grid(row=p_row, sticky='new', pady=(10,0), padx=(5, 5))
         font_left_menu = settings['font']['font_left_menu']
         font_size_left_menu = settings['font_size']['font_size_left_menu']
         self.button.config(font=(font_left_menu, font_size_left_menu))
@@ -261,9 +249,36 @@ class ButtonTopText:
         self.button['fg'] = 'white'
 
 
+class FrameSection:
+    """ Sections Frame located in main window """
+
+    def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id):
+        """ Initialization of these sections buttons """
+
+        self.parent = p_parent
+        self.row = p_row
+        self.column = p_column
+        self.rowspan = p_rowspan
+        self.columspan = p_columnspan
+        self.width = p_w
+        self.height = p_h
+        self.id = p_id
+
+        self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h)
+        self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
+        self.frame.config(highlightbackground="black", highlightthickness=1)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.grid_propagate(False)
 
 
+class WidgetGroup:
+    def __init__(self, p_id):
+        self.id = p_id
+        self.widgets = []
 
-
+    def update_widgets(self):
+        for w in self.widgets:
+            w.update()
 
 
