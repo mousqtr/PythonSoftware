@@ -1,7 +1,8 @@
 import tkinter as tk
 import json
 
-from gui import LeftFrame, RightFrame, FrameContent, ButtonLeftText, ButtonTopText, NewPage
+from gui import LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText
+from new_page import NewPage
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
@@ -22,15 +23,8 @@ left_menu_height_initial = window_height_initial
 frame_right_width_initial = window_width_initial - left_menu_width_initial
 frame_right_height_initial = window_height_initial
 
-company_name = settings['company_name']
-font_company_name = settings['font']['font_company_name']
-font_size_company_name = settings['font_size']['font_size_company_name']
-
-bg_company_name = settings['colors']['bg_company_name']
-bg_top_menu = settings['colors']['bg_top_menu']
-bg_left_menu = settings['colors']['bg_left_menu']
 bg_connect = settings['colors']['bg_connect']
-
+bg_left_menu = settings['colors']['bg_left_menu']
 
 # Root initialization
 root = tk.Tk()
@@ -51,27 +45,15 @@ root.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, 
 # The window is splitted into 2 frames
 frame_left = LeftFrame(root)
 frame_right = RightFrame(root)
+frame_top = TopFrame(frame_right)
 
-# Company title
-label_company_title = tk.Label(frame_left.frame, text=company_name, bg=bg_company_name, fg="white", height=2)
-label_company_title.grid(row=0, sticky='new', pady=(0, 20))
-label_company_title.config(font=(font_company_name, font_size_company_name))
+# Initialization of the top menu buttons (include in frame_top_menu)
+button_settings = ButtonTopText("Paramètres", 1, frame_top.second_top_frame, bg_connect, None)
+
+window_login = Login(root)
+button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_connect, window_login.create_login_window)
 
 
-
-
-# Top menu (include in right_frame)
-top_menu_width = window_width_initial - left_menu_width_initial
-frame_top_menu = tk.Frame(frame_right.frame, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
-frame_top_menu.grid_propagate(False)
-frame_top_menu.grid(row=0, sticky='new')
-frame_top_menu.columnconfigure((0, 1), weight=1)
-
-first_top_frame = tk.Frame(frame_top_menu, bg=bg_top_menu)
-first_top_frame.grid(row=0, column=0, sticky='news')
-second_top_frame = tk.Frame(frame_top_menu, bg=bg_top_menu)
-second_top_frame.grid(row=0, column=1, sticky='nes')
-# second_top_frame.columnconfigure((0, 1, 2), weight=1)
 
 # # Initialization of right sub frames (include in right_frame)
 # Frame_dashboard = FrameContent(Frame_right, "Dashboard", "#e8e8e8")
@@ -104,34 +86,21 @@ second_top_frame.grid(row=0, column=1, sticky='nes')
 # Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
 # Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
 
-
-# Initialization of the top menu buttons (include in frame_top_menu)
-button_settings = ButtonTopText("Paramètres", 1, second_top_frame, bg_connect, None)
-window_login = Login(root)
-button_login = ButtonTopText("Se connecter", 2, second_top_frame, bg_connect, window_login.create_login_window)
-
-button_login2 = tk.Label(first_top_frame, text="Page 1", bg=bg_connect, fg="white")
-button_login2.grid(row=0, column=0, sticky="ns", pady=6, padx=10)
-font_top_menu = settings['font']['font_top_menu']
-font_size_top_menu = settings['font_size']['font_size_top_menu']
-button_login2.config(font=(font_top_menu, font_size_top_menu))
-
-# Initialization of the left menu buttons
 def create_page():
-    NewPage(root, frame_left, frame_right)
+    NewPage(root, frame_left, frame_right, frame_top)
 
 
-Button_create_page = ButtonLeftText(" + ", 2, frame_left, bg_left_menu, (0, 10), create_page)
+# Button create page
+button_create_page = ButtonLeftText(" + ", 20, frame_left, bg_left_menu, (0, 10), create_page)
 
 
 # Detect the window resize
 def window_resize(event):
     """ Resize the window and intern elements """
     offset_width = root.winfo_width() - window_width_initial
-    frame_top_menu["width"] = frame_right_width_initial + offset_width
+    frame_top.frame["width"] = frame_right_width_initial + offset_width
     frame_left.frame["height"] = root.winfo_height()
     frame_right.resize()
-
 
 
 root.bind("<Configure>", window_resize)
