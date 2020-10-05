@@ -59,11 +59,11 @@ class TopFrame:
         self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu)
         self.second_top_frame.grid(row=0, column=1, sticky='nes')
 
-        self.page_title = tk.Label(self.first_top_frame, text=" ", bg=bg_top_menu, fg="white")
-        self.page_title.grid(row=0, column=0, sticky="ns", pady=7, padx=10)
-        font_top_menu = settings['font']['font_top_menu']
-        font_size_top_menu = settings['font_size']['font_size_top_menu']
-        self.page_title.config(font=(font_top_menu, font_size_top_menu))
+        # self.page_title = tk.Label(self.first_top_frame, text=" ", bg=bg_top_menu, fg="white")
+        # self.page_title.grid(row=0, column=0, sticky="ns", pady=7, padx=10)
+        # font_top_menu = settings['font']['font_top_menu']
+        # font_size_top_menu = settings['font_size']['font_size_top_menu']
+        # self.page_title.config(font=(font_top_menu, font_size_top_menu))
 
 
 class RightFrame:
@@ -113,13 +113,13 @@ class LeftFrame:
         self.first_left_frame.rowconfigure(0, weight=1)
         self.first_left_frame.grid_propagate(False)
 
-        self.second_left_frame = tk.Frame(self.frame, bg="green", height=580, width=200)
+        self.second_left_frame = tk.Frame(self.frame, bg=bg_left_menu, height=580, width=200)
         self.second_left_frame.grid(row=1, column=0)
         self.second_left_frame.columnconfigure(0, weight=1)
         self.second_left_frame.grid_propagate(False)
         self.second_height = 580
 
-        self.third_left_frame = tk.Frame(self.frame, bg="red", height=60, width=200)
+        self.third_left_frame = tk.Frame(self.frame, bg=bg_left_menu, height=60, width=200)
         self.third_left_frame.grid(row=2, column=0)
         self.third_left_frame.grid_propagate(False)
 
@@ -201,7 +201,7 @@ class FrameContent:
 
     def change_page(self):
         self.frame.lift()
-        self.top_frame.page_title["text"] = "Page : " + self.name
+        # self.top_frame.page_title["text"] = "Page : " + self.name
 
 
 class ButtonLeftText:

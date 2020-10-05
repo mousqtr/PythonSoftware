@@ -3,6 +3,7 @@ import json
 
 from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText
 from new_page import NewPage
+from edit_page import EditPage
 from login import Login
 from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
@@ -37,14 +38,12 @@ frame_top = TopFrame(frame_right)
 
 # Initialization of the top menu buttons (include in frame_top_menu)
 
-button_edit_page = ButtonTopText("Editer la page", 0, frame_top.second_top_frame, bg_connect, None)
+
 button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.second_top_frame, bg_connect, None)
 button_settings = ButtonLeftText("Paramètres", 0, frame_left.third_left_frame, bg_connect, None)
 
 window_login = Login(root)
 button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_connect, window_login.create_login_window)
-
-
 
 
 # # Widget group
@@ -60,13 +59,19 @@ button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_c
 # Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
 
 
+def edit_page():
+    EditPage(root, frame_left, frame_right, frame_top)
+
+
+button_edit_page = ButtonTopText("Editer la page", 0, frame_top.second_top_frame, bg_connect, edit_page)
+
+
 def create_page():
-    nb_buttons_max = 10
+    nb_buttons_max = 8
     if len(frame_left.buttons_left) < nb_buttons_max:
         NewPage(root, frame_left, frame_right, frame_top)
 
 
-# Button create page
 button_create_page = ButtonLeftText(" + ", 20, frame_left.second_left_frame, bg_left_menu, create_page)
 
 
