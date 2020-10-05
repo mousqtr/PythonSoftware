@@ -60,7 +60,10 @@ button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_c
 
 
 def edit_page():
-    EditPage(root, frame_left, frame_right, frame_top)
+    # print(frame_right.frames_content)
+    # print(frame_right.current_frame)
+    if len(frame_right.frames_content) > 0:
+        EditPage(root, frame_left, frame_right, frame_top)
 
 
 button_edit_page = ButtonTopText("Editer la page", 0, frame_top.second_top_frame, bg_connect, edit_page)

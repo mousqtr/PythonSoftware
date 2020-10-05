@@ -12,13 +12,19 @@ class EditPage:
     def __init__(self, p_parent, p_left_frame, p_right_frame, p_top_frame):
         """ Initialization of create page window """
 
+        frame_content_id = p_right_frame.current_frame
+        frame_content = p_right_frame.frames_content[frame_content_id]
+
         # Parameters
         self.parent = p_parent
-        self.nb_row = 5
-        self.nb_column = 5
+        self.nb_row = frame_content.nb_row
+        self.nb_column = frame_content.nb_column
         self.left_frame = p_left_frame
         self.right_frame = p_right_frame
         self.top_frame = p_top_frame
+
+        print(frame_content.new_sections)
+
 
         # Window handle
         self.window_new_page = tk.Toplevel(self.parent)
@@ -27,7 +33,7 @@ class EditPage:
         window_new_page_icon = tk.PhotoImage(file="img/add.png")
         self.window_new_page.iconphoto(False, window_new_page_icon)
         width_new_page_window = 700
-        height_login_window = 440
+        height_login_window = 410
         screen_width = self.parent.winfo_screenwidth()
         screen_height = self.parent.winfo_screenheight()
         x_cord = int((screen_width / 2) - (width_new_page_window / 2))
@@ -38,35 +44,37 @@ class EditPage:
 
         # Title of the window
         bg_identification = settings['colors']['bg_identification']
-        label_new_page_title = tk.Label(self.window_new_page, text="Modifier la page", bg=bg_identification, fg="white")
-        label_new_page_title.grid(row=0, columnspan=4, sticky='new')
-        font_new_page_title = settings['font']['font_login_title']
-        font_size_new_page_title = settings['font_size']['font_size_login_title']
-        label_new_page_title.config(font=(font_new_page_title, font_size_new_page_title))
 
-        self.part_left = tk.Frame(self.window_new_page, bg="green", width=200, height=400)
-        self.part_left.grid(row=1, column=0, columnspan=1, padx=(5,5), pady=(5,5))
+        self.part_left = tk.Frame(self.window_new_page, bg="#DCDCDC", width=200, height=400)
+        self.part_left.grid(row=0, column=0, columnspan=1, padx=(5,5), pady=(5,5))
         self.part_left.columnconfigure(0, weight=1)
-        self.part_left.rowconfigure((0, 3), weight=10)
-        self.part_left.rowconfigure((1, 2), weight=1)
+        self.part_left.rowconfigure((1, 4), weight=10)
+        self.part_left.rowconfigure((2, 3), weight=1)
         self.part_left.grid_propagate(False)
 
+        self.label = tk.Label(self.part_left, text="Paramètres", bg=bg_identification, fg="white")
+        self.label.grid(row=0, sticky='new')
+        self.label.config(font=("Calibri bold", 12))
+
         self.first_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
-        self.first_left_frame.grid(row=0, column=0)
+        self.first_left_frame.grid(row=1, column=0)
 
         # Frame left
-        self.label_page_name = tk.Label(self.first_left_frame, text="Nom de la page", bg="green", fg="white")
+        self.label_page_name = tk.Label(self.first_left_frame, text="Nom de la page", bg="#DCDCDC", fg="black")
         self.label_page_name.grid(row=0, sticky='nwe')
         self.label_page_name.config(font=("Calibri bold", 12))
 
-        self.entry_page_name = tk.Entry(self.first_left_frame, width=18)
+        frame_content_name = frame_content.name
+        var_name = tk.StringVar()
+        var_name.set(frame_content_name)
+        self.entry_page_name = tk.Entry(self.first_left_frame, width=18, textvariable=var_name)
         self.entry_page_name.grid(row=1, sticky='nwe')
         self.entry_page_name.config(font=("Calibri bold", 12))
 
         self.second_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
-        self.second_left_frame.grid(row=1, column=0)
+        self.second_left_frame.grid(row=2, column=0)
 
-        self.label_grid = tk.Label(self.second_left_frame, text="Nombre de lignes", bg="green", fg="white")
+        self.label_grid = tk.Label(self.second_left_frame, text="Nombre de lignes", bg="#DCDCDC", fg="black")
         self.label_grid.grid(row=0, sticky='nwe')
         self.label_grid.config(font=("Calibri bold", 12))
 
@@ -77,9 +85,9 @@ class EditPage:
         self.entry_page_row.config(font=("Calibri bold", 12))
 
         self.third_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
-        self.third_left_frame.grid(row=2, column=0)
+        self.third_left_frame.grid(row=3, column=0)
 
-        self.label_grid = tk.Label(self.third_left_frame, text="Nombre de colonnes", bg="green", fg="white")
+        self.label_grid = tk.Label(self.third_left_frame, text="Nombre de colonnes", bg="#DCDCDC", fg="black")
         self.label_grid.grid(row=0, sticky='nwe')
         self.label_grid.config(font=("Calibri bold", 12))
 
@@ -90,23 +98,23 @@ class EditPage:
         self.entry_page_column.config(font=("Calibri bold", 12))
 
         self.fourth_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
-        self.fourth_left_frame.grid(row=3, column=0)
+        self.fourth_left_frame.grid(row=4, column=0)
 
         self.button_apply = tk.Button(self.fourth_left_frame, text="Actualiser la grille", width=18, command=self.update_grid)
         self.button_apply.grid(row=0, sticky='nwe')
 
         # Frame center
-        self.part_center = tk.Frame(self.window_new_page, bg="green", width=400, height=400)
-        self.part_center.grid(row=1, column=1, columnspan=2)
+        self.part_center = tk.Frame(self.window_new_page, width=400, height=400, bg="#DCDCDC")
+        self.part_center.grid(row=0, column=1, columnspan=2)
         self.part_center.columnconfigure(0, weight=1)
         self.part_center.rowconfigure((0, 1, 2), weight=1)
         self.part_center.grid_propagate(False)
 
-        self.label = tk.Label(self.part_center, text="Choisir la grille", bg="green", fg="white")
+        self.label = tk.Label(self.part_center, text="Personnaliser la grille", bg=bg_identification, fg="white")
         self.label.grid(row=0, sticky='new')
         self.label.config(font=("Calibri bold", 12))
 
-        self.frame_sections = tk.Frame(self.part_center, bg="green", width=280, height=280)
+        self.frame_sections = tk.Frame(self.part_center, bg="#DCDCDC", width=280, height=280)
         self.frame_sections.grid(row=1)
         self.frame_sections.grid_propagate(False)
 
@@ -133,25 +141,29 @@ class EditPage:
                 ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
-        self.label = tk.Label(self.part_center, text="Clique gauche sur deux cases pour construire \n une zone plus large", bg="green", fg="white")
+        self.label = tk.Label(self.part_center, text="Clique gauche sur deux cases pour construire \n une zone plus large", bg="#DCDCDC", fg="black")
         self.label.grid(row=2, sticky='new')
         self.label.config(font=("Calibri", 12, "bold italic"))
 
-        self.label = tk.Label(self.part_center, text="Clique droit sur une zone pour la subdiviser", bg="green", fg="white")
+        self.label = tk.Label(self.part_center, text="Clique droit sur une zone pour la subdiviser", bg="#DCDCDC", fg="black")
         self.label.grid(row=3, sticky='new', pady=(0, 10))
         self.label.config(font=("Calibri", 12, "bold italic"))
 
         # Frame right
-        self.part_right = tk.Frame(self.window_new_page, bg="green", width=200, height=400)
-        self.part_right.grid(row=1, column=3, columnspan=1, padx=(5,5), pady=(5,5))
+        self.part_right = tk.Frame(self.window_new_page, bg="#DCDCDC", width=200, height=400)
+        self.part_right.grid(row=0, column=3, columnspan=1, padx=(5,5), pady=(5,5))
         self.part_right.rowconfigure((0,1), weight=1)
         self.part_right.grid_propagate(False)
 
-        self.button_delete = tk.Button(self.part_right, text="Supprimer\nla page", width=15, command=None)
-        self.button_delete.grid(padx=30, row=0)
+        self.label = tk.Label(self.part_right, text="Confirmation", bg=bg_identification, fg="white")
+        self.label.grid(row=0, sticky='new')
+        self.label.config(font=("Calibri bold", 12))
 
-        self.button_apply = tk.Button(self.part_right, text="Appliquer les\nmodifications", width=15, command=self.apply)
-        self.button_apply.grid(padx=30, row=1)
+        self.button_delete = tk.Button(self.part_right, text="Supprimer\nla page", width=15, command=None)
+        self.button_delete.grid(row=0, padx=30)
+
+        self.button_apply = tk.Button(self.part_right, text="Créer la page", width=15, command=self.apply)
+        self.button_apply.grid(row=1, padx=30)
 
     def apply(self):
         """ Runs the creation of a page """

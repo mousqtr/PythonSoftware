@@ -77,6 +77,7 @@ class RightFrame:
         self.frame.grid(row=0, column=1, sticky='n')
 
         self.frames_content = []
+        self.current_frame = 0
 
     def resize(self):
         offset_width = self.parent.winfo_width() - window_width_initial
@@ -148,8 +149,11 @@ class FrameContent:
         self.nb_column = p_nb_column
         self.right_frame = p_frame_right
         self.top_frame = p_frame_top
-        self.right_frame.frames_content.append(self)
         self.name = p_name
+
+        self.right_frame.frames_content.append(self)
+        self.id = len(self.right_frame.frames_content) - 1
+        self.right_frame.current_frame = self.id
 
         window_height = settings['dimensions']['window_height']
         top_menu_height = settings['dimensions']['top_menu_height']
@@ -201,6 +205,8 @@ class FrameContent:
 
     def change_page(self):
         self.frame.lift()
+        self.right_frame.current_frame = self.id
+
         # self.top_frame.page_title["text"] = "Page : " + self.name
 
 
