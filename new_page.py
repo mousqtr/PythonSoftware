@@ -125,6 +125,7 @@ class NewPage:
         self.new_sections = []
         self.selected_sections = []
         self.disappeared_sections = []  # Sections that will disappear
+        self.disappeared_sections_group = []
 
         section_id = 0
         for i in range(self.nb_row):
@@ -246,7 +247,8 @@ class NewPage:
                 id = self.get_id_by_pos(i, j)
                 section = self.sections[id]
                 detected_sections.append(section)
-                self.disappeared_sections.append(section)
+
+        self.disappeared_sections_group.append(detected_sections)
 
         # Calculate the gap of this selection
         row_gap = x_max - x_min + 1
@@ -271,6 +273,8 @@ class NewPage:
             self.selected_sections[0].button["bg"] = bg_identification
             self.selected_sections[1].button["bg"] = bg_identification
             self.selected_sections = []
+
+
 
 
 class ButtonSection:
@@ -309,7 +313,8 @@ class ButtonSection:
     def right_click(self, event):
         if self.rowspan != 1 or self.columspan != 1:
             self.destroy()
-            # del self.parent.new_sections[self.id]
+            del self.parent.new_sections[self.id]
+            del self.parent.disappeared_sections_group[self.id]
 
     def destroy(self):
         if self.rowspan != 1 or self.columspan != 1:

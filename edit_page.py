@@ -23,7 +23,7 @@ class EditPage:
         self.right_frame = p_right_frame
         self.top_frame = p_top_frame
 
-        print(frame_content.new_sections)
+        print(frame_content.disappeared_sections)
 
 
         # Window handle

@@ -59,12 +59,6 @@ class TopFrame:
         self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu)
         self.second_top_frame.grid(row=0, column=1, sticky='nes')
 
-        # self.page_title = tk.Label(self.first_top_frame, text=" ", bg=bg_top_menu, fg="white")
-        # self.page_title.grid(row=0, column=0, sticky="ns", pady=7, padx=10)
-        # font_top_menu = settings['font']['font_top_menu']
-        # font_size_top_menu = settings['font_size']['font_size_top_menu']
-        # self.page_title.config(font=(font_top_menu, font_size_top_menu))
-
 
 class RightFrame:
     """ Right frame of the window"""
@@ -134,9 +128,6 @@ class LeftFrame:
 
     def resize(self):
         offset = self.parent.winfo_height() - window_height_initial
-        # height = self.second_height + offset
-        # self.second_height = height
-        # print(self.second_height)
         self.second_left_frame["height"] = self.second_height + offset
 
 
@@ -179,13 +170,18 @@ class FrameContent:
         self.new_sections = []
         self.displayed_sections = []
 
+        disappeared_sections = []
+        for x in p_new_page.disappeared_sections_group:
+            for y in x:
+                disappeared_sections.append(y)
+
         section_id = 0
         for s in p_new_page.sections:
             section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id)
             section_id += 1
-            if s not in p_new_page.disappeared_sections:
+            if s not in disappeared_sections:
                 self.sections.append(section)
-            if s in p_new_page.disappeared_sections:
+            if s in disappeared_sections:
                 s.button.grid_forget()
 
         section_id = 0
