@@ -23,7 +23,7 @@ class EditPage:
         self.right_frame = p_right_frame
         self.top_frame = p_top_frame
 
-        print(frame_content.disappeared_sections)
+        # print(frame_content.disappeared_sections_group)
 
 
         # Window handle
@@ -140,6 +140,16 @@ class EditPage:
             for j in range(self.nb_column):
                 ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
+
+        for l in frame_content.disappeared_sections_group:
+            x1, y1 = l[0].row, l[0].column
+            x2, y2 = l[-1].row, l[-1].column
+            id1 = self.get_id_by_pos(x1, y1)
+            id2 = self.get_id_by_pos(x2, y2)
+            s1 = self.sections[id1]
+            s2 = self.sections[id2]
+            self.merge_sections(s1, s2)
+
 
         self.label = tk.Label(self.part_center, text="Clique gauche sur deux cases pour construire \n une zone plus large", bg="#DCDCDC", fg="black")
         self.label.grid(row=2, sticky='new')

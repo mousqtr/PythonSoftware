@@ -166,29 +166,31 @@ class FrameContent:
         section_width = int(self.frame["width"] / self.nb_column)
         section_height = int(self.frame["height"] / self.nb_row)
 
-        self.sections = []
-        self.new_sections = []
+        self.sections = []              # list of 1 x 1 sections
+        self.new_sections = []          # list of n x m sections
         self.displayed_sections = []
+        self.disappeared_sections_group = p_new_page.disappeared_sections_group
 
-        disappeared_sections = []
+        # Convert list of list to list
+        self.disappeared_sections = []
         for x in p_new_page.disappeared_sections_group:
             for y in x:
-                disappeared_sections.append(y)
+                self.disappeared_sections.append(y)
 
         section_id = 0
         for s in p_new_page.sections:
             section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id)
             section_id += 1
-            if s not in disappeared_sections:
+            if s not in self.disappeared_sections:
                 self.sections.append(section)
-            if s in disappeared_sections:
+            if s in self.disappeared_sections:
                 s.button.grid_forget()
 
         section_id = 0
         for s in p_new_page.new_sections:
-            width = section_width * s.columspan
+            width = section_width * s.columnspan
             height = section_height * s.rowspan
-            section = FrameSection(self, s.row, s.column, s.rowspan, s.columspan, width, height, section_id)
+            section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id)
             self.new_sections.append(section)
             section_id += 1
 

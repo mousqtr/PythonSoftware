@@ -275,8 +275,6 @@ class NewPage:
             self.selected_sections = []
 
 
-
-
 class ButtonSection:
     """ Sections buttons located in the create page window """
 
@@ -287,7 +285,7 @@ class ButtonSection:
         self.row = p_row
         self.column = p_column
         self.rowspan = p_rowspan
-        self.columspan = p_columnspan
+        self.columnspan = p_columnspan
         self.width = p_w
         self.height = p_h
         self.id = p_id
@@ -305,17 +303,17 @@ class ButtonSection:
             p_parent.new_sections.append(self)
 
     def left_click(self, event):
-        if self.rowspan == 1 and self.columspan == 1:
+        if self.rowspan == 1 and self.columnspan == 1:
             self.button["bg"] = "green"
             self.parent.selected_sections.append(self)
             self.parent.merge()
 
     def right_click(self, event):
-        if self.rowspan != 1 or self.columspan != 1:
+        if self.rowspan != 1 or self.columnspan != 1:
             self.destroy()
             del self.parent.new_sections[self.id]
             del self.parent.disappeared_sections_group[self.id]
 
     def destroy(self):
-        if self.rowspan != 1 or self.columspan != 1:
+        if self.rowspan != 1 or self.columnspan != 1:
             self.button.grid_forget()
