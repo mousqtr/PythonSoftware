@@ -311,8 +311,9 @@ class ButtonSection:
     def right_click(self, event):
         if self.rowspan != 1 or self.columnspan != 1:
             self.destroy()
-            del self.parent.new_sections[self.id]
-            del self.parent.disappeared_sections_group[self.id]
+            id = self.parent.new_sections.index(self)
+            del self.parent.new_sections[id]
+            del self.parent.disappeared_sections_group[id]
 
     def destroy(self):
         if self.rowspan != 1 or self.columnspan != 1:

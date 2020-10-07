@@ -134,13 +134,14 @@ class LeftFrame:
 class FrameContent:
     """ Right frame content of the window"""
 
-    def __init__(self, p_frame_right, p_frame_top, p_name, p_background, p_nb_row, p_nb_column, p_new_page):
+    def __init__(self, p_frame_right, p_frame_top, p_name, p_background, p_nb_row, p_nb_column, p_souce_window):
 
         self.nb_row = p_nb_row
         self.nb_column = p_nb_column
         self.right_frame = p_frame_right
         self.top_frame = p_frame_top
         self.name = p_name
+        self.source_window = p_souce_window
 
         self.right_frame.frames_content.append(self)
         self.id = len(self.right_frame.frames_content) - 1
@@ -154,6 +155,18 @@ class FrameContent:
         self.frame.grid(row=1)
         self.frame.grid_propagate(False)
 
+        # Lists which will contain sections
+        self.sections = []              # list of 1 x 1 sections
+        self.new_sections = []          # list of n x m sections
+        self.displayed_sections = []
+
+
+        self.create_sections()
+
+    def create_sections(self):
+
+        self.disappeared_sections_group = self.source_window.disappeared_sections_group
+
         t_row = []
         t_column = []
         for i in range(self.nb_row):
@@ -166,28 +179,23 @@ class FrameContent:
         section_width = int(self.frame["width"] / self.nb_column)
         section_height = int(self.frame["height"] / self.nb_row)
 
-        self.sections = []              # list of 1 x 1 sections
-        self.new_sections = []          # list of n x m sections
-        self.displayed_sections = []
-        self.disappeared_sections_group = p_new_page.disappeared_sections_group
-
         # Convert list of list to list
-        self.disappeared_sections = []
-        for x in p_new_page.disappeared_sections_group:
+        disappeared_sections = []
+        for x in self.source_window.disappeared_sections_group:
             for y in x:
-                self.disappeared_sections.append(y)
+                disappeared_sections.append(y)
 
         section_id = 0
-        for s in p_new_page.sections:
-            section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id)
-            section_id += 1
-            if s not in self.disappeared_sections:
+        for s in self.source_window.sections:
+            if s not in disappeared_sections:
+                section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id)
+                section_id += 1
                 self.sections.append(section)
-            if s in self.disappeared_sections:
-                s.button.grid_forget()
+            # if s in disappeared_sections:
+            #     s.button.grid_forget()
 
         section_id = 0
-        for s in p_new_page.new_sections:
+        for s in self.source_window.new_sections:
             width = section_width * s.columnspan
             height = section_height * s.rowspan
             section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id)
@@ -205,7 +213,11 @@ class FrameContent:
         self.frame.lift()
         self.right_frame.current_frame = self.id
 
-        # self.top_frame.page_title["text"] = "Page : " + self.name
+    def destroy_sections(self):
+        for s in self.sections:
+            s.frame.grid_forget()
+        for s in self.new_sections:
+            s.frame.grid_forget()
 
 
 class ButtonLeftText:
@@ -215,7 +227,7 @@ class ButtonLeftText:
         self.init_bg = p_bg
 
         self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", width=18, activebackground="green", borderwidth=1, command=p_command)
-        self.button.grid(row=p_row, sticky='new', pady=(10,0), padx=(5, 5))
+        self.button.grid(row=p_row, sticky='new', pady=(10, 0), padx=(5, 5))
         font_left_menu = settings['font']['font_left_menu']
         font_size_left_menu = settings['font_size']['font_size_left_menu']
         self.button.config(font=(font_left_menu, font_size_left_menu))
