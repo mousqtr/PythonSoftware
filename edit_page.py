@@ -23,9 +23,6 @@ class EditPage:
         self.right_frame = p_right_frame
         self.top_frame = p_top_frame
 
-        # print(frame_content.disappeared_sections_group)
-
-
         # Window handle
         self.window_new_page = tk.Toplevel(self.parent)
         self.window_new_page.resizable(False, False)
@@ -179,20 +176,40 @@ class EditPage:
 
     def apply(self):
         """ Runs the creation of a page """
+
+        old_sections = self.frame_content.sections
+        old_new_sections = self.frame_content.new_sections
+        old_name = self.frame_content.name
+
+        new_name = self.entry_page_name.get()
+        if (new_name != " ") and (new_name != ""):
+            self.frame_content.name = new_name
+            self.left_frame.buttons_left[self.frame_content_id].button["text"] = new_name
+
+        # Destroy the existing sections
         self.frame_content.destroy_sections()
 
-        name = self.entry_page_name.get()
-        self.frame_content.name = name
+        # Update the frame_content parameters
         self.frame_content.nb_row = self.nb_row
         self.frame_content.nb_column = self.nb_column
         self.frame_content.source_window = self
 
+        # Creation of the sections
         self.frame_content.create_sections()
 
-        name = self.entry_page_name.get()
-        # self.left_frame.buttons_left.append(new_button_left)
+        for s1 in self.frame_content.sections:
+            for s2 in old_sections:
+                if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columspan == s2.columspan):
+                    s1.frame.configure(bg="yellow")
+
+        for s1 in self.frame_content.new_sections:
+            for s2 in old_new_sections:
+                if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columspan == s2.columspan):
+                    s1.frame.configure(bg="yellow")
 
         self.window_new_page.destroy()
+
+
 
     def update_grid(self):
         """ Updates the grid when dimensions are changed """

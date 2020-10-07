@@ -160,10 +160,13 @@ class FrameContent:
         self.new_sections = []          # list of n x m sections
         self.displayed_sections = []
 
-
         self.create_sections()
 
     def create_sections(self):
+
+        self.sections = []
+        self.new_sections = []
+        self.displayed_sections = []
 
         self.disappeared_sections_group = self.source_window.disappeared_sections_group
 
@@ -204,10 +207,10 @@ class FrameContent:
 
         self.displayed_sections = self.sections + self.new_sections
 
-        for i in range(len(self.displayed_sections)):
-            s = self.displayed_sections[i]
-            label = tk.Label(s.frame, text=str(i), bg="blue", fg="white")
-            label.grid(row=0, column=0, sticky='news')
+        # for i in range(len(self.displayed_sections)):
+        #     s = self.displayed_sections[i]
+        #     label = tk.Label(s.frame, text=str(i), bg="blue", fg="white")
+        #     label.grid(row=0, column=0, sticky='news')
 
     def change_page(self):
         self.frame.lift()
