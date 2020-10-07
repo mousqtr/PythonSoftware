@@ -24,25 +24,25 @@ class EditPage:
         self.top_frame = p_top_frame
 
         # Window handle
-        self.window_new_page = tk.Toplevel(self.parent)
-        self.window_new_page.resizable(False, False)
-        self.window_new_page.title("Modifier la page")
+        self.window_edit_page = tk.Toplevel(self.parent)
+        self.window_edit_page.resizable(False, False)
+        self.window_edit_page.title("Modifier la page")
         window_new_page_icon = tk.PhotoImage(file="img/add.png")
-        self.window_new_page.iconphoto(False, window_new_page_icon)
+        self.window_edit_page.iconphoto(False, window_new_page_icon)
         width_new_page_window = 700
         height_login_window = 410
         screen_width = self.parent.winfo_screenwidth()
         screen_height = self.parent.winfo_screenheight()
         x_cord = int((screen_width / 2) - (width_new_page_window / 2))
         y_cord = int((screen_height / 2) - (height_login_window / 2))
-        self.window_new_page.grid_propagate(False)
-        self.window_new_page.geometry("{}x{}+{}+{}".format(width_new_page_window, height_login_window, x_cord, y_cord))
-        self.window_new_page.columnconfigure((0, 1, 2, 3), weight=1)
+        self.window_edit_page.grid_propagate(False)
+        self.window_edit_page.geometry("{}x{}+{}+{}".format(width_new_page_window, height_login_window, x_cord, y_cord))
+        self.window_edit_page.columnconfigure((0, 1, 2, 3), weight=1)
 
         # Title of the window
         bg_identification = settings['colors']['bg_identification']
 
-        self.part_left = tk.Frame(self.window_new_page, bg="#DCDCDC", width=200, height=400)
+        self.part_left = tk.Frame(self.window_edit_page, bg="#DCDCDC", width=200, height=400)
         self.part_left.grid(row=0, column=0, columnspan=1, padx=(5,5), pady=(5,5))
         self.part_left.columnconfigure(0, weight=1)
         self.part_left.rowconfigure((1, 4), weight=10)
@@ -101,7 +101,7 @@ class EditPage:
         self.button_apply.grid(row=0, sticky='nwe')
 
         # Frame center
-        self.part_center = tk.Frame(self.window_new_page, width=400, height=400, bg="#DCDCDC")
+        self.part_center = tk.Frame(self.window_edit_page, width=400, height=400, bg="#DCDCDC")
         self.part_center.grid(row=0, column=1, columnspan=2)
         self.part_center.columnconfigure(0, weight=1)
         self.part_center.rowconfigure((0, 1, 2), weight=1)
@@ -127,8 +127,8 @@ class EditPage:
         section_width = int(self.frame_sections["width"] / self.nb_column)
         section_height = int(self.frame_sections["width"] / self.nb_row)
 
-        self.sections = []
-        self.new_sections = []
+        self.mono_sections = []
+        self.poly_sections = []
         self.selected_sections = []
         self.disappeared_sections = []  # Sections that will disappear
         self.disappeared_sections_group = []
@@ -144,8 +144,8 @@ class EditPage:
             x2, y2 = l[-1].row, l[-1].column
             id1 = self.get_id_by_pos(x1, y1)
             id2 = self.get_id_by_pos(x2, y2)
-            s1 = self.sections[id1]
-            s2 = self.sections[id2]
+            s1 = self.mono_sections[id1]
+            s2 = self.mono_sections[id2]
             self.merge_sections(s1, s2)
 
         self.label = tk.Label(self.part_center, text="Clique gauche sur deux cases pour construire \n une zone plus large", bg="#DCDCDC", fg="black")
@@ -157,7 +157,7 @@ class EditPage:
         self.label.config(font=("Calibri", 12, "bold italic"))
 
         # Frame right
-        self.part_right = tk.Frame(self.window_new_page, bg="#DCDCDC", width=200, height=400)
+        self.part_right = tk.Frame(self.window_edit_page, bg="#DCDCDC", width=200, height=400)
         self.part_right.grid(row=0, column=3, columnspan=1, padx=(5,5), pady=(5,5))
         self.part_right.rowconfigure((0, 1), weight=1)
         self.part_right.grid_propagate(False)
@@ -177,8 +177,8 @@ class EditPage:
     def apply(self):
         """ Runs the creation of a page """
 
-        old_sections = self.frame_content.sections
-        old_new_sections = self.frame_content.new_sections
+        old_mono_sections = self.frame_content.mono_sections
+        old_poly_sections = self.frame_content.poly_sections
         old_name = self.frame_content.name
 
         new_name = self.entry_page_name.get()
@@ -197,17 +197,17 @@ class EditPage:
         # Creation of the sections
         self.frame_content.create_sections()
 
-        for s1 in self.frame_content.sections:
-            for s2 in old_sections:
+        for s1 in self.frame_content.mono_sections:
+            for s2 in old_mono_sections:
                 if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columspan == s2.columspan):
                     s1.frame.configure(bg="yellow")
 
-        for s1 in self.frame_content.new_sections:
-            for s2 in old_new_sections:
+        for s1 in self.frame_content.poly_sections:
+            for s2 in old_poly_sections:
                 if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columspan == s2.columspan):
                     s1.frame.configure(bg="yellow")
 
-        self.window_new_page.destroy()
+        self.window_edit_page.destroy()
 
 
 
@@ -215,10 +215,10 @@ class EditPage:
         """ Updates the grid when dimensions are changed """
 
         # Destroy previous sections buttons
-        for x in self.sections:
+        for x in self.mono_sections:
             x.button.grid_forget()
 
-        for x in self.new_sections:
+        for x in self.poly_sections:
             x.button.grid_forget()
 
         # Get the dimensions in the entries
@@ -240,8 +240,8 @@ class EditPage:
         section_height = int(self.frame_sections["width"] / self.nb_row)
 
         # List of sections
-        self.sections = []              # Initial sections (rowspan = 1 and columnspan = 1)
-        self.new_sections = []          # Sections created after a merge of initial sections
+        self.mono_sections = []              # Initial sections (rowspan = 1 and columnspan = 1)
+        self.poly_sections = []          # Sections created after a merge of initial sections
         self.selected_sections = []     # Sections selected by a click (green ones)
 
         # Creation of initial sections
@@ -283,7 +283,7 @@ class EditPage:
         for i in range(x_min, x_max + 1):
             for j in range(y_min, y_max + 1):
                 id = self.get_id_by_pos(i, j)
-                section = self.sections[id]
+                section = self.mono_sections[id]
                 detected_sections.append(section)
 
         self.disappeared_sections_group.append(detected_sections)
@@ -297,7 +297,7 @@ class EditPage:
         section3_height = row_gap * p_section1.height
         rowspan = row_gap
         columnspan = col_gap
-        section3_id = len(self.new_sections)
+        section3_id = len(self.poly_sections)
 
         # Create the new section
         ButtonSection(self, x_min, y_min, rowspan, columnspan, section3_width, section3_height, section3_id)
@@ -336,9 +336,9 @@ class ButtonSection:
         self.button.bind("<Button-3>", self.right_click)
 
         if p_rowspan == 1 and p_columnspan == 1:
-            p_parent.sections.append(self)
+            p_parent.mono_sections.append(self)
         else:
-            p_parent.new_sections.append(self)
+            p_parent.poly_sections.append(self)
 
     def left_click(self, event):
         if self.rowspan == 1 and self.columnspan == 1:
@@ -349,8 +349,8 @@ class ButtonSection:
     def right_click(self, event):
         if self.rowspan != 1 or self.columnspan != 1:
             self.destroy()
-            id = self.parent.new_sections.index(self)
-            del self.parent.new_sections[id]
+            id = self.parent.poly_sections.index(self)
+            del self.parent.poly_sections[id]
             del self.parent.disappeared_sections_group[id]
 
 

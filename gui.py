@@ -84,12 +84,12 @@ class RightFrame:
             child_page.frame["height"] = self.parent.winfo_height() - top_menu_height_initial
 
             # Resize sections
-            for child in child_page.sections:
+            for child in child_page.mono_sections:
                 child.frame["width"] = int(child_page.frame["width"]/child_page.nb_column)
                 child.frame["height"] = int(child_page.frame["height"] / child_page.nb_row)
 
             # Resize sections
-            for child in child_page.new_sections:
+            for child in child_page.poly_sections:
                 child.frame["width"] = int(child_page.frame["width"]/child_page.nb_column)*child.columspan
                 child.frame["height"] = int(child_page.frame["height"]/child_page.nb_row)*child.rowspan
 
@@ -156,18 +156,18 @@ class FrameContent:
         self.frame.grid_propagate(False)
 
         # Lists which will contain sections
-        self.sections = []              # list of 1 x 1 sections
-        self.new_sections = []          # list of n x m sections
+        self.mono_sections = []              # list of 1 x 1 sections
+        self.poly_sections = []          # list of n x m sections
         self.displayed_sections = []
+        self.disappeared_sections_group = []
 
         self.create_sections()
 
     def create_sections(self):
 
-        self.sections = []
-        self.new_sections = []
+        self.mono_sections = []
+        self.poly_sections = []
         self.displayed_sections = []
-
         self.disappeared_sections_group = self.source_window.disappeared_sections_group
 
         t_row = []
@@ -189,23 +189,23 @@ class FrameContent:
                 disappeared_sections.append(y)
 
         section_id = 0
-        for s in self.source_window.sections:
+        for s in self.source_window.mono_sections:
             if s not in disappeared_sections:
                 section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id)
                 section_id += 1
-                self.sections.append(section)
+                self.mono_sections.append(section)
             # if s in disappeared_sections:
             #     s.button.grid_forget()
 
         section_id = 0
-        for s in self.source_window.new_sections:
+        for s in self.source_window.poly_sections:
             width = section_width * s.columnspan
             height = section_height * s.rowspan
             section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id)
-            self.new_sections.append(section)
+            self.poly_sections.append(section)
             section_id += 1
 
-        self.displayed_sections = self.sections + self.new_sections
+        self.displayed_sections = self.mono_sections + self.poly_sections
 
         # for i in range(len(self.displayed_sections)):
         #     s = self.displayed_sections[i]
@@ -217,9 +217,9 @@ class FrameContent:
         self.right_frame.current_frame = self.id
 
     def destroy_sections(self):
-        for s in self.sections:
+        for s in self.mono_sections:
             s.frame.grid_forget()
-        for s in self.new_sections:
+        for s in self.poly_sections:
             s.frame.grid_forget()
 
 

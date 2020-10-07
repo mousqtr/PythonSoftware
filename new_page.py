@@ -121,8 +121,8 @@ class NewPage:
         section_width = int(self.frame_sections["width"] / self.nb_column)
         section_height = int(self.frame_sections["width"] / self.nb_row)
 
-        self.sections = []
-        self.new_sections = []
+        self.mono_sections = []
+        self.poly_sections = []
         self.selected_sections = []
         self.disappeared_sections = []  # Sections that will disappear
         self.disappeared_sections_group = []
@@ -177,10 +177,10 @@ class NewPage:
         """ Updates the grid when dimensions are changed """
 
         # Destroy previous sections buttons
-        for x in self.sections:
+        for x in self.mono_sections:
             x.button.grid_forget()
 
-        for x in self.new_sections:
+        for x in self.poly_sections:
             x.button.grid_forget()
 
         # Get the dimensions in the entries
@@ -202,8 +202,8 @@ class NewPage:
         section_height = int(self.frame_sections["width"] / self.nb_row)
 
         # List of sections
-        self.sections = []              # Initial sections (rowspan = 1 and columnspan = 1)
-        self.new_sections = []          # Sections created after a merge of initial sections
+        self.mono_sections = []              # Initial sections (rowspan = 1 and columnspan = 1)
+        self.poly_sections = []          # Sections created after a merge of initial sections
         self.selected_sections = []     # Sections selected by a click (green ones)
 
         # Creation of initial sections
@@ -245,7 +245,7 @@ class NewPage:
         for i in range(x_min, x_max + 1):
             for j in range(y_min, y_max + 1):
                 id = self.get_id_by_pos(i, j)
-                section = self.sections[id]
+                section = self.mono_sections[id]
                 detected_sections.append(section)
 
         self.disappeared_sections_group.append(detected_sections)
@@ -259,7 +259,7 @@ class NewPage:
         section3_height = row_gap * p_section1.height
         rowspan = row_gap
         columnspan = col_gap
-        section3_id = len(self.new_sections)
+        section3_id = len(self.poly_sections)
 
         # Create the new section
         ButtonSection(self, x_min, y_min, rowspan, columnspan, section3_width, section3_height, section3_id)
@@ -298,9 +298,9 @@ class ButtonSection:
         self.button.bind("<Button-3>", self.right_click)
 
         if p_rowspan == 1 and p_columnspan == 1:
-            p_parent.sections.append(self)
+            p_parent.mono_sections.append(self)
         else:
-            p_parent.new_sections.append(self)
+            p_parent.poly_sections.append(self)
 
     def left_click(self, event):
         if self.rowspan == 1 and self.columnspan == 1:
@@ -311,8 +311,8 @@ class ButtonSection:
     def right_click(self, event):
         if self.rowspan != 1 or self.columnspan != 1:
             self.destroy()
-            id = self.parent.new_sections.index(self)
-            del self.parent.new_sections[id]
+            id = self.parent.poly_sections.index(self)
+            del self.parent.poly_sections[id]
             del self.parent.disappeared_sections_group[id]
 
     def destroy(self):
