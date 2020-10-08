@@ -32,7 +32,7 @@
     },
     "font_size": {
         "font_size_company_name": 14,
-        "font_size_left_menu": 14,
+        "font_size_left_menu": 12,
         "font_size_top_menu": 12,
         "font_size_right_frame_title": 14,
         "font_size_login_title": 14,

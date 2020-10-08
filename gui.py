@@ -1,5 +1,6 @@
 import tkinter as tk
 import json
+from PIL import Image, ImageTk
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -7,9 +8,9 @@ with open('settings.json') as json_file:
 window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
 top_menu_height_initial = settings['dimensions']['top_menu_height']
-left_menu_width_initial = settings['dimensions']['left_menu_width']
+left_menu_width_initial = 50
 left_menu_height_initial = window_height_initial - top_menu_height_initial
-frame_right_width_initial = window_width_initial - left_menu_width_initial
+
 frame_right_height_initial = left_menu_height_initial
 
 bg_left_menu = settings['colors']['bg_left_menu']
@@ -92,11 +93,13 @@ class MiddleFrame:
 class RightFrame:
     """ Right frame of the window"""
 
-    def __init__(self, p_parent):
+    def __init__(self, p_parent, p_left):
 
         self.parent = p_parent.frame
+        self.frame_left = p_left
 
-        self.frame = tk.Frame(self.parent, bg="green", width=frame_right_width_initial, height=frame_right_height_initial)
+        self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
+        self.frame = tk.Frame(self.parent, width=self.frame_right_width_initial, height=frame_right_height_initial, bg="green")
         self.frame.grid(row=1, column=1, sticky='n')
 
         self.frames_content = []
@@ -105,12 +108,14 @@ class RightFrame:
     def resize(self):
         offset_width = self.parent.winfo_width() - window_width_initial
         offset_height = self.parent.winfo_height() - window_height_initial
-        self.frame["width"] = frame_right_width_initial + offset_width
+
+        self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
+        self.frame["width"] = self.frame_right_width_initial + offset_width
         self.frame["height"] = self.parent.winfo_height()
 
         # Resize the frameContent part
         for child_page in self.frames_content:
-            child_page.frame["width"] = frame_right_width_initial + offset_width
+            child_page.frame["width"] = self.frame_right_width_initial + offset_width
             child_page.frame["height"] = self.parent["height"]
 
             # Resize sections
@@ -125,29 +130,87 @@ class RightFrame:
 
 
 class LeftFrame:
-    def __init__(self, p_parent):
-        self.parent = p_parent.frame
+    def __init__(self, p_middle, p_img_page, p_img_widget, p_img_setting):
+        self.frame_middle = p_middle.frame
 
-        self.frame = tk.Frame(self.parent, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
+        self.frame_initial_width = 50
+        self.frame = tk.Frame(self.frame_middle, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=1, column=0)
 
-        self.first_left_frame = tk.Frame(self.frame, bg=bg_left_menu, height=500, width=200)
-        self.first_left_frame.grid(row=1, column=0)
+        self.static_part = tk.Frame(self.frame, bg=bg_left_menu, height=left_menu_height_initial, width=50)
+        self.static_part.grid(row=1, column=0)
+        self.static_part.columnconfigure(0, weight=1)
+        self.static_part.grid_propagate(False)
+
+        self.moving_part_pages = tk.Frame(self.frame, bg="blue", height=left_menu_height_initial, width=0)
+        self.moving_part_pages.grid(row=1, column=1)
+        self.moving_part_pages.columnconfigure(0, weight=1)
+        self.moving_part_pages.grid_propagate(False)
+        self.part_pages_opened = False
+
+        self.moving_part_widgets = tk.Frame(self.frame, bg="red", height=left_menu_height_initial, width=0)
+        self.moving_part_widgets.grid(row=1, column=1)
+        self.moving_part_widgets.columnconfigure(0, weight=1)
+        self.moving_part_widgets.grid_propagate(False)
+
+        self.moving_part_settings = tk.Frame(self.frame, bg="green", height=left_menu_height_initial, width=0)
+        self.moving_part_settings.grid(row=1, column=1)
+        self.moving_part_settings.columnconfigure(0, weight=1)
+        self.moving_part_settings.grid_propagate(False)
+
+        button1 = tk.Button(self.static_part, image=p_img_page, height=50, borderwidth=0, command=self.show_pages)
+        button1.grid(row=0)
+
+        button2 = tk.Button(self.static_part, image=p_img_widget, height=50, borderwidth=0, command=self.show_widgets)
+        button2.grid(row=1)
+
+        button3 = tk.Button(self.static_part, image=p_img_setting, height=50, borderwidth=0, command=self.show_settings)
+        button3.grid(row=2)
+
+        self.first_left_frame = tk.Frame(self.moving_part_pages, bg=bg_left_menu, height=500, width=200)
+        self.first_left_frame.grid(row=0, column=0)
         self.first_left_frame.columnconfigure(0, weight=1)
         self.first_left_frame.grid_propagate(False)
 
-        self.second_left_frame = tk.Frame(self.frame, bg="purple", height=60, width=200)
-        self.second_left_frame.grid(row=2, column=0)
-        self.second_left_frame.grid_propagate(False)
 
         # List which contains the buttons in the left menu
         self.buttons_left = []
 
+
+
     def resize(self):
-        offset = self.parent.winfo_height() - left_menu_height_initial
-        self.frame["height"] = self.parent.winfo_height()
+        offset = self.frame_middle.winfo_height() - left_menu_height_initial
+        self.frame["height"] = self.frame_middle.winfo_height()
         self.first_left_frame["height"] = 500 + offset
+
+    def show_pages(self):
+        if not self.part_pages_opened:
+            self.frame_initial_width = 200
+            self.frame["width"] = 200
+            self.moving_part_pages["width"] = 150
+            self.moving_part_pages.lift()
+            self.part_pages_opened = True
+        else:
+            self.frame_initial_width = 50
+            self.frame["width"] = 50
+            self.moving_part_pages["width"] = 0
+            self.part_pages_opened = False
+
+
+
+
+    def show_widgets(self):
+        self.moving_part_widgets.lift()
+        self.frame_initial_width = 200
+        self.moving_part_widgets.configure(width=150)
+
+    def show_settings(self):
+        self.moving_part_settings.lift()
+        self.frame_initial_width = 200
+        self.moving_part_widgets.configure(width=150)
+
+
 
 
 class FrameContent:
@@ -248,7 +311,7 @@ class ButtonLeftText:
     def __init__(self, p_text, p_row, p_parent, p_bg, p_command):
         self.init_bg = p_bg
 
-        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", width=18, activebackground="green", borderwidth=1, command=p_command)
+        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", width=17, activebackground="green", borderwidth=1, command=p_command)
         self.button.grid(row=p_row, sticky='new', pady=(10, 0), padx=(5, 5))
         font_left_menu = settings['font']['font_left_menu']
         font_size_left_menu = settings['font_size']['font_size_left_menu']

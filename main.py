@@ -32,21 +32,34 @@ main_window = MainWindow()
 root = main_window.frame
 
 # The window is splitted into 2 frames
+img_pages = tk.PhotoImage(file="img/pages.png")
+img_pages = img_pages.zoom(10)
+img_pages = img_pages.subsample(32)
+
+img_widgets = tk.PhotoImage(file="img/widgets.png")
+img_widgets = img_widgets.zoom(10)
+img_widgets = img_widgets.subsample(32)
+
+img_settings = tk.PhotoImage(file="img/setting.png")
+img_settings = img_settings.zoom(10)
+img_settings = img_settings.subsample(32)
 
 frame_top = TopFrame(root)
 frame_middle = MiddleFrame(root)
 
-frame_left = LeftFrame(frame_middle)
-frame_right = RightFrame(frame_middle)
+frame_left = LeftFrame(frame_middle, img_pages, img_widgets, img_settings)
+frame_right = RightFrame(frame_middle, frame_left)
+
+
 
 # Initialization of the buttons
-
-button_settings = ButtonLeftText("Paramètres", 0, frame_left.second_left_frame, bg_connect, None)
 
 button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame, bg_connect, None)
 
 window_login = Login(root)
 button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, bg_connect, window_login.create_login_window)
+
+
 
 def edit_page():
     if len(frame_right.frames_content) > 0:
