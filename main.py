@@ -93,8 +93,8 @@ def window_resize(event):
     frame_top.frame["width"] = window_width_initial + offset_width
     frame_top.second_top_frame["width"] = 100 + offset_width
     frame_middle.resize()
-    frame_right.resize()
-    frame_left.resize()
+
+
 
 
 root.bind("<Configure>", window_resize)

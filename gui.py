@@ -1,6 +1,6 @@
 import tkinter as tk
 import json
-from PIL import Image, ImageTk
+from functools import partial
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -86,9 +86,14 @@ class MiddleFrame:
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
 
+        self.children_frames = []
+
     def resize(self):
         self.frame["width"] = self.parent.winfo_width()
         self.frame["height"] = self.parent.winfo_height() - top_menu_height_initial
+
+        for x in self.children_frames:
+            x.resize()
 
 class RightFrame:
     """ Right frame of the window"""
@@ -99,11 +104,13 @@ class RightFrame:
         self.frame_left = p_left
 
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
-        self.frame = tk.Frame(self.parent, width=self.frame_right_width_initial, height=frame_right_height_initial, bg="green")
+        self.frame = tk.Frame(self.parent, width=self.frame_right_width_initial, height=frame_right_height_initial)
         self.frame.grid(row=1, column=1, sticky='n')
 
         self.frames_content = []
         self.current_frame = 0
+
+        p_parent.children_frames.append(self)
 
     def resize(self):
         offset_width = self.parent.winfo_width() - window_width_initial
@@ -131,6 +138,7 @@ class RightFrame:
 
 class LeftFrame:
     def __init__(self, p_middle, p_img_page, p_img_widget, p_img_setting):
+        self.parent = p_middle
         self.frame_middle = p_middle.frame
 
         self.frame_initial_width = 50
@@ -147,25 +155,26 @@ class LeftFrame:
         self.moving_part_pages.grid(row=1, column=1)
         self.moving_part_pages.columnconfigure(0, weight=1)
         self.moving_part_pages.grid_propagate(False)
-        self.part_pages_opened = False
 
         self.moving_part_widgets = tk.Frame(self.frame, bg="red", height=left_menu_height_initial, width=0)
         self.moving_part_widgets.grid(row=1, column=1)
         self.moving_part_widgets.columnconfigure(0, weight=1)
         self.moving_part_widgets.grid_propagate(False)
 
-        self.moving_part_settings = tk.Frame(self.frame, bg="green", height=left_menu_height_initial, width=0)
+        self.moving_part_settings = tk.Frame(self.frame, bg="orange", height=left_menu_height_initial, width=0)
         self.moving_part_settings.grid(row=1, column=1)
         self.moving_part_settings.columnconfigure(0, weight=1)
         self.moving_part_settings.grid_propagate(False)
 
-        button1 = tk.Button(self.static_part, image=p_img_page, height=50, borderwidth=0, command=self.show_pages)
+        self.part_pages_opened = [False, False, False]
+
+        button1 = tk.Button(self.static_part, image=p_img_page, height=50, borderwidth=0, command=partial(self.show, self.moving_part_pages, 0))
         button1.grid(row=0)
 
-        button2 = tk.Button(self.static_part, image=p_img_widget, height=50, borderwidth=0, command=self.show_widgets)
+        button2 = tk.Button(self.static_part, image=p_img_widget, height=50, borderwidth=0, command=partial(self.show, self.moving_part_widgets, 1))
         button2.grid(row=1)
 
-        button3 = tk.Button(self.static_part, image=p_img_setting, height=50, borderwidth=0, command=self.show_settings)
+        button3 = tk.Button(self.static_part, image=p_img_setting, height=50, borderwidth=0, command=partial(self.show, self.moving_part_settings, 2))
         button3.grid(row=2)
 
         self.first_left_frame = tk.Frame(self.moving_part_pages, bg=bg_left_menu, height=500, width=200)
@@ -173,43 +182,35 @@ class LeftFrame:
         self.first_left_frame.columnconfigure(0, weight=1)
         self.first_left_frame.grid_propagate(False)
 
-
         # List which contains the buttons in the left menu
         self.buttons_left = []
 
-
+        p_middle.children_frames.append(self)
 
     def resize(self):
         offset = self.frame_middle.winfo_height() - left_menu_height_initial
         self.frame["height"] = self.frame_middle.winfo_height()
         self.first_left_frame["height"] = 500 + offset
 
-    def show_pages(self):
-        if not self.part_pages_opened:
+    def show(self, p_frame, p_id):
+        if not self.part_pages_opened[p_id]:
             self.frame_initial_width = 200
             self.frame["width"] = 200
-            self.moving_part_pages["width"] = 150
-            self.moving_part_pages.lift()
-            self.part_pages_opened = True
+            p_frame["width"] = 150
+            p_frame.lift()
+            for i in range(len(self.part_pages_opened)):
+                if i == p_id:
+                    self.part_pages_opened[i] = True
+                else:
+                    self.part_pages_opened[i] = False
+            self.part_pages_opened[p_id] = True
         else:
             self.frame_initial_width = 50
             self.frame["width"] = 50
-            self.moving_part_pages["width"] = 0
-            self.part_pages_opened = False
+            p_frame["width"] = 0
+            self.part_pages_opened[p_id] = False
 
-
-
-
-    def show_widgets(self):
-        self.moving_part_widgets.lift()
-        self.frame_initial_width = 200
-        self.moving_part_widgets.configure(width=150)
-
-    def show_settings(self):
-        self.moving_part_settings.lift()
-        self.frame_initial_width = 200
-        self.moving_part_widgets.configure(width=150)
-
+        self.parent.resize()
 
 
 
