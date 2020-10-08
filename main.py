@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText
+from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText, MiddleFrame
 from new_page import NewPage
 from edit_page import EditPage
 from login import Login
@@ -20,7 +20,7 @@ window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
 top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = settings['dimensions']['left_menu_width']
-left_menu_height_initial = window_height_initial
+left_menu_height_initial = window_height_initial - top_menu_height_initial
 frame_right_width_initial = window_width_initial - left_menu_width_initial
 frame_right_height_initial = window_height_initial
 
@@ -32,41 +32,28 @@ main_window = MainWindow()
 root = main_window.frame
 
 # The window is splitted into 2 frames
-frame_left = LeftFrame(root)
-frame_right = RightFrame(root)
-frame_top = TopFrame(frame_right)
 
-# Initialization of the top menu buttons (include in frame_top_menu)
+frame_top = TopFrame(root)
+frame_middle = MiddleFrame(root)
 
+frame_left = LeftFrame(frame_middle)
+frame_right = RightFrame(frame_middle)
 
-button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.second_top_frame, bg_connect, None)
-button_settings = ButtonLeftText("Paramètres", 0, frame_left.third_left_frame, bg_connect, None)
+# Initialization of the buttons
+
+button_settings = ButtonLeftText("Paramètres", 0, frame_left.second_left_frame, bg_connect, None)
+
+button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame, bg_connect, None)
 
 window_login = Login(root)
-button_login = ButtonTopText("Se connecter", 2, frame_top.second_top_frame, bg_connect, window_login.create_login_window)
-
-
-# # Widget group
-# Widget_group_1 = WidgetGroup(1)
-# Widget_group_2 = WidgetGroup(2)
-#
-# # Widgets
-# Widget_summary = Summary(Frame_dashboard, Widget_group_1, 1)
-# Widget_donut_chart = DonutChart(Frame_dashboard, Widget_group_1, 2)
-# Widget_research = Filters(Frame_research, Widget_group_1, 1)
-# Widget_table_1 = Table(Frame_research, Widget_group_1, 2)
-# Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
-# Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)
-
+button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, bg_connect, window_login.create_login_window)
 
 def edit_page():
-    # print(frame_right.frames_content)
-    # print(frame_right.current_frame)
     if len(frame_right.frames_content) > 0:
         EditPage(root, frame_left, frame_right, frame_top)
 
 
-button_edit_page = ButtonTopText("Editer la page", 0, frame_top.second_top_frame, bg_connect, edit_page)
+button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame, bg_connect, edit_page)
 
 
 def create_page():
@@ -75,7 +62,7 @@ def create_page():
         NewPage(root, frame_left, frame_right, frame_top)
 
 
-button_create_page = ButtonLeftText(" + ", 20, frame_left.second_left_frame, bg_left_menu, create_page)
+button_create_page = ButtonLeftText(" + ", 20, frame_left.first_left_frame, bg_left_menu, create_page)
 
 
 # Detect the window resize
@@ -89,8 +76,10 @@ def window_resize(event):
 
     """ Resize the window and intern elements """
     offset_width = root.winfo_width() - window_width_initial
-    frame_top.frame["width"] = frame_right_width_initial + offset_width
-    frame_left.frame["height"] = root.winfo_height()
+    offset_height = root.winfo_height() - window_height_initial
+    frame_top.frame["width"] = window_width_initial + offset_width
+    frame_top.second_top_frame["width"] = 100 + offset_width
+    frame_middle.resize()
     frame_right.resize()
     frame_left.resize()
 
@@ -99,3 +88,19 @@ root.bind("<Configure>", window_resize)
 
 # Launch the GUI
 root.mainloop()
+
+
+
+
+
+# # Widget group
+# Widget_group_1 = WidgetGroup(1)
+# Widget_group_2 = WidgetGroup(2)
+#
+# # Widgets
+# Widget_summary = Summary(Frame_dashboard, Widget_group_1, 1)
+# Widget_donut_chart = DonutChart(Frame_dashboard, Widget_group_1, 2)
+# Widget_research = Filters(Frame_research, Widget_group_1, 1)
+# Widget_table_1 = Table(Frame_research, Widget_group_1, 2)
+# Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
+# Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)

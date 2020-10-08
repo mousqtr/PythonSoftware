@@ -1,8 +1,8 @@
 {
     "company_name": "Nom d'entreprise",
     "dimensions": {
-        "window_width": 1000,
-        "window_height": 700,
+        "window_width": 800,
+        "window_height": 600,
         "left_menu_width": 200,
         "top_menu_height": 40,
         "window_login_width": 440,

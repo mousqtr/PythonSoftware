@@ -8,9 +8,9 @@ window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
 top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = settings['dimensions']['left_menu_width']
-left_menu_height_initial = window_height_initial
+left_menu_height_initial = window_height_initial - top_menu_height_initial
 frame_right_width_initial = window_width_initial - left_menu_width_initial
-frame_right_height_initial = window_height_initial
+frame_right_height_initial = left_menu_height_initial
 
 bg_left_menu = settings['colors']['bg_left_menu']
 bg_top_menu = settings['colors']['bg_top_menu']
@@ -47,41 +47,71 @@ class MainWindow:
 class TopFrame:
     def __init__(self, p_parent):
 
-        top_menu_width = window_width_initial - left_menu_width_initial
-        self.frame = tk.Frame(p_parent.frame, bg=bg_top_menu, width=top_menu_width, height=top_menu_height_initial)
+        # top_menu_width = window_width_initial - left_menu_width_initial
+        self.frame = tk.Frame(p_parent, bg=bg_top_menu, width=window_width_initial, height=top_menu_height_initial)
         self.frame.grid_propagate(False)
-        self.frame.grid(row=0, sticky='new')
-        self.frame.columnconfigure((0, 1), weight=1)
+        self.frame.grid(row=0)
 
-        self.first_top_frame = tk.Frame(self.frame, bg=bg_top_menu)
-        self.first_top_frame.grid(row=0, column=0, sticky='news')
+        width_1 = 200
+        self.first_top_frame = tk.Frame(self.frame, bg="blue", width=width_1, height=top_menu_height_initial)
+        self.first_top_frame.grid(row=0, column=0)
+        self.first_top_frame.grid_propagate(False)
+        self.first_top_frame.columnconfigure(0, weight=1)
+        self.first_top_frame.rowconfigure(0, weight=1)
 
-        self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu)
-        self.second_top_frame.grid(row=0, column=1, sticky='nes')
+        width_2 = 100
+        self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=width_2, height=top_menu_height_initial)
+        self.second_top_frame.grid(row=0, column=1)
 
+        width_3 = 500
+        self.third_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=width_3, height=top_menu_height_initial)
+        self.third_top_frame.grid(row=0, column=2)
+
+        # Company title
+
+        label_company_title = tk.Label(self.first_top_frame, text=company_name, bg=bg_company_name, fg="white")
+        label_company_title.grid(row=0, column=0, sticky='news')
+        label_company_title.config(font=(font_company_name, font_size_company_name))
+
+
+class MiddleFrame:
+    def __init__(self, p_parent):
+
+        self.parent = p_parent
+
+        self.frame = tk.Frame(p_parent, bg="red", width=window_width_initial, height=window_height_initial - top_menu_height_initial)
+        self.frame.grid_propagate(False)
+        self.frame.grid(row=1)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+
+    def resize(self):
+        self.frame["width"] = self.parent.winfo_width()
+        self.frame["height"] = self.parent.winfo_height() - top_menu_height_initial
 
 class RightFrame:
     """ Right frame of the window"""
 
     def __init__(self, p_parent):
 
-        self.parent = p_parent
+        self.parent = p_parent.frame
 
-        self.frame = tk.Frame(p_parent, bg="black", width=frame_right_width_initial, height=frame_right_height_initial)
-        self.frame.grid(row=0, column=1, sticky='n')
+        self.frame = tk.Frame(self.parent, bg="green", width=frame_right_width_initial, height=frame_right_height_initial)
+        self.frame.grid(row=1, column=1, sticky='n')
 
         self.frames_content = []
         self.current_frame = 0
 
     def resize(self):
         offset_width = self.parent.winfo_width() - window_width_initial
+        offset_height = self.parent.winfo_height() - window_height_initial
         self.frame["width"] = frame_right_width_initial + offset_width
         self.frame["height"] = self.parent.winfo_height()
 
         # Resize the frameContent part
         for child_page in self.frames_content:
             child_page.frame["width"] = frame_right_width_initial + offset_width
-            child_page.frame["height"] = self.parent.winfo_height() - top_menu_height_initial
+            child_page.frame["height"] = self.parent["height"]
 
             # Resize sections
             for child in child_page.mono_sections:
@@ -96,39 +126,28 @@ class RightFrame:
 
 class LeftFrame:
     def __init__(self, p_parent):
-        self.parent = p_parent
+        self.parent = p_parent.frame
 
-        self.frame = tk.Frame(p_parent, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
+        self.frame = tk.Frame(self.parent, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
         self.frame.grid_propagate(False)
-        self.frame.grid(row=0, column=0)
+        self.frame.grid(row=1, column=0)
 
-        self.first_left_frame = tk.Frame(self.frame, bg="black", height=60, width=200)
-        self.first_left_frame.grid(row=0, column=0)
+        self.first_left_frame = tk.Frame(self.frame, bg=bg_left_menu, height=500, width=200)
+        self.first_left_frame.grid(row=1, column=0)
         self.first_left_frame.columnconfigure(0, weight=1)
-        self.first_left_frame.rowconfigure(0, weight=1)
         self.first_left_frame.grid_propagate(False)
 
-        self.second_left_frame = tk.Frame(self.frame, bg=bg_left_menu, height=580, width=200)
-        self.second_left_frame.grid(row=1, column=0)
-        self.second_left_frame.columnconfigure(0, weight=1)
+        self.second_left_frame = tk.Frame(self.frame, bg="purple", height=60, width=200)
+        self.second_left_frame.grid(row=2, column=0)
         self.second_left_frame.grid_propagate(False)
-        self.second_height = 580
-
-        self.third_left_frame = tk.Frame(self.frame, bg=bg_left_menu, height=60, width=200)
-        self.third_left_frame.grid(row=2, column=0)
-        self.third_left_frame.grid_propagate(False)
 
         # List which contains the buttons in the left menu
         self.buttons_left = []
 
-        # Company title
-        label_company_title = tk.Label(self.first_left_frame, text=company_name, bg=bg_company_name, fg="white")
-        label_company_title.grid(row=0, column=0, sticky='news')
-        label_company_title.config(font=(font_company_name, font_size_company_name))
-
     def resize(self):
-        offset = self.parent.winfo_height() - window_height_initial
-        self.second_left_frame["height"] = self.second_height + offset
+        offset = self.parent.winfo_height() - left_menu_height_initial
+        self.frame["height"] = self.parent.winfo_height()
+        self.first_left_frame["height"] = 500 + offset
 
 
 class FrameContent:
