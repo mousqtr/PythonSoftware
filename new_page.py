@@ -158,12 +158,12 @@ class NewPage:
         """ Runs the creation of a page """
 
         name = self.entry_page_name.get()
-        new_frame_content = FrameContent(self.right_frame, self.top_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
+        new_frame_content = FrameContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
 
         row = len(self.left_frame.buttons_left) + 1
         name = self.entry_page_name.get()
         bg_left_menu = settings['colors']['bg_left_menu']
-        new_button_left = ButtonLeftText(name, row, self.left_frame.first_left_frame, bg_left_menu, new_frame_content.change_page)
+        new_button_left = ButtonLeftText(name, row, self.left_frame.moving_part_pages, "white", new_frame_content.change_page)
         self.left_frame.buttons_left.append(new_button_left)
 
 

@@ -1,5 +1,6 @@
 import tkinter as tk
 import json
+from functools import partial
 
 from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText, MiddleFrame
 from new_page import NewPage
@@ -24,6 +25,7 @@ left_menu_height_initial = window_height_initial - top_menu_height_initial
 frame_right_width_initial = window_width_initial - left_menu_width_initial
 frame_right_height_initial = window_height_initial
 
+
 bg_connect = settings['colors']['bg_connect']
 bg_left_menu = settings['colors']['bg_left_menu']
 
@@ -32,29 +34,38 @@ main_window = MainWindow()
 root = main_window.frame
 
 # The window is splitted into 2 frames
-img_pages = tk.PhotoImage(file="img/pages.png")
-img_pages = img_pages.zoom(10)
-img_pages = img_pages.subsample(32)
+img_pages = tk.PhotoImage(file="img/pages2.png")
+img_widgets = tk.PhotoImage(file="img/widgets2.png")
+img_settings = tk.PhotoImage(file="img/setting2.png")
 
-img_widgets = tk.PhotoImage(file="img/widgets.png")
-img_widgets = img_widgets.zoom(10)
-img_widgets = img_widgets.subsample(32)
+img_pages2 = tk.PhotoImage(file="img/pages3.png")
+img_widgets2 = tk.PhotoImage(file="img/widgets3.png")
+img_settings2 = tk.PhotoImage(file="img/setting3.png")
 
-img_settings = tk.PhotoImage(file="img/setting.png")
-img_settings = img_settings.zoom(10)
-img_settings = img_settings.subsample(32)
 
-frame_top = TopFrame(root)
+list_img_1 = [img_pages, img_widgets, img_settings]
+list_img_2 = [img_pages2, img_widgets2, img_settings2]
+
+
+img_logo = tk.PhotoImage(file="img/logo.png")
+img_logo = img_logo.zoom(4)
+img_logo = img_logo.subsample(32)
+
+frame_top = TopFrame(root, img_logo)
 frame_middle = MiddleFrame(root)
 
-frame_left = LeftFrame(frame_middle, img_pages, img_widgets, img_settings)
+frame_left = LeftFrame(frame_middle, frame_top, list_img_1, list_img_2)
 frame_right = RightFrame(frame_middle, frame_left)
 
 
-
 # Initialization of the buttons
+def edit_widgets(p_right_frame):
+    if len(frame_right.frames_content) > 0:
+        frame_content_id = p_right_frame.current_frame
+        frame_content = p_right_frame.frames_content[frame_content_id]
+        frame_content.edit_widgets()
 
-button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame, bg_connect, None)
+button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame, bg_connect, partial(edit_widgets, frame_right))
 
 window_login = Login(root)
 button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, bg_connect, window_login.create_login_window)
@@ -66,16 +77,17 @@ def edit_page():
         EditPage(root, frame_left, frame_right, frame_top)
 
 
+
 button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame, bg_connect, edit_page)
 
 
 def create_page():
-    nb_buttons_max = 8
+    nb_buttons_max = 11
     if len(frame_left.buttons_left) < nb_buttons_max:
         NewPage(root, frame_left, frame_right, frame_top)
 
 
-button_create_page = ButtonLeftText(" + ", 20, frame_left.first_left_frame, bg_left_menu, create_page)
+button_create_page = ButtonLeftText(" + ", 20, frame_left.moving_part_pages, "white", create_page)
 
 
 # Detect the window resize
@@ -90,8 +102,7 @@ def window_resize(event):
     """ Resize the window and intern elements """
     offset_width = root.winfo_width() - window_width_initial
     offset_height = root.winfo_height() - window_height_initial
-    frame_top.frame["width"] = window_width_initial + offset_width
-    frame_top.second_top_frame["width"] = 100 + offset_width
+    frame_top.resize()
     frame_middle.resize()
 
 

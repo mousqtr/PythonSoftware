@@ -1,9 +1,9 @@
 {
-    "company_name": "Nom d'entreprise",
+    "company_name": "Sunny Software",
     "dimensions": {
         "window_width": 800,
         "window_height": 600,
-        "left_menu_width": 200,
+        "left_menu_width": 250,
         "top_menu_height": 40,
         "window_login_width": 440,
         "window_login_height": 250
@@ -13,7 +13,7 @@
         "second": "Affectation"
     },
     "colors": {
-        "bg_company_name": "orange",
+        "bg_company_name": "#8989ff",
         "bg_top_menu": "#333333",
         "bg_left_menu": "#333333",
         "bg_connect": "#333333",

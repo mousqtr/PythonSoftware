@@ -1,6 +1,7 @@
 import tkinter as tk
 import json
 from functools import partial
+from widgets.summary.new_summary import Summary
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -46,22 +47,31 @@ class MainWindow:
 
 
 class TopFrame:
-    def __init__(self, p_parent):
+    def __init__(self, p_parent, p_icon):
+
+        self.parent = p_parent
 
         # top_menu_width = window_width_initial - left_menu_width_initial
         self.frame = tk.Frame(p_parent, bg=bg_top_menu, width=window_width_initial, height=top_menu_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=0)
 
-        width_1 = 200
-        self.first_top_frame = tk.Frame(self.frame, bg="blue", width=width_1, height=top_menu_height_initial)
+        # width_1 = 250
+        # self.first_top_frame = tk.Frame(self.frame, bg="blue", width=width_1, height=top_menu_height_initial)
+        # self.first_top_frame.grid(row=0, column=0)
+        # self.first_top_frame.grid_propagate(False)
+        # self.first_top_frame.columnconfigure(0, weight=1)
+        # self.first_top_frame.rowconfigure(0, weight=1)
+
+        self.width_first_frame = 50
+        self.first_top_frame = tk.Frame(self.frame, bg="blue", width=self.width_first_frame, height=top_menu_height_initial)
         self.first_top_frame.grid(row=0, column=0)
         self.first_top_frame.grid_propagate(False)
         self.first_top_frame.columnconfigure(0, weight=1)
         self.first_top_frame.rowconfigure(0, weight=1)
 
-        width_2 = 100
-        self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=width_2, height=top_menu_height_initial)
+        self.width_second_frame = 250
+        self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=self.width_second_frame, height=top_menu_height_initial)
         self.second_top_frame.grid(row=0, column=1)
 
         width_3 = 500
@@ -70,9 +80,33 @@ class TopFrame:
 
         # Company title
 
-        label_company_title = tk.Label(self.first_top_frame, text=company_name, bg=bg_company_name, fg="white")
-        label_company_title.grid(row=0, column=0, sticky='news')
-        label_company_title.config(font=(font_company_name, font_size_company_name))
+        self.label_company_title = tk.Label(self.first_top_frame, text=company_name, bg=bg_company_name, fg="white")
+        self.label_company_title.config(font=(font_company_name, font_size_company_name))
+
+        self.button_company = tk.Button(self.first_top_frame, image=p_icon, height=50, borderwidth=0, command=None)
+        self.button_company.grid(row=0)
+
+    def resize(self):
+        offset_width = self.parent.winfo_width() - window_width_initial
+        self.frame["width"] = window_width_initial + offset_width
+        self.second_top_frame["width"] = self.width_second_frame + offset_width
+
+    def open(self, p_bool):
+        if p_bool == True:
+            self.width_first_frame = 250
+            self.first_top_frame["width"] = 250
+            self.width_second_frame = 50
+            self.resize()
+            self.label_company_title.grid(row=0, column=0, sticky='news')
+            self.button_company.grid_forget()
+        else:
+            self.width_first_frame = 50
+            self.first_top_frame["width"] = 50
+            self.width_second_frame = 250
+            self.resize()
+            self.label_company_title.grid_forget()
+            self.button_company.grid(row=0, column=0, sticky='news')
+
 
 
 class MiddleFrame:
@@ -136,95 +170,129 @@ class RightFrame:
                 child.frame["height"] = int(child_page.frame["height"]/child_page.nb_row)*child.rowspan
 
 
+
 class LeftFrame:
-    def __init__(self, p_middle, p_img_page, p_img_widget, p_img_setting):
-        self.parent = p_middle
+    def __init__(self, p_middle, p_top_frame, p_list_img_1, p_list_img_2):
+        self.middle = p_middle
+        self.frame_top = p_top_frame
         self.frame_middle = p_middle.frame
+        self.list_img_1 = p_list_img_1
+        self.list_img_2 = p_list_img_2
+
+        for i in range(len(self.list_img_1)):
+            self.list_img_1[i] = self.list_img_1[i].zoom(10)
+            self.list_img_1[i] = self.list_img_1[i].subsample(32)
+            self.list_img_2[i] = self.list_img_2[i].zoom(10)
+            self.list_img_2[i] = self.list_img_2[i].subsample(32)
+
+
+        bg_left = "#42526C"
 
         self.frame_initial_width = 50
-        self.frame = tk.Frame(self.frame_middle, bg=bg_left_menu, width=left_menu_width_initial, height=left_menu_height_initial)
+        self.frame = tk.Frame(self.frame_middle, bg=bg_left, width=left_menu_width_initial, height=left_menu_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=1, column=0)
 
-        self.static_part = tk.Frame(self.frame, bg=bg_left_menu, height=left_menu_height_initial, width=50)
+        self.static_part = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=50)
         self.static_part.grid(row=1, column=0)
         self.static_part.columnconfigure(0, weight=1)
         self.static_part.grid_propagate(False)
 
-        self.moving_part_pages = tk.Frame(self.frame, bg="blue", height=left_menu_height_initial, width=0)
+        self.moving_part_pages = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
         self.moving_part_pages.grid(row=1, column=1)
         self.moving_part_pages.columnconfigure(0, weight=1)
         self.moving_part_pages.grid_propagate(False)
 
-        self.moving_part_widgets = tk.Frame(self.frame, bg="red", height=left_menu_height_initial, width=0)
+        self.moving_part_widgets = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
         self.moving_part_widgets.grid(row=1, column=1)
         self.moving_part_widgets.columnconfigure(0, weight=1)
         self.moving_part_widgets.grid_propagate(False)
 
-        self.moving_part_settings = tk.Frame(self.frame, bg="orange", height=left_menu_height_initial, width=0)
+        self.moving_part_settings = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
         self.moving_part_settings.grid(row=1, column=1)
         self.moving_part_settings.columnconfigure(0, weight=1)
         self.moving_part_settings.grid_propagate(False)
 
         self.part_pages_opened = [False, False, False]
 
-        button1 = tk.Button(self.static_part, image=p_img_page, height=50, borderwidth=0, command=partial(self.show, self.moving_part_pages, 0))
-        button1.grid(row=0)
+        self.buttons = [tk.Button() for i in range(3)]
 
-        button2 = tk.Button(self.static_part, image=p_img_widget, height=50, borderwidth=0, command=partial(self.show, self.moving_part_widgets, 1))
-        button2.grid(row=1)
+        self.buttons[0] = tk.Button(self.static_part, image=self.list_img_1[0], height=50, borderwidth=0, command=partial(self.show, self.moving_part_pages, 0))
+        self.buttons[0].grid(row=0)
 
-        button3 = tk.Button(self.static_part, image=p_img_setting, height=50, borderwidth=0, command=partial(self.show, self.moving_part_settings, 2))
-        button3.grid(row=2)
+        self.buttons[1] = tk.Button(self.static_part, image=self.list_img_1[1], height=50, borderwidth=0, command=partial(self.show, self.moving_part_widgets, 1))
+        self.buttons[1].grid(row=1)
 
-        self.first_left_frame = tk.Frame(self.moving_part_pages, bg=bg_left_menu, height=500, width=200)
-        self.first_left_frame.grid(row=0, column=0)
-        self.first_left_frame.columnconfigure(0, weight=1)
-        self.first_left_frame.grid_propagate(False)
+        self.buttons[2] = tk.Button(self.static_part, image=self.list_img_1[2], height=50, borderwidth=0, command=partial(self.show, self.moving_part_settings, 2))
+        self.buttons[2].grid(row=2)
+
+        label_page = tk.Label(self.moving_part_pages, text="Pages", bg=bg_left, fg="white")
+        label_page.grid(row=0, sticky='nwe')
+        label_page.config(font=("Calibri bold", 12))
+
+        label_widget = tk.Label(self.moving_part_widgets, text="Widgets", bg=bg_left, fg="white")
+        label_widget.grid(row=0, sticky='nwe')
+        label_widget.config(font=("Calibri bold", 12))
+
+        label_setting = tk.Label(self.moving_part_settings, text="Paramètres \ngénéraux", bg=bg_left, fg="white")
+        label_setting.grid(row=0, sticky='nwe')
+        label_setting.config(font=("Calibri bold", 12))
+
 
         # List which contains the buttons in the left menu
         self.buttons_left = []
 
-        p_middle.children_frames.append(self)
+        self.middle.children_frames.append(self)
 
     def resize(self):
         offset = self.frame_middle.winfo_height() - left_menu_height_initial
         self.frame["height"] = self.frame_middle.winfo_height()
-        self.first_left_frame["height"] = 500 + offset
+        self.static_part["height"] = left_menu_height_initial + offset
+        self.moving_part_pages["height"] = left_menu_height_initial + offset
+        self.moving_part_widgets["height"] = left_menu_height_initial + offset
+        self.moving_part_settings["height"] = left_menu_height_initial + offset
 
     def show(self, p_frame, p_id):
         if not self.part_pages_opened[p_id]:
-            self.frame_initial_width = 200
-            self.frame["width"] = 200
-            p_frame["width"] = 150
+            self.frame_initial_width = 250
+            self.frame["width"] = 250
+            p_frame["width"] = 200
             p_frame.lift()
             for i in range(len(self.part_pages_opened)):
                 if i == p_id:
                     self.part_pages_opened[i] = True
+                    self.buttons[i]["image"] = self.list_img_2[i]
                 else:
                     self.part_pages_opened[i] = False
+                    self.buttons[i]["image"] = self.list_img_1[i]
             self.part_pages_opened[p_id] = True
+            self.frame_top.open(True)
         else:
             self.frame_initial_width = 50
             self.frame["width"] = 50
             p_frame["width"] = 0
             self.part_pages_opened[p_id] = False
+            self.frame_top.open(False)
 
-        self.parent.resize()
+            for i in range(len(self.buttons)):
+                self.buttons[i]["image"] = self.list_img_1[i]
+
+        self.middle.resize()
+
+
 
 
 
 class FrameContent:
     """ Right frame content of the window"""
 
-    def __init__(self, p_frame_right, p_frame_top, p_name, p_background, p_nb_row, p_nb_column, p_souce_window):
+    def __init__(self, p_frame_right, p_name, p_background, p_nb_row, p_nb_column, p_source_window):
 
         self.nb_row = p_nb_row
         self.nb_column = p_nb_column
         self.right_frame = p_frame_right
-        self.top_frame = p_frame_top
         self.name = p_name
-        self.source_window = p_souce_window
+        self.source_window = p_source_window
 
         self.right_frame.frames_content.append(self)
         self.id = len(self.right_frame.frames_content) - 1
@@ -243,6 +311,10 @@ class FrameContent:
         self.poly_sections = []          # list of n x m sections
         self.displayed_sections = []
         self.disappeared_sections_group = []
+
+        self.labels_sections = []
+        self.buttons_sections_add = []
+        self.buttons_sections_delete = []
 
         self.create_sections()
 
@@ -290,10 +362,10 @@ class FrameContent:
 
         self.displayed_sections = self.mono_sections + self.poly_sections
 
-        # for i in range(len(self.displayed_sections)):
-        #     s = self.displayed_sections[i]
-        #     label = tk.Label(s.frame, text=str(i), bg="blue", fg="white")
-        #     label.grid(row=0, column=0, sticky='news')
+        self.labels_sections = [tk.Label() for i in range(len(self.displayed_sections))]
+        self.buttons_sections_add = [tk.Button() for i in range(len(self.displayed_sections))]
+        self.buttons_sections_delete = [tk.Button() for i in range(len(self.displayed_sections))]
+
 
     def change_page(self):
         self.frame.lift()
@@ -305,6 +377,41 @@ class FrameContent:
         for s in self.poly_sections:
             s.frame.grid_forget()
 
+    def edit_widgets(self):
+        for i in range(len(self.displayed_sections)):
+            s = self.displayed_sections[i]
+
+            if i == 0:
+                s_width = s.frame.winfo_width()
+                s_height = s.frame.winfo_height()
+                print(s_width)
+                print(s_height)
+                Widget_group_1 = WidgetGroup(1)
+                Widget_summary = Summary(s, Widget_group_1, s_width, s_height)
+            else:
+
+                s.frame["bg"] = "#42526C"
+
+                padx = 5 * s.rowspan
+                pady = 5 * s.columspan
+
+                text = "Widget : " + str(i)
+                self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
+                self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady,pady))
+
+                self.buttons_sections_add[i] = tk.Button(s.frame, text="Ajouter", fg="black")
+                self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady,pady))
+
+                self.buttons_sections_delete[i] = tk.Button(s.frame, text="Supprimer", fg="black")
+                self.buttons_sections_delete[i].grid(row=2, column=0, sticky='news', padx=(padx,padx), pady=(pady,pady))
+
+
+    def destroy_widgets(self):
+        for i in range(len(self.displayed_sections)):
+            self.labels_sections[i].grid_forget()
+            self.buttons_sections_add[i].grid_forget()
+            self.buttons_sections_delete[i].grid_forget()
+
 
 class ButtonLeftText:
     """ Text buttons located in the left of the window """
@@ -312,21 +419,19 @@ class ButtonLeftText:
     def __init__(self, p_text, p_row, p_parent, p_bg, p_command):
         self.init_bg = p_bg
 
-        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="white", width=17, activebackground="green", borderwidth=1, command=p_command)
-        self.button.grid(row=p_row, sticky='new', pady=(10, 0), padx=(5, 5))
-        font_left_menu = settings['font']['font_left_menu']
-        font_size_left_menu = settings['font_size']['font_size_left_menu']
-        self.button.config(font=(font_left_menu, font_size_left_menu))
+        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="black", width=16, activebackground="green", borderwidth=1, command=p_command)
+        self.button.grid(row=p_row, sticky='n', pady=(10, 0), padx=(5, 5))
+        self.button.config(font=("Calibri bold", 12))
         self.button.bind("<Enter>", self.on_enter)
         self.button.bind("<Leave>", self.on_leave)
 
     def on_enter(self, e):
-        self.button['bg'] = 'white'
-        self.button['fg'] = 'black'
+        self.button['bg'] = '#8989ff'
+        self.button['fg'] = 'white'
 
     def on_leave(self, e):
-        self.button['bg'] = self.init_bg
-        self.button['fg'] = 'white'
+        self.button['bg'] = "white"
+        self.button['fg'] = 'black'
 
 
 class ButtonTopText:
@@ -382,5 +487,4 @@ class WidgetGroup:
     def update_widgets(self):
         for w in self.widgets:
             w.update()
-
 

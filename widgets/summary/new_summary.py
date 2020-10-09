@@ -17,7 +17,7 @@ with open('widgets/summary/summary_data.json') as json_file:
 class Summary:
     """ Widget that shows some label and data """
 
-    def __init__(self, p_parent, p_widget_group, p_row):
+    def __init__(self, p_parent, p_widget_group, p_width, p_height):
         """
         Initialization of the summary widget that shows some label and data
 
@@ -28,7 +28,6 @@ class Summary:
 
         # Saving the parameters to use them in each function
         self.parent = p_parent
-        self.row = p_row
         self.widget_group = p_widget_group
 
         # Add this widget to p_parent widgets
@@ -36,12 +35,12 @@ class Summary:
         self.type = "Summary"
 
         # Properties of the widget-
-        frame_height = 200
-        frame_width = 780
-        frame = tk.Frame(p_parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
+        frame_height = p_height
+        frame_width = p_width
+        frame = tk.Frame(p_parent.frame, bg="white", highlightthickness=1)
         frame.grid_propagate(False)
         frame.config(highlightbackground="grey")
-        frame.grid(row=0, column=0, pady=(5, 5))
+        frame.grid(row=0, column=0, sticky="news")
         frame.update_idletasks()  # to display good dimensions with .winfo_width()
         frame.columnconfigure((0, 1, 2, 3), weight=1)
         frame.rowconfigure(0, weight=1)
@@ -53,15 +52,15 @@ class Summary:
         title.config(font=("Calibri bold", 12))
 
         # Creation of the buttons that display data
-        self.nb_column = 4
-        self.nb_row = 2
+        self.nb_column = 1 #4
+        self.nb_row = 1 #2
         self.buttons = [[tk.Button() for j in range(0, self.nb_column)] for i in range(0, self.nb_row)]
         self.button_width = int(frame_width/self.nb_column)
         self.button_height = int((frame_height/self.nb_row)/16)
         for i in range(0, self.nb_row):
             for j in range(0, self.nb_column):
                 self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ", fg="white")
-                self.buttons[i][j].grid(row=i+1, column=j, padx=(10, 10), pady=(10, 10))
+                self.buttons[i][j].grid(row=i+1, column=j, padx=(5, 5), pady=(5, 5))
                 self.buttons[i][j].config(font=("Calibri bold", 10))
                 self.buttons[i][j]['command'] = partial(self.choose_data, i, j)
 
@@ -218,22 +217,25 @@ class Summary:
         Function that loads the content of each button
         """
 
-        # Get all the data contain in the "summary section" of the saving file
-        for x in widgets_data['summary_data']:
-            coord = x.split(',')
-            row = int(coord[0])
-            column = int(coord[1])
-            data = widgets_data['summary_data'][x]
-            bg_color = widgets_data['summary_bg_color'][x]
-            fg_color = widgets_data['summary_fg_color'][x]
-            if data == ' ':
-                data_text = data
-            else:
-                data_text = data + '\n' + str(widgets_data['data'][data])
-            self.buttons[row][column]['text'] = data_text
-            self.buttons[row][column]['bg'] = bg_color
-            self.buttons[row][column]['fg'] = fg_color
+        # # Get all the data contain in the "summary section" of the saving file
+        # for x in widgets_data['summary_data']:
+        #     coord = x.split(',')
+        #     row = int(coord[0])
+        #     column = int(coord[1])
+        #     data = widgets_data['summary_data'][x]
+        #     bg_color = widgets_data['summary_bg_color'][x]
+        #     fg_color = widgets_data['summary_fg_color'][x]
+        #     if data == ' ':
+        #         data_text = data
+        #     else:
+        #         data_text = data + '\n' + str(widgets_data['data'][data])
+        #     self.buttons[row][column]['text'] = data_text
+        #     self.buttons[row][column]['bg'] = bg_color
+        #     self.buttons[row][column]['fg'] = fg_color
 
+        self.buttons[0][0]['text'] = "test"
+        self.buttons[0][0]['bg'] = "red"
+        self.buttons[0][0]['fg'] = "white"
 
     def update(self):
         print("Update Summary")
