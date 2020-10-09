@@ -56,13 +56,6 @@ class TopFrame:
         self.frame.grid_propagate(False)
         self.frame.grid(row=0)
 
-        # width_1 = 250
-        # self.first_top_frame = tk.Frame(self.frame, bg="blue", width=width_1, height=top_menu_height_initial)
-        # self.first_top_frame.grid(row=0, column=0)
-        # self.first_top_frame.grid_propagate(False)
-        # self.first_top_frame.columnconfigure(0, weight=1)
-        # self.first_top_frame.rowconfigure(0, weight=1)
-
         self.width_first_frame = 50
         self.first_top_frame = tk.Frame(self.frame, bg="blue", width=self.width_first_frame, height=top_menu_height_initial)
         self.first_top_frame.grid(row=0, column=0)
@@ -108,7 +101,6 @@ class TopFrame:
             self.button_company.grid(row=0, column=0, sticky='news')
 
 
-
 class MiddleFrame:
     def __init__(self, p_parent):
 
@@ -128,6 +120,7 @@ class MiddleFrame:
 
         for x in self.children_frames:
             x.resize()
+
 
 class RightFrame:
     """ Right frame of the window"""
@@ -150,6 +143,7 @@ class RightFrame:
         offset_width = self.parent.winfo_width() - window_width_initial
         offset_height = self.parent.winfo_height() - window_height_initial
 
+        # Resize the right part
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
         self.frame["width"] = self.frame_right_width_initial + offset_width
         self.frame["height"] = self.parent.winfo_height()
@@ -169,6 +163,9 @@ class RightFrame:
                 child.frame["width"] = int(child_page.frame["width"]/child_page.nb_column)*child.columspan
                 child.frame["height"] = int(child_page.frame["height"]/child_page.nb_row)*child.rowspan
 
+    def update_values(self):
+        self.frame_left.current_frame = self.current_frame
+        self.frame_left.frames_content = self.frames_content
 
 
 class LeftFrame:
@@ -179,12 +176,14 @@ class LeftFrame:
         self.list_img_1 = p_list_img_1
         self.list_img_2 = p_list_img_2
 
+        self.current_frame = 0
+        self.frames_content = []
+
         for i in range(len(self.list_img_1)):
             self.list_img_1[i] = self.list_img_1[i].zoom(10)
             self.list_img_1[i] = self.list_img_1[i].subsample(32)
             self.list_img_2[i] = self.list_img_2[i].zoom(10)
             self.list_img_2[i] = self.list_img_2[i].subsample(32)
-
 
         bg_left = "#42526C"
 
@@ -198,46 +197,25 @@ class LeftFrame:
         self.static_part.columnconfigure(0, weight=1)
         self.static_part.grid_propagate(False)
 
-        self.moving_part_pages = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
-        self.moving_part_pages.grid(row=1, column=1)
-        self.moving_part_pages.columnconfigure(0, weight=1)
-        self.moving_part_pages.grid_propagate(False)
-
-        self.moving_part_widgets = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
-        self.moving_part_widgets.grid(row=1, column=1)
-        self.moving_part_widgets.columnconfigure(0, weight=1)
-        self.moving_part_widgets.grid_propagate(False)
-
-        self.moving_part_settings = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
-        self.moving_part_settings.grid(row=1, column=1)
-        self.moving_part_settings.columnconfigure(0, weight=1)
-        self.moving_part_settings.grid_propagate(False)
-
-        self.part_pages_opened = [False, False, False]
-
+        self.moving_frames = [tk.Frame for i in range(3)]
         self.buttons = [tk.Button() for i in range(3)]
+        self.frames_opened = [False for i in range(3)]
+        self.texts = ["Pages", "Widgets", "Paramètres \ngénéraux"]
 
-        self.buttons[0] = tk.Button(self.static_part, image=self.list_img_1[0], height=50, borderwidth=0, command=partial(self.show, self.moving_part_pages, 0))
-        self.buttons[0].grid(row=0)
+        for i in range(3):
+            self.moving_frames[i] = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
+            self.moving_frames[i].grid(row=1, column=1)
+            self.moving_frames[i].columnconfigure(0, weight=1)
+            self.moving_frames[i].grid_propagate(False)
 
-        self.buttons[1] = tk.Button(self.static_part, image=self.list_img_1[1], height=50, borderwidth=0, command=partial(self.show, self.moving_part_widgets, 1))
-        self.buttons[1].grid(row=1)
+            self.buttons[i] = tk.Button(self.static_part, image=self.list_img_1[i], height=50, borderwidth=0, command=partial(self.show, i))
+            self.buttons[i].grid(row=i)
 
-        self.buttons[2] = tk.Button(self.static_part, image=self.list_img_1[2], height=50, borderwidth=0, command=partial(self.show, self.moving_part_settings, 2))
-        self.buttons[2].grid(row=2)
+            label_page = tk.Label(self.moving_frames[i], text=self.texts[i], bg=bg_left, fg="white")
+            label_page.grid(row=0, sticky='nwe')
+            label_page.config(font=("Calibri bold", 12))
 
-        label_page = tk.Label(self.moving_part_pages, text="Pages", bg=bg_left, fg="white")
-        label_page.grid(row=0, sticky='nwe')
-        label_page.config(font=("Calibri bold", 12))
-
-        label_widget = tk.Label(self.moving_part_widgets, text="Widgets", bg=bg_left, fg="white")
-        label_widget.grid(row=0, sticky='nwe')
-        label_widget.config(font=("Calibri bold", 12))
-
-        label_setting = tk.Label(self.moving_part_settings, text="Paramètres \ngénéraux", bg=bg_left, fg="white")
-        label_setting.grid(row=0, sticky='nwe')
-        label_setting.config(font=("Calibri bold", 12))
-
+        self.widgets_frames = []
 
         # List which contains the buttons in the left menu
         self.buttons_left = []
@@ -245,42 +223,63 @@ class LeftFrame:
         self.middle.children_frames.append(self)
 
     def resize(self):
-        offset = self.frame_middle.winfo_height() - left_menu_height_initial
-        self.frame["height"] = self.frame_middle.winfo_height()
-        self.static_part["height"] = left_menu_height_initial + offset
-        self.moving_part_pages["height"] = left_menu_height_initial + offset
-        self.moving_part_widgets["height"] = left_menu_height_initial + offset
-        self.moving_part_settings["height"] = left_menu_height_initial + offset
 
-    def show(self, p_frame, p_id):
-        if not self.part_pages_opened[p_id]:
+        offset = self.frame_middle.winfo_height() - left_menu_height_initial
+
+        # Resize the entire frame
+        self.frame["height"] = self.frame_middle.winfo_height()
+
+        # Resize the static part
+        self.static_part["height"] = left_menu_height_initial + offset
+
+        # Resire each frame included in moving_frames list
+        for mf in self.moving_frames:
+            mf["height"] = left_menu_height_initial + offset
+
+        # Resire each widget frame included in widgets_frames list
+        for wf in self.widgets_frames:
+            wf["height"] = left_menu_height_initial + offset
+
+
+    def show(self, p_id):
+
+        # When the p_id frame is open
+        if not self.frames_opened[p_id]:
             self.frame_initial_width = 250
             self.frame["width"] = 250
-            p_frame["width"] = 200
-            p_frame.lift()
-            for i in range(len(self.part_pages_opened)):
+            self.moving_frames[p_id]["width"] = 200
+            if p_id == 1 and self.frames_content != []:
+                self.widgets_frames[self.current_frame].grid(row=1, column=1, sticky="news")
+                self.widgets_frames[self.current_frame].lift()
+                print("ok")
+            else:
+                self.moving_frames[p_id].lift()
+
+            # Indicate that this frame is open and change the color of the button
+            for i in range(len(self.frames_opened)):
                 if i == p_id:
-                    self.part_pages_opened[i] = True
+                    self.frames_opened[i] = True
                     self.buttons[i]["image"] = self.list_img_2[i]
                 else:
-                    self.part_pages_opened[i] = False
+                    self.frames_opened[i] = False
                     self.buttons[i]["image"] = self.list_img_1[i]
-            self.part_pages_opened[p_id] = True
+
+            self.frames_opened[p_id] = True
             self.frame_top.open(True)
-        else:
+        else: # When the p_id frame is open
             self.frame_initial_width = 50
             self.frame["width"] = 50
-            p_frame["width"] = 0
-            self.part_pages_opened[p_id] = False
+            self.moving_frames[p_id]["width"] = 0
+            self.frames_opened[p_id] = False
             self.frame_top.open(False)
 
             for i in range(len(self.buttons)):
                 self.buttons[i]["image"] = self.list_img_1[i]
 
+            if p_id == 1 and self.frames_content != []:
+                self.widgets_frames[self.current_frame].grid_forget()
+
         self.middle.resize()
-
-
-
 
 
 class FrameContent:
@@ -295,6 +294,7 @@ class FrameContent:
         self.source_window = p_source_window
 
         self.right_frame.frames_content.append(self)
+        self.right_frame.update_values()
         self.id = len(self.right_frame.frames_content) - 1
         self.right_frame.current_frame = self.id
 
@@ -370,6 +370,7 @@ class FrameContent:
     def change_page(self):
         self.frame.lift()
         self.right_frame.current_frame = self.id
+        self.right_frame.update_values()
 
     def destroy_sections(self):
         for s in self.mono_sections:

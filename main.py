@@ -75,6 +75,7 @@ button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, bg_co
 def edit_page():
     if len(frame_right.frames_content) > 0:
         EditPage(root, frame_left, frame_right, frame_top)
+    # print(frame_left.widgets_frames)
 
 
 
@@ -87,7 +88,7 @@ def create_page():
         NewPage(root, frame_left, frame_right, frame_top)
 
 
-button_create_page = ButtonLeftText(" + ", 20, frame_left.moving_part_pages, "white", create_page)
+button_create_page = ButtonLeftText(" + ", 20, frame_left.moving_frames[0], "white", create_page)
 
 
 # Detect the window resize
@@ -100,8 +101,6 @@ def window_resize(event):
         main_window.height = height
 
     """ Resize the window and intern elements """
-    offset_width = root.winfo_width() - window_width_initial
-    offset_height = root.winfo_height() - window_height_initial
     frame_top.resize()
     frame_middle.resize()
 

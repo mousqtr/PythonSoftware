@@ -5,6 +5,11 @@ from gui import FrameContent, ButtonLeftText
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
+window_width_initial = settings['dimensions']['window_width']
+window_height_initial = settings['dimensions']['window_height']
+top_menu_height_initial = settings['dimensions']['top_menu_height']
+left_menu_width_initial = 50
+left_menu_height_initial = window_height_initial - top_menu_height_initial
 
 class NewPage:
     """ Create a new page window """
@@ -162,15 +167,22 @@ class NewPage:
 
         row = len(self.left_frame.buttons_left) + 1
         name = self.entry_page_name.get()
-        bg_left_menu = settings['colors']['bg_left_menu']
-        new_button_left = ButtonLeftText(name, row, self.left_frame.moving_part_pages, "white", new_frame_content.change_page)
+        new_button_left = ButtonLeftText(name, row, self.left_frame.moving_frames[0], "white", new_frame_content.change_page)
         self.left_frame.buttons_left.append(new_button_left)
 
-
-
-        # self.top_frame.page_title["text"] = "Page : " + name
-
         self.window_new_page.destroy()
+
+        # Create a widget frame for each frame content
+        moving_part_widgets = tk.Frame(self.left_frame.frame, bg="red", height=left_menu_height_initial, width=200)
+        moving_part_widgets.columnconfigure(0, weight=1)
+        moving_part_widgets.grid_propagate(False)
+        self.left_frame.widgets_frames.append(moving_part_widgets)
+
+        # Add a title
+        text = "Widgets : "+ new_frame_content.name
+        label_page = tk.Label(moving_part_widgets, text=text, bg="red", fg="white")
+        label_page.grid(row=0, sticky='nwe')
+        label_page.config(font=("Calibri bold", 12))
 
 
     def update_grid(self):
