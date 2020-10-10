@@ -37,17 +37,17 @@ class Summary:
         # Properties of the widget-
         frame_height = p_height
         frame_width = p_width
-        frame = tk.Frame(p_parent.frame, bg="white", highlightthickness=1)
-        frame.grid_propagate(False)
-        frame.config(highlightbackground="grey")
-        frame.grid(row=0, column=0, sticky="news")
-        frame.update_idletasks()  # to display good dimensions with .winfo_width()
-        frame.columnconfigure((0, 1, 2, 3), weight=1)
-        frame.rowconfigure(0, weight=1)
-        frame.rowconfigure((1, 2), weight=4)
+        self.frame = tk.Frame(p_parent.frame, bg="white", highlightthickness=1)
+        self.frame.grid_propagate(False)
+        self.frame.config(highlightbackground="grey")
+        self.frame.grid(row=0, column=0, sticky="news")
+        self.frame.update_idletasks()  # to display good dimensions with .winfo_width()
+        self.frame.columnconfigure((0, 1, 2, 3), weight=1)
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.rowconfigure((1, 2), weight=4)
 
         # Title of the page
-        title = tk.Label(frame,text="Sommaire", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
+        title = tk.Label(self.frame,text="Sommaire", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
         title.grid(row=0, column=0, columnspan=5, sticky="nwe", ipadx=10, ipady=5)
         title.config(font=("Calibri bold", 12))
 
@@ -59,7 +59,7 @@ class Summary:
         self.button_height = int((frame_height/self.nb_row)/16)
         for i in range(0, self.nb_row):
             for j in range(0, self.nb_column):
-                self.buttons[i][j] = tk.Button(frame, width=self.button_width, height=self.button_height, text=" ", fg="white")
+                self.buttons[i][j] = tk.Button(self.frame, width=self.button_width, height=self.button_height, text=" ", fg="white")
                 self.buttons[i][j].grid(row=i+1, column=j, padx=(5, 5), pady=(5, 5))
                 self.buttons[i][j].config(font=("Calibri bold", 10))
                 self.buttons[i][j]['command'] = partial(self.choose_data, i, j)
@@ -239,3 +239,9 @@ class Summary:
 
     def update(self):
         print("Update Summary")
+
+    def hide(self):
+        self.frame.grid_forget()
+
+    def show(self):
+        self.frame.grid(row=0, column=0, sticky="news")

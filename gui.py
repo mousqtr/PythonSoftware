@@ -106,7 +106,7 @@ class MiddleFrame:
 
         self.parent = p_parent
 
-        self.frame = tk.Frame(p_parent, bg="red", width=window_width_initial, height=window_height_initial - top_menu_height_initial)
+        self.frame = tk.Frame(p_parent, width=window_width_initial, height=window_height_initial - top_menu_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=1)
         self.frame.columnconfigure(0, weight=1)
@@ -200,7 +200,7 @@ class LeftFrame:
         self.moving_frames = [tk.Frame for i in range(3)]
         self.buttons = [tk.Button() for i in range(3)]
         self.frames_opened = [False for i in range(3)]
-        self.texts = ["Pages", "Widgets", "Paramètres \ngénéraux"]
+        self.texts = ["Pages", "Widgets", "Paramètres"]
 
         for i in range(3):
             self.moving_frames[i] = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
@@ -211,7 +211,7 @@ class LeftFrame:
             self.buttons[i] = tk.Button(self.static_part, image=self.list_img_1[i], height=50, borderwidth=0, command=partial(self.show, i))
             self.buttons[i].grid(row=i)
 
-            label_page = tk.Label(self.moving_frames[i], text=self.texts[i], bg=bg_left, fg="white")
+            label_page = tk.Label(self.moving_frames[i], text=self.texts[i], bg="#333333", fg="white")
             label_page.grid(row=0, sticky='nwe')
             label_page.config(font=("Calibri bold", 12))
 
@@ -318,6 +318,9 @@ class FrameContent:
 
         self.create_sections()
 
+        self.widgets = []
+        self.edit_widget_is_opened = False
+
     def create_sections(self):
 
         self.mono_sections = []
@@ -379,35 +382,15 @@ class FrameContent:
 
     def edit_widgets(self, p_list_img_widgets, p_list_title_widgets):
 
-
-        for i in range(len(self.displayed_sections)):
-            s = self.displayed_sections[i]
-
-
-
-            # if i == 0:
-            #     s_width = s.frame.winfo_width()
-            #     s_height = s.frame.winfo_height()
-            #     print(s_width)
-            #     print(s_height)
-            #     Widget_group_1 = WidgetGroup(1)
-            #     Widget_summary = Summary(s, Widget_group_1, s_width, s_height)
-            # else:
-
-            s.frame["bg"] = "#42526C"
-
-            padx = 5 * s.rowspan
-            pady = 5 * s.columspan
-
-            text = "Widget : " + str(i)
-            self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
-            self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
-
-            self.buttons_sections_add[i] = tk.Button(s.frame, text="Ajouter", fg="black", command=partial(self.choose_widget, s, p_list_img_widgets, p_list_title_widgets))
-            self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
-
-            self.buttons_sections_delete[i] = tk.Button(s.frame, text="Supprimer", fg="black")
-            self.buttons_sections_delete[i].grid(row=2, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+        if self.edit_widget_is_opened == False:
+            self.hide_widgets()
+            self.show_edit_widgets(p_list_img_widgets, p_list_title_widgets)
+            self.edit_widget_is_opened = True
+        else:
+            self.show_widgets()
+            self.hide_edit_widgets()
+            self.edit_widget_is_opened = False
+        print(self.edit_widget_is_opened)
 
     def choose_widget(self, p_section, p_list_img_widgets, p_list_title_widgets):
         window_widget_choice = tk.Toplevel(self.right_frame.frame)
@@ -447,7 +430,7 @@ class FrameContent:
             labels_widgets[i].config(font=("Calibri bold", 12))
 
             buttons_widgets[i] = tk.Button(window_widget_choice, image=p_list_img_widgets[i], width=100, height=100, borderwidth=2)
-            buttons_widgets[i]["command"] = partial(self.apply_widget, i)
+            buttons_widgets[i]["command"] = partial(self.apply_widget, i, p_section)
             buttons_widgets[i].grid(row=2, column=i, padx=(5, 5), pady=(0, 0))
 
         for i in range(nb_widgets - 4):
@@ -459,14 +442,55 @@ class FrameContent:
             buttons_widgets[i]["command"] = partial(self.apply_widget, i+4)
             buttons_widgets[i].grid(row=4, column=i, padx=(5, 5), pady=(0, 0))
 
-    def apply_widget(self, p_id_widget):
-        print(p_id_widget)
+    def apply_widget(self, p_id_widget, p_section):
+        # self.hide_edit_widgets()
 
-    def destroy_widgets(self):
+        s_width = p_section.frame.winfo_width()
+        s_height = p_section.frame.winfo_height()
+        widget_group_1 = WidgetGroup(1)
+
+        if p_id_widget == 0:
+            widget_summary = Summary(p_section, widget_group_1, s_width, s_height)
+            self.widgets.append(widget_summary)
+
+        for w in self.widgets:
+            w.show()
+
+        self.hide_widgets()
+
+    def hide_widgets(self):
+        for w in self.widgets:
+            w.hide()
+
+    def show_widgets(self):
+        for w in self.widgets:
+            w.show()
+
+    def show_edit_widgets(self, p_list_img_widgets, p_list_title_widgets):
+        for i in range(len(self.displayed_sections)):
+            s = self.displayed_sections[i]
+
+            s.frame["bg"] = "#42526C"
+
+            padx = 5 * s.rowspan
+            pady = 5 * s.columspan
+
+            text = "Widget : " + str(i)
+            self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
+            self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+
+            self.buttons_sections_add[i] = tk.Button(s.frame, text="Ajouter", fg="black", command=partial(self.choose_widget, s, p_list_img_widgets, p_list_title_widgets))
+            self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+
+            self.buttons_sections_delete[i] = tk.Button(s.frame, text="Supprimer", fg="black")
+            self.buttons_sections_delete[i].grid(row=2, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+
+    def hide_edit_widgets(self):
         for i in range(len(self.displayed_sections)):
             self.labels_sections[i].grid_forget()
             self.buttons_sections_add[i].grid_forget()
             self.buttons_sections_delete[i].grid_forget()
+            self.displayed_sections[i].frame["bg"] = "white"
 
 
 class ButtonLeftText:
@@ -475,7 +499,7 @@ class ButtonLeftText:
     def __init__(self, p_text, p_row, p_parent, p_bg, p_command):
         self.init_bg = p_bg
 
-        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="black", width=16, activebackground="green", borderwidth=1, command=p_command)
+        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="black", width=18, activebackground="#8989ff", borderwidth=1, command=p_command)
         self.button.grid(row=p_row, sticky='n', pady=(10, 0), padx=(5, 5))
         self.button.config(font=("Calibri bold", 12))
         self.button.bind("<Enter>", self.on_enter)
