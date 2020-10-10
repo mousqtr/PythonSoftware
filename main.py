@@ -42,10 +42,18 @@ img_pages2 = tk.PhotoImage(file="img/pages3.png")
 img_widgets2 = tk.PhotoImage(file="img/widgets3.png")
 img_settings2 = tk.PhotoImage(file="img/setting3.png")
 
+img_summary = tk.PhotoImage(file="img/widgets/summary.png")
+img_graph = tk.PhotoImage(file="img/widgets/graph.png")
+img_donut_chart = tk.PhotoImage(file="img/widgets/donut_chart.png")
+img_histogram = tk.PhotoImage(file="img/widgets/histogram.png")
+img_table = tk.PhotoImage(file="img/widgets/table.png")
+img_histogram_graph = tk.PhotoImage(file="img/widgets/histogram_graph.png")
+img_map = tk.PhotoImage(file="img/widgets/map.png")
 
 list_img_1 = [img_pages, img_widgets, img_settings]
 list_img_2 = [img_pages2, img_widgets2, img_settings2]
-
+list_img_widgets = [img_summary, img_donut_chart, img_table, img_map, img_graph, img_histogram, img_histogram_graph]
+list_title_widgets = ["Sommaire", "Graphique\nen anneau", "Table", "Carte", "Graphique", "Histogramme", "Graphe\nHistogramme"]
 
 img_logo = tk.PhotoImage(file="img/logo.png")
 img_logo = img_logo.zoom(4)
@@ -59,13 +67,15 @@ frame_right = RightFrame(frame_middle, frame_left)
 
 
 # Initialization of the buttons
-def edit_widgets(p_right_frame):
+def edit_widgets(p_right_frame, p_list_img_widgets, p_list_title_widgets):
     if len(frame_right.frames_content) > 0:
         frame_content_id = p_right_frame.current_frame
         frame_content = p_right_frame.frames_content[frame_content_id]
-        frame_content.edit_widgets()
+        frame_content.edit_widgets(p_list_img_widgets, p_list_title_widgets)
 
-button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame, bg_connect, partial(edit_widgets, frame_right))
+
+button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame, bg_connect,
+                                         partial(edit_widgets, frame_right, list_img_widgets, list_title_widgets))
 
 window_login = Login(root)
 button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, bg_connect, window_login.create_login_window)

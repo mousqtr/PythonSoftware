@@ -57,7 +57,7 @@ class TopFrame:
         self.frame.grid(row=0)
 
         self.width_first_frame = 50
-        self.first_top_frame = tk.Frame(self.frame, bg="blue", width=self.width_first_frame, height=top_menu_height_initial)
+        self.first_top_frame = tk.Frame(self.frame, width=self.width_first_frame, height=top_menu_height_initial)
         self.first_top_frame.grid(row=0, column=0)
         self.first_top_frame.grid_propagate(False)
         self.first_top_frame.columnconfigure(0, weight=1)
@@ -366,7 +366,6 @@ class FrameContent:
         self.buttons_sections_add = [tk.Button() for i in range(len(self.displayed_sections))]
         self.buttons_sections_delete = [tk.Button() for i in range(len(self.displayed_sections))]
 
-
     def change_page(self):
         self.frame.lift()
         self.right_frame.current_frame = self.id
@@ -378,34 +377,90 @@ class FrameContent:
         for s in self.poly_sections:
             s.frame.grid_forget()
 
-    def edit_widgets(self):
+    def edit_widgets(self, p_list_img_widgets, p_list_title_widgets):
+
+
         for i in range(len(self.displayed_sections)):
             s = self.displayed_sections[i]
 
-            if i == 0:
-                s_width = s.frame.winfo_width()
-                s_height = s.frame.winfo_height()
-                print(s_width)
-                print(s_height)
-                Widget_group_1 = WidgetGroup(1)
-                Widget_summary = Summary(s, Widget_group_1, s_width, s_height)
-            else:
 
-                s.frame["bg"] = "#42526C"
 
-                padx = 5 * s.rowspan
-                pady = 5 * s.columspan
+            # if i == 0:
+            #     s_width = s.frame.winfo_width()
+            #     s_height = s.frame.winfo_height()
+            #     print(s_width)
+            #     print(s_height)
+            #     Widget_group_1 = WidgetGroup(1)
+            #     Widget_summary = Summary(s, Widget_group_1, s_width, s_height)
+            # else:
 
-                text = "Widget : " + str(i)
-                self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
-                self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady,pady))
+            s.frame["bg"] = "#42526C"
 
-                self.buttons_sections_add[i] = tk.Button(s.frame, text="Ajouter", fg="black")
-                self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady,pady))
+            padx = 5 * s.rowspan
+            pady = 5 * s.columspan
 
-                self.buttons_sections_delete[i] = tk.Button(s.frame, text="Supprimer", fg="black")
-                self.buttons_sections_delete[i].grid(row=2, column=0, sticky='news', padx=(padx,padx), pady=(pady,pady))
+            text = "Widget : " + str(i)
+            self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
+            self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
 
+            self.buttons_sections_add[i] = tk.Button(s.frame, text="Ajouter", fg="black", command=partial(self.choose_widget, s, p_list_img_widgets, p_list_title_widgets))
+            self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+
+            self.buttons_sections_delete[i] = tk.Button(s.frame, text="Supprimer", fg="black")
+            self.buttons_sections_delete[i].grid(row=2, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+
+    def choose_widget(self, p_section, p_list_img_widgets, p_list_title_widgets):
+        window_widget_choice = tk.Toplevel(self.right_frame.frame)
+        window_widget_choice.resizable(False, False)
+        window_widget_choice.title("Choix du widget")
+        window_widget_choice_icon = tk.PhotoImage(file="img/grid.png")
+        window_widget_choice.iconphoto(False, window_widget_choice_icon)
+        window_widget_choice_width = 560
+        window_widget_choice_height = 400
+        screen_width = self.right_frame.frame.winfo_screenwidth()
+        screen_height = self.right_frame.frame.winfo_screenheight()
+        x_cord = int((screen_width / 2) - (window_widget_choice_width / 2))
+        y_cord = int((screen_height / 2) - (window_widget_choice_height / 2))
+        window_widget_choice.geometry("{}x{}+{}+{}".format(window_widget_choice_width, window_widget_choice_height, x_cord, y_cord))
+        window_widget_choice.columnconfigure((0, 1, 2, 3), weight=1)
+        window_widget_choice.rowconfigure((0, 1, 3), weight=1)
+        window_widget_choice.rowconfigure((2,4), weight=2)
+        window_widget_choice.grid_propagate(False)
+
+        # Title of the login window
+        bg_identification = settings['colors']['bg_identification']
+        label_login_title = tk.Label(window_widget_choice, text="Choix du widget", bg=bg_identification, fg="white")
+        label_login_title.grid(row=0, sticky='new', pady=(0, 0), columnspan=4)
+        font_login_title = settings['font']['font_login_title']
+        font_size_login_title = settings['font_size']['font_size_login_title']
+        label_login_title.config(font=(font_login_title, font_size_login_title))
+
+
+        # Grid of widgets
+        nb_widgets = len(p_list_img_widgets)
+        buttons_widgets = [tk.Button() for i in range(nb_widgets)]
+        labels_widgets = [tk.Label() for i in range(nb_widgets)]
+        j = 0
+        for i in range(4):
+            labels_widgets[i] = tk.Label(window_widget_choice, text=p_list_title_widgets[i])
+            labels_widgets[i].grid(row=1, column=i, padx=(5, 5), pady=(0, 0))
+            labels_widgets[i].config(font=("Calibri bold", 12))
+
+            buttons_widgets[i] = tk.Button(window_widget_choice, image=p_list_img_widgets[i], width=100, height=100, borderwidth=2)
+            buttons_widgets[i]["command"] = partial(self.apply_widget, i)
+            buttons_widgets[i].grid(row=2, column=i, padx=(5, 5), pady=(0, 0))
+
+        for i in range(nb_widgets - 4):
+            labels_widgets[i] = tk.Label(window_widget_choice, text=p_list_title_widgets[i+4])
+            labels_widgets[i].grid(row=3, column=i, padx=(5, 5), pady=(0, 0))
+            labels_widgets[i].config(font=("Calibri bold", 12))
+
+            buttons_widgets[i] = tk.Button(window_widget_choice, image=p_list_img_widgets[i+4], width=100, height=100, borderwidth=2)
+            buttons_widgets[i]["command"] = partial(self.apply_widget, i+4)
+            buttons_widgets[i].grid(row=4, column=i, padx=(5, 5), pady=(0, 0))
+
+    def apply_widget(self, p_id_widget):
+        print(p_id_widget)
 
     def destroy_widgets(self):
         for i in range(len(self.displayed_sections)):
@@ -449,7 +504,7 @@ class ButtonTopText:
         self.button.bind("<Leave>", self.on_leave)
 
     def on_enter(self, e):
-        self.button['bg'] = 'green'
+        self.button['bg'] = '#8989ff'
         self.button['fg'] = 'white'
 
     def on_leave(self, e):
