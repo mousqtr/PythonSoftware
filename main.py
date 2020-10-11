@@ -88,7 +88,6 @@ def edit_page():
     # print(frame_left.widgets_frames)
 
 
-
 button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame, bg_connect, edit_page)
 
 

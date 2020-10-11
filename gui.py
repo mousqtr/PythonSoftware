@@ -177,6 +177,7 @@ class LeftFrame:
         self.list_img_2 = p_list_img_2
 
         self.current_frame = 0
+        self.current_widget = 0
         self.frames_content = []
 
         for i in range(len(self.list_img_1)):
@@ -215,7 +216,7 @@ class LeftFrame:
             label_page.grid(row=0, sticky='nwe')
             label_page.config(font=("Calibri bold", 12))
 
-        self.widgets_frames = []
+        self.moving_widgets_page = []
 
         # List which contains the buttons in the left menu
         self.buttons_left = []
@@ -237,7 +238,7 @@ class LeftFrame:
             mf["height"] = left_menu_height_initial + offset
 
         # Resire each widget frame included in widgets_frames list
-        for wf in self.widgets_frames:
+        for wf in self.moving_widgets_page:
             wf["height"] = left_menu_height_initial + offset
 
 
@@ -245,17 +246,20 @@ class LeftFrame:
 
         # When the p_id frame is open
         if not self.frames_opened[p_id]:
+
+            # Update sizes
             self.frame_initial_width = 250
             self.frame["width"] = 250
             self.moving_frames[p_id]["width"] = 200
+
+            # Widget moving frame
             if p_id == 1 and self.frames_content != []:
-                self.widgets_frames[self.current_frame].grid(row=1, column=1, sticky="news")
-                self.widgets_frames[self.current_frame].lift()
-                print("ok")
+                self.moving_widgets_page[self.current_frame].grid(row=1, column=1, sticky="news")
+                self.moving_widgets_page[self.current_frame].lift()
             else:
                 self.moving_frames[p_id].lift()
 
-            # Indicate that this frame is open and change the color of the button
+            # Indicate that the frame is open and change the color of the button
             for i in range(len(self.frames_opened)):
                 if i == p_id:
                     self.frames_opened[i] = True
@@ -266,6 +270,7 @@ class LeftFrame:
 
             self.frames_opened[p_id] = True
             self.frame_top.open(True)
+
         else: # When the p_id frame is open
             self.frame_initial_width = 50
             self.frame["width"] = 50
@@ -277,9 +282,15 @@ class LeftFrame:
                 self.buttons[i]["image"] = self.list_img_1[i]
 
             if p_id == 1 and self.frames_content != []:
-                self.widgets_frames[self.current_frame].grid_forget()
+                self.moving_widgets_page[self.current_frame].grid_forget()
 
         self.middle.resize()
+
+    def display(self):
+        # print(self.current_widget)
+        # print(self.current_frame)
+
+        self.frames_content[self.current_frame].frames_configuration_widgets[self.current_widget].lift()
 
 
 class FrameContent:
@@ -287,17 +298,21 @@ class FrameContent:
 
     def __init__(self, p_frame_right, p_name, p_background, p_nb_row, p_nb_column, p_source_window):
 
+        # Transform parameters to class variables
         self.nb_row = p_nb_row
         self.nb_column = p_nb_column
         self.right_frame = p_frame_right
         self.name = p_name
         self.source_window = p_source_window
+        self.frame_left = p_frame_right.frame_left
 
+        # Set parameters to the RightFrame class (add the frame in frame_content list/ set current_frame)
         self.right_frame.frames_content.append(self)
         self.right_frame.update_values()
         self.id = len(self.right_frame.frames_content) - 1
         self.right_frame.current_frame = self.id
 
+        # Creation of the main frame
         window_height = settings['dimensions']['window_height']
         top_menu_height = settings['dimensions']['top_menu_height']
         self.frame_width = self.right_frame.frame["width"]
@@ -307,22 +322,29 @@ class FrameContent:
         self.frame.grid_propagate(False)
 
         # Lists which will contain sections
-        self.mono_sections = []              # list of 1 x 1 sections
-        self.poly_sections = []          # list of n x m sections
-        self.displayed_sections = []
-        self.disappeared_sections_group = []
+        self.mono_sections = []                 # list of 1 x 1 sections
+        self.poly_sections = []                 # list of n x m sections
+        self.displayed_sections = []            # Addition of mono_sections and poly_sections
+        self.disappeared_sections_group = []    # Sections located behind a poly_sections (they will disappeared)
 
+        # Elements that will be used during the "widget configuration" mode
         self.labels_sections = []
         self.buttons_sections_add = []
         self.buttons_sections_delete = []
 
+        # List containing the widgets
+        self.frames_configuration_widgets = []
+        self.widgets = []
+
+        # Creation of the sections
         self.create_sections()
 
-        self.widgets = []
+        # Boolean who indicated if the "widget configuration" mode is open or not
         self.edit_widget_is_opened = False
 
     def create_sections(self):
 
+        # Lists which will contain sections
         self.mono_sections = []
         self.poly_sections = []
         self.displayed_sections = []
@@ -349,17 +371,30 @@ class FrameContent:
         section_id = 0
         for s in self.source_window.mono_sections:
             if s not in disappeared_sections:
-                section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id)
+                section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id, self.frame_left)
                 section_id += 1
                 self.mono_sections.append(section)
-            # if s in disappeared_sections:
-            #     s.button.grid_forget()
+
+
+                # Creation of a widget frame configuration for each section
+                widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="orange", height=200, width=100)
+                widget_setting_frame.grid(row=1, column=0)
+                widget_setting_frame.columnconfigure(0, weight=1)
+                widget_setting_frame.grid_propagate(False)
+                self.frames_configuration_widgets.append(widget_setting_frame)
+
+                text = "Widget : " + str(section_id)
+                label_widget = tk.Label(widget_setting_frame, text=text, bg="green", fg="white")
+                label_widget.grid(row=0, sticky='nwe')
+                label_widget.config(font=("Calibri bold", 12))
+
+        # print(self.frames_configuration_widgets)
 
         section_id = 0
         for s in self.source_window.poly_sections:
             width = section_width * s.columnspan
             height = section_height * s.rowspan
-            section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id)
+            section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id, self.frame_left)
             self.poly_sections.append(section)
             section_id += 1
 
@@ -390,9 +425,10 @@ class FrameContent:
             self.show_widgets()
             self.hide_edit_widgets()
             self.edit_widget_is_opened = False
-        print(self.edit_widget_is_opened)
 
     def choose_widget(self, p_section, p_list_img_widgets, p_list_title_widgets):
+
+        # Creation of the window where you can choose the widget
         window_widget_choice = tk.Toplevel(self.right_frame.frame)
         window_widget_choice.resizable(False, False)
         window_widget_choice.title("Choix du widget")
@@ -417,7 +453,6 @@ class FrameContent:
         font_login_title = settings['font']['font_login_title']
         font_size_login_title = settings['font_size']['font_size_login_title']
         label_login_title.config(font=(font_login_title, font_size_login_title))
-
 
         # Grid of widgets
         nb_widgets = len(p_list_img_widgets)
@@ -445,18 +480,21 @@ class FrameContent:
     def apply_widget(self, p_id_widget, p_section):
         # self.hide_edit_widgets()
 
+        # Get the properties of the current section
         s_width = p_section.frame.winfo_width()
         s_height = p_section.frame.winfo_height()
         widget_group_1 = WidgetGroup(1)
 
+        # If the selected widget is Summary, create a summary widget in the current section
         if p_id_widget == 0:
             widget_summary = Summary(p_section, widget_group_1, s_width, s_height)
             self.widgets.append(widget_summary)
 
-        for w in self.widgets:
-            w.show()
-
+        # Hide the widget to continue in the edit widget mode
         self.hide_widgets()
+
+        # # Creation of a widget configuration frame in the left menu
+        # self.frame_left.create_widget_setting_frame()
 
     def hide_widgets(self):
         for w in self.widgets:
@@ -491,6 +529,7 @@ class FrameContent:
             self.buttons_sections_add[i].grid_forget()
             self.buttons_sections_delete[i].grid_forget()
             self.displayed_sections[i].frame["bg"] = "white"
+
 
 
 class ButtonLeftText:
@@ -539,7 +578,7 @@ class ButtonTopText:
 class FrameSection:
     """ Sections Frame located in main window """
 
-    def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id):
+    def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id, p_frame_left):
         """ Initialization of these sections buttons """
 
         self.parent = p_parent
@@ -550,14 +589,33 @@ class FrameSection:
         self.width = p_w
         self.height = p_h
         self.id = p_id
+        self.frame_left = p_frame_left
 
-        self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h)
+        self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h, bg="white")
         self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
         self.frame.config(highlightbackground="black", highlightthickness=1)
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
         self.frame.grid_propagate(False)
+        self.frame.bind("<Button-1>", self.on_click)
 
+    def on_click(self, e):
+        self.frame['bg'] = '#8989ff'
+        self.frame_left.current_widget = self.id
+        self.frame_left.display()
+
+
+
+class FrameSettingWidget:
+    def __init__(self, p_parent):
+        """ Initialization of these sections buttons """
+
+        self.frame = tk.Frame(p_parent.frame, width=50, height=50, bg="white")
+        self.frame.grid(row=0, column=0 , padx=(5, 5), pady=(5, 5))
+        self.frame.config(highlightbackground="black", highlightthickness=1)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.grid_propagate(False)
 
 class WidgetGroup:
     def __init__(self, p_id):

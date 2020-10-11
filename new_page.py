@@ -162,6 +162,15 @@ class NewPage:
     def apply(self):
         """ Runs the creation of a page """
 
+        # Create a widget frame for each frame content
+        moving_part_widgets = tk.Frame(self.left_frame.frame, bg="#42526C", height=left_menu_height_initial, width=200)
+        moving_part_widgets.columnconfigure(0, weight=1)
+        moving_part_widgets.grid_propagate(False)
+        self.left_frame.moving_widgets_page.append(moving_part_widgets)
+
+
+
+
         name = self.entry_page_name.get()
         new_frame_content = FrameContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
 
@@ -172,17 +181,14 @@ class NewPage:
 
         self.window_new_page.destroy()
 
-        # Create a widget frame for each frame content
-        moving_part_widgets = tk.Frame(self.left_frame.frame, bg="#42526C", height=left_menu_height_initial, width=200)
-        moving_part_widgets.columnconfigure(0, weight=1)
-        moving_part_widgets.grid_propagate(False)
-        self.left_frame.widgets_frames.append(moving_part_widgets)
+
 
         # Add a title
-        text = "Widgets : "+ new_frame_content.name
+        text = "Page : " + new_frame_content.name
         label_page = tk.Label(moving_part_widgets, text=text, bg="#333333", fg="white")
         label_page.grid(row=0, sticky='nwe')
         label_page.config(font=("Calibri bold", 12))
+
 
 
     def update_grid(self):
