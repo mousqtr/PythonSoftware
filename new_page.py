@@ -10,6 +10,7 @@ window_height_initial = settings['dimensions']['window_height']
 top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = 50
 left_menu_height_initial = window_height_initial - top_menu_height_initial
+bg_identification = settings['colors']['bg_identification']
 
 class NewPage:
     """ Create a new page window """
@@ -41,79 +42,89 @@ class NewPage:
         self.window_new_page.geometry("{}x{}+{}+{}".format(width_new_page_window, height_login_window, x_cord, y_cord))
         self.window_new_page.columnconfigure((0, 1, 2, 3), weight=1)
 
-        # Title of the window
-        bg_identification = settings['colors']['bg_identification']
-
+        # Left part of the window
         self.part_left = tk.Frame(self.window_new_page, bg="#DCDCDC", width=200, height=400)
         self.part_left.grid(row=0, column=0, columnspan=1, padx=(5,5), pady=(5,5))
         self.part_left.columnconfigure(0, weight=1)
         self.part_left.rowconfigure((1, 4), weight=10)
         self.part_left.rowconfigure((2, 3), weight=1)
         self.part_left.grid_propagate(False)
-
         self.label = tk.Label(self.part_left, text="Paramètres", bg=bg_identification, fg="white")
         self.label.grid(row=0, sticky='new')
         self.label.config(font=("Calibri bold", 12))
 
+        # Left part of the window - First frame
         self.first_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
         self.first_left_frame.grid(row=1, column=0)
 
-        # Frame left
+        # Left part of the window - First frame - Label page name
         self.label_page_name = tk.Label(self.first_left_frame, text="Nom de la page", bg="#DCDCDC", fg="black")
         self.label_page_name.grid(row=0, sticky='nwe')
         self.label_page_name.config(font=("Calibri bold", 12))
 
+        # Left part of the window - First frame - Entry page name
         self.entry_page_name = tk.Entry(self.first_left_frame, width=18)
         self.entry_page_name.grid(row=1, sticky='nwe')
         self.entry_page_name.config(font=("Calibri bold", 12))
 
+        # Left part of the window - Second frame
         self.second_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
         self.second_left_frame.grid(row=2, column=0)
 
+        # Left part of the window - Second frame - Label nb line
         self.label_grid = tk.Label(self.second_left_frame, text="Nombre de lignes", bg="#DCDCDC", fg="black")
         self.label_grid.grid(row=0, sticky='nwe')
         self.label_grid.config(font=("Calibri bold", 12))
 
+        # Left part of the window - Second frame - Entry nb line
         str_nb_row = tk.StringVar()
         str_nb_row.set(str(self.nb_row))
         self.entry_page_row = tk.Entry(self.second_left_frame, width=18, textvariable=str_nb_row)
         self.entry_page_row.grid(row=1, sticky='nwe')
         self.entry_page_row.config(font=("Calibri bold", 12))
 
+        # Left part of the window - Third frame
         self.third_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
         self.third_left_frame.grid(row=3, column=0)
 
+        # Left part of the window - Third frame - Label nb column
         self.label_grid = tk.Label(self.third_left_frame, text="Nombre de colonnes", bg="#DCDCDC", fg="black")
         self.label_grid.grid(row=0, sticky='nwe')
         self.label_grid.config(font=("Calibri bold", 12))
 
+        # Left part of the window - Third frame - Entry nb column
         str_nb_column = tk.StringVar()
         str_nb_column.set(str(self.nb_column))
         self.entry_page_column = tk.Entry(self.third_left_frame, width=18, textvariable=str_nb_column)
         self.entry_page_column.grid(row=1, sticky='nwe')
         self.entry_page_column.config(font=("Calibri bold", 12))
 
+        # Left part of the window - Fourth frame
         self.fourth_left_frame = tk.Frame(self.part_left, bg="#e8e8e8", width=400, height=150)
         self.fourth_left_frame.grid(row=4, column=0)
 
+        # Left part of the window - Fourth frame - Button
         self.button_apply = tk.Button(self.fourth_left_frame, text="Actualiser la grille", width=18, command=self.update_grid)
         self.button_apply.grid(row=0, sticky='nwe')
 
-        # Frame center
+        # Center part of the window
         self.part_center = tk.Frame(self.window_new_page, width=400, height=400, bg="#DCDCDC")
         self.part_center.grid(row=0, column=1, columnspan=2)
         self.part_center.columnconfigure(0, weight=1)
         self.part_center.rowconfigure((0, 1, 2), weight=1)
         self.part_center.grid_propagate(False)
 
+        # Center part of the window - Label title
         self.label = tk.Label(self.part_center, text="Personnaliser la grille", bg=bg_identification, fg="white")
         self.label.grid(row=0, sticky='new')
         self.label.config(font=("Calibri bold", 12))
 
+        # Center part of the window - Frame sections
         self.frame_sections = tk.Frame(self.part_center, bg="#DCDCDC", width=280, height=280)
         self.frame_sections.grid(row=1)
         self.frame_sections.grid_propagate(False)
 
+        # Adapt the grid format to nb of row/column
         t_row = []
         t_column = []
         for i in range(self.nb_row):
@@ -123,39 +134,46 @@ class NewPage:
         self.frame_sections.columnconfigure(tuple(t_column), weight=1)
         self.frame_sections.rowconfigure(tuple(t_row), weight=1)
 
+        # Calculate the dimensions of a mono section
         section_width = int(self.frame_sections["width"] / self.nb_column)
         section_height = int(self.frame_sections["width"] / self.nb_row)
 
+        # Lists which will contain sections
         self.mono_sections = []
         self.poly_sections = []
         self.selected_sections = []
         self.disappeared_sections = []  # Sections that will disappear
         self.disappeared_sections_group = []
 
+        # Create all ButtonSections
         section_id = 0
         for i in range(self.nb_row):
             for j in range(self.nb_column):
                 ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
+        # Center part of the window - Label 1
         self.label = tk.Label(self.part_center, text="Clique gauche sur deux cases pour construire \n une zone plus large", bg="#DCDCDC", fg="black")
         self.label.grid(row=2, sticky='new')
         self.label.config(font=("Calibri", 12, "bold italic"))
 
+        # Center part of the window - Label 2
         self.label = tk.Label(self.part_center, text="Clique droit sur une zone pour la subdiviser", bg="#DCDCDC", fg="black")
         self.label.grid(row=3, sticky='new', pady=(0, 10))
         self.label.config(font=("Calibri", 12, "bold italic"))
 
-        # Frame right
+        # Right part of the window
         self.part_right = tk.Frame(self.window_new_page, bg="#DCDCDC", width=200, height=400)
         self.part_right.grid(row=0, column=3, columnspan=1, padx=(5,5), pady=(5,5))
         self.part_right.rowconfigure(1, weight=1)
         self.part_right.grid_propagate(False)
 
+        # Right part of the window - Label confirmation
         self.label = tk.Label(self.part_right, text="Confirmation", bg=bg_identification, fg="white")
         self.label.grid(row=0, sticky='new')
         self.label.config(font=("Calibri bold", 12))
 
+        # Right part of the window - Button confirmation
         self.button_apply = tk.Button(self.part_right, text="Créer la page", width=15, command=self.apply)
         self.button_apply.grid(row=1, padx=30)
 
@@ -168,28 +186,23 @@ class NewPage:
         moving_part_widgets.grid_propagate(False)
         self.left_frame.moving_widgets_page.append(moving_part_widgets)
 
-
-
-
+        # Get the name of the page
         name = self.entry_page_name.get()
         new_frame_content = FrameContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
 
+        # Create the left button
         row = len(self.left_frame.buttons_left) + 1
-        name = self.entry_page_name.get()
         new_button_left = ButtonLeftText(name, row, self.left_frame.moving_frames[0], "white", new_frame_content.change_page)
         self.left_frame.buttons_left.append(new_button_left)
 
+        # Destroy the new page window
         self.window_new_page.destroy()
 
-
-
-        # Add a title
+        # Add the page name in the widget page
         text = "Page : " + new_frame_content.name
         label_page = tk.Label(moving_part_widgets, text=text, bg="#333333", fg="white")
         label_page.grid(row=0, sticky='nwe')
         label_page.config(font=("Calibri bold", 12))
-
-
 
     def update_grid(self):
         """ Updates the grid when dimensions are changed """
@@ -299,6 +312,7 @@ class ButtonSection:
     def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id):
         """ Initialization of the create page section buttons """
 
+        # Transform parameters to class variables
         self.parent = p_parent
         self.row = p_row
         self.column = p_column
@@ -308,10 +322,12 @@ class ButtonSection:
         self.height = p_h
         self.id = p_id
 
+        # Creation of a button
         bg_identification = settings['colors']['bg_identification']
         self.button = tk.Button(p_parent.frame_sections, bg=bg_identification, width=p_w, height=p_h)
         self.button.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
 
+        # User interaction with the button
         self.button.bind("<Button-1>", self.left_click)
         self.button.bind("<Button-3>", self.right_click)
 
@@ -321,12 +337,16 @@ class ButtonSection:
             p_parent.poly_sections.append(self)
 
     def left_click(self, event):
+        """ Function called when the user user left click """
+
         if self.rowspan == 1 and self.columnspan == 1:
             self.button["bg"] = "green"
             self.parent.selected_sections.append(self)
             self.parent.merge()
 
     def right_click(self, event):
+        """ Function called when the user user right click """
+
         if self.rowspan != 1 or self.columnspan != 1:
             self.destroy()
             id = self.parent.poly_sections.index(self)
@@ -334,5 +354,7 @@ class ButtonSection:
             del self.parent.disappeared_sections_group[id]
 
     def destroy(self):
+        """ Destruction of a poly section """
+
         if self.rowspan != 1 or self.columnspan != 1:
             self.button.grid_forget()
