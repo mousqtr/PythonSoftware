@@ -25,7 +25,11 @@ bg_company_name = settings['colors']['bg_company_name']
 
 
 class MainWindow:
+    """ Main window class, includes gui elements as top frame and middle frame"""
+
     def __init__(self):
+
+        # Creation of the frame
         self.frame = tk.Tk()
         self.frame.title("Gestionnaire d'inventaire")
         self.frame.resizable(True, True)
@@ -45,17 +49,25 @@ class MainWindow:
         self.width = self.frame.winfo_width()
         self.height = self.frame.winfo_height()
 
+        # Boolean that indicates if the window has to be resized or not
+        self.resized = True
+
 
 class TopFrame:
-    def __init__(self, p_parent, p_icon):
+    """ Top frame class, includes all gui elements located in the top of the window """
 
-        self.parent = p_parent
+    def __init__(self, p_main_window, p_icon):
 
-        # top_menu_width = window_width_initial - left_menu_width_initial
-        self.frame = tk.Frame(p_parent, bg=bg_top_menu, width=window_width_initial, height=top_menu_height_initial)
+        # Transform parameters into class variables
+        self.main_window = p_main_window
+        self.company_icon = p_icon
+
+        # Creation of the frame
+        self.frame = tk.Frame(self.main_window.frame, bg=bg_top_menu, width=window_width_initial, height=top_menu_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=0)
 
+        # Creation of the first frame (1/3) - company logo, company name
         self.width_first_frame = 50
         self.first_top_frame = tk.Frame(self.frame, width=self.width_first_frame, height=top_menu_height_initial)
         self.first_top_frame.grid(row=0, column=0)
@@ -63,28 +75,42 @@ class TopFrame:
         self.first_top_frame.columnconfigure(0, weight=1)
         self.first_top_frame.rowconfigure(0, weight=1)
 
+        # Creation of the second frame (2/3)
         self.width_second_frame = 250
         self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=self.width_second_frame, height=top_menu_height_initial)
         self.second_top_frame.grid(row=0, column=1)
 
+        # Creation of the third frame (3/3) - buttons
         width_3 = 500
         self.third_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=width_3, height=top_menu_height_initial)
         self.third_top_frame.grid(row=0, column=2)
 
-        # Company title
-
+        # Company name in the first frame
         self.label_company_title = tk.Label(self.first_top_frame, text=company_name, bg=bg_company_name, fg="white")
         self.label_company_title.config(font=(font_company_name, font_size_company_name))
 
-        self.button_company = tk.Button(self.first_top_frame, image=p_icon, height=50, borderwidth=0, command=None)
+        # Company icon in the first frame
+        self.button_company = tk.Button(self.first_top_frame, image=self.company_icon, height=50, borderwidth=0, command=None)
         self.button_company.grid(row=0)
 
+        self.window_open = True
+
     def resize(self):
-        offset_width = self.parent.winfo_width() - window_width_initial
+        """ Function that resizes the frame and the second frame """
+
+        # Difference between the initial window width and the resized window width
+        offset_width = self.main_window.frame.winfo_width() - window_width_initial
+
+        # Resize the top frame
         self.frame["width"] = window_width_initial + offset_width
+
+        # Resize the second top frame
         self.second_top_frame["width"] = self.width_second_frame + offset_width
 
     def open(self, p_bool):
+        """ Function that draw the company icon or the company name depending on the p_bool value """
+
+        # The left window is opened
         if p_bool == True:
             self.width_first_frame = 250
             self.first_top_frame["width"] = 250
@@ -92,6 +118,8 @@ class TopFrame:
             self.resize()
             self.label_company_title.grid(row=0, column=0, sticky='news')
             self.button_company.grid_forget()
+
+        # The left window is closed
         else:
             self.width_first_frame = 50
             self.first_top_frame["width"] = 50
@@ -102,56 +130,66 @@ class TopFrame:
 
 
 class MiddleFrame:
-    def __init__(self, p_parent):
+    """ Middle frame class, includes all gui elements located in the second part of the window (after the top) """
 
-        self.parent = p_parent
+    def __init__(self, p_main_window):
 
-        self.frame = tk.Frame(p_parent, width=window_width_initial, height=window_height_initial - top_menu_height_initial)
+        # Transform parameters into class variables
+        self.main_window = p_main_window
+
+        # Creation of the frame
+        self.frame = tk.Frame(self.main_window.frame, width=window_width_initial, height=window_height_initial - top_menu_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=1)
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
 
+        # List of children frames (LeftFrame and RightFrame)
         self.children_frames = []
 
     def resize(self):
-        self.frame["width"] = self.parent.winfo_width()
-        self.frame["height"] = self.parent.winfo_height() - top_menu_height_initial
+        """ Function that resizes the frame and children frames (LeftFrame and RightFrame) """
 
-        for x in self.children_frames:
-            x.resize()
+        # Resize the frame
+        self.frame["width"] = self.main_window.frame.winfo_width()
+        self.frame["height"] = self.main_window.frame.winfo_height() - top_menu_height_initial
+
+        # # Resize the children frames
+        # for x in self.children_frames:
+        #     x.resize()
 
 
 class RightFrame:
-    """ Right frame of the window"""
+    """ Right frame of the window, includes FrameContent """
 
-    def __init__(self, p_parent, p_left):
+    def __init__(self, p_middle, p_left):
 
-        self.parent = p_parent.frame
+        # Transform parameters into class variables
+        self.frame_middle = p_middle
         self.frame_left = p_left
 
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
-        self.frame = tk.Frame(self.parent, width=self.frame_right_width_initial, height=frame_right_height_initial)
+        self.frame = tk.Frame(self.frame_middle.frame, width=self.frame_right_width_initial, height=frame_right_height_initial)
         self.frame.grid(row=1, column=1, sticky='n')
 
         self.frames_content = []
         self.current_frame = 0
 
-        p_parent.children_frames.append(self)
+        self.frame_middle.children_frames.append(self)
 
     def resize(self):
-        offset_width = self.parent.winfo_width() - window_width_initial
-        offset_height = self.parent.winfo_height() - window_height_initial
+        offset_width = self.frame_middle.frame.winfo_width() - window_width_initial
+        offset_height = self.frame_middle.frame.winfo_height() - window_height_initial
 
         # Resize the right part
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
         self.frame["width"] = self.frame_right_width_initial + offset_width
-        self.frame["height"] = self.parent.winfo_height()
+        self.frame["height"] = self.frame_middle.frame.winfo_height()
 
         # Resize the frameContent part
         for child_page in self.frames_content:
             child_page.frame["width"] = self.frame_right_width_initial + offset_width
-            child_page.frame["height"] = self.parent["height"]
+            child_page.frame["height"] = self.frame_middle.frame["height"]
 
             # Resize sections
             for child in child_page.mono_sections:
@@ -376,20 +414,6 @@ class FrameContent:
                 self.mono_sections.append(section)
 
 
-                # Creation of a widget frame configuration for each section
-                widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="orange", height=200, width=100)
-                widget_setting_frame.grid(row=1, column=0)
-                widget_setting_frame.columnconfigure(0, weight=1)
-                widget_setting_frame.grid_propagate(False)
-                self.frames_configuration_widgets.append(widget_setting_frame)
-
-                text = "Widget : " + str(section_id)
-                label_widget = tk.Label(widget_setting_frame, text=text, bg="green", fg="white")
-                label_widget.grid(row=0, sticky='nwe')
-                label_widget.config(font=("Calibri bold", 12))
-
-        # print(self.frames_configuration_widgets)
-
         section_id = 0
         for s in self.source_window.poly_sections:
             width = section_width * s.columnspan
@@ -399,6 +423,25 @@ class FrameContent:
             section_id += 1
 
         self.displayed_sections = self.mono_sections + self.poly_sections
+
+        section_id = 0
+        for ds in self.displayed_sections:
+
+            # Creation of a widget frame configuration for each section
+            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="orange", height=200,
+                                            width=100)
+            widget_setting_frame.grid(row=1, column=0)
+            widget_setting_frame.columnconfigure(0, weight=1)
+            widget_setting_frame.grid_propagate(False)
+            self.frames_configuration_widgets.append(widget_setting_frame)
+
+            text = "Widget : " + str(section_id)
+            label_widget = tk.Label(widget_setting_frame, text=text, bg="green", fg="white")
+            label_widget.grid(row=0, sticky='nwe')
+            label_widget.config(font=("Calibri bold", 12))
+            section_id += 1
+
+            print(section_id)
 
         self.labels_sections = [tk.Label() for i in range(len(self.displayed_sections))]
         self.buttons_sections_add = [tk.Button() for i in range(len(self.displayed_sections))]
@@ -529,7 +572,6 @@ class FrameContent:
             self.buttons_sections_add[i].grid_forget()
             self.buttons_sections_delete[i].grid_forget()
             self.displayed_sections[i].frame["bg"] = "white"
-
 
 
 class ButtonLeftText:

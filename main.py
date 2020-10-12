@@ -31,7 +31,6 @@ bg_left_menu = settings['colors']['bg_left_menu']
 
 # Root initialization
 main_window = MainWindow()
-root = main_window.frame
 
 # The window is splitted into 2 frames
 img_pages = tk.PhotoImage(file="img/pages2.png")
@@ -59,8 +58,8 @@ img_logo = tk.PhotoImage(file="img/logo.png")
 img_logo = img_logo.zoom(4)
 img_logo = img_logo.subsample(32)
 
-frame_top = TopFrame(root, img_logo)
-frame_middle = MiddleFrame(root)
+frame_top = TopFrame(main_window, img_logo)
+frame_middle = MiddleFrame(main_window)
 
 frame_left = LeftFrame(frame_middle, frame_top, list_img_1, list_img_2)
 frame_right = RightFrame(frame_middle, frame_left)
@@ -77,14 +76,14 @@ def edit_widgets(p_right_frame, p_list_img_widgets, p_list_title_widgets):
 button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame, bg_connect,
                                          partial(edit_widgets, frame_right, list_img_widgets, list_title_widgets))
 
-window_login = Login(root)
+window_login = Login(main_window.frame)
 button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, bg_connect, window_login.create_login_window)
 
 
 
 def edit_page():
     if len(frame_right.frames_content) > 0:
-        EditPage(root, frame_left, frame_right, frame_top)
+        EditPage(main_window.frame, frame_left, frame_right, frame_top)
     # print(frame_left.widgets_frames)
 
 
@@ -94,7 +93,7 @@ button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame,
 def create_page():
     nb_buttons_max = 11
     if len(frame_left.buttons_left) < nb_buttons_max:
-        NewPage(root, frame_left, frame_right, frame_top)
+        NewPage(main_window.frame, frame_left, frame_right, frame_top)
 
 
 button_create_page = ButtonLeftText(" + ", 20, frame_left.moving_frames[0], "white", create_page)
@@ -102,24 +101,38 @@ button_create_page = ButtonLeftText(" + ", 20, frame_left.moving_frames[0], "whi
 
 # Detect the window resize
 def window_resize(event):
-    width = main_window.frame.winfo_width()
-    height = main_window.frame.winfo_height()
+    if main_window.resized:
+        width = main_window.frame.winfo_width()
+        height = main_window.frame.winfo_height()
 
-    if width != main_window.width or height != main_window.height:
-        main_window.width = width
-        main_window.height = height
+        if width != main_window.width or height != main_window.height:
+            main_window.width = width
+            main_window.height = height
 
-    """ Resize the window and intern elements """
-    frame_top.resize()
-    frame_middle.resize()
+        """ Resize the window and intern elements """
+        frame_top.resize()
+        frame_middle.resize()
+        frame_left.resize()
+        frame_right.resize()
 
 
+def stop_window_resize():
+    main_window.resized = False
 
 
-root.bind("<Configure>", window_resize)
+main_window.frame.bind("<Configure>", window_resize)
+
+
+def on_closing():
+    if tk.messagebox.askokcancel("Fermer", "Voulez-vous vraiment quitter ?"):
+        stop_window_resize()
+        main_window.frame.destroy()
+
+
+main_window.frame.protocol("WM_DELETE_WINDOW", on_closing)
 
 # Launch the GUI
-root.mainloop()
+main_window.frame.mainloop()
 
 
 
