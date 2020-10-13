@@ -11,7 +11,7 @@
         "1,3": " ",
         "0,3": " ",
         "1,0": " ",
-        "0,0": "Ordinateurs",
+        "0,0": "Telephones",
         "0,2": " ",
         "1,1": " ",
         "1,2": " "
@@ -21,7 +21,7 @@
         "1,3": "SystemButtonFace",
         "0,3": "SystemButtonFace",
         "1,0": "SystemButtonFace",
-        "0,0": "orange",
+        "0,0": "red",
         "0,2": "SystemButtonFace",
         "1,1": "SystemButtonFace",
         "1,2": "SystemButtonFace"

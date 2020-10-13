@@ -17,7 +17,7 @@ with open('widgets/summary/summary_data.json') as json_file:
 class Summary:
     """ Widget that shows some label and data """
 
-    def __init__(self, p_parent, p_widget_group, p_width, p_height):
+    def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group, p_width, p_height):
         """
         Initialization of the summary widget that shows some label and data
 
@@ -27,8 +27,9 @@ class Summary:
         """
 
         # Saving the parameters to use them in each function
-        self.parent = p_parent
+        self.frame_section = p_section_frame
         self.widget_group = p_widget_group
+        self.frame_widget_configuration = p_widget_configuration_frame
 
         # Add this widget to p_parent widgets
         self.widget_group.widgets.append(self)
@@ -37,7 +38,7 @@ class Summary:
         # Properties of the widget-
         frame_height = p_height
         frame_width = p_width
-        self.frame = tk.Frame(p_parent.frame, bg="white", highlightthickness=1)
+        self.frame = tk.Frame(self.frame_section.frame, bg="white", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
         self.frame.grid(row=0, column=0, sticky="news")
@@ -47,9 +48,9 @@ class Summary:
         self.frame.rowconfigure((1, 2), weight=4)
 
         # Title of the page
-        title = tk.Label(self.frame,text="Sommaire", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
-        title.grid(row=0, column=0, columnspan=5, sticky="nwe", ipadx=10, ipady=5)
-        title.config(font=("Calibri bold", 12))
+        self.title = tk.Label(self.frame,text="Sommaire", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
+        self.title.grid(row=0, column=0, columnspan=5, sticky="nwe", ipadx=10, ipady=5)
+        self.title.config(font=("Calibri bold", 12))
 
         # Creation of the buttons that display data
         self.nb_column = 1 #4
@@ -70,6 +71,10 @@ class Summary:
         # Fill the data file
         fill_file()
 
+        # User interaction with the button
+        self.frame.bind("<Button-1>", self.on_click)
+        self.buttons[0][0].bind("<Button-1>", self.on_click)
+        self.title.bind("<Button-1>", self.on_click)
 
 
     def choose_data(self, p_i, p_j):
@@ -81,14 +86,14 @@ class Summary:
         """
 
         # Window handle
-        login_window = tk.Toplevel(self.parent.frame)
+        login_window = tk.Toplevel(self.frame_section.frame)
         login_window.resizable(False, False)
         # login_window_width = settings['dimensions']['window_login_width']
         # login_window_height = settings['dimensions']['window_login_height']
         login_window_width = 550
         login_window_height = 220
-        screen_width = self.parent.frame.winfo_screenwidth()
-        screen_height = self.parent.frame.winfo_screenheight()
+        screen_width = self.frame_section.frame.winfo_screenwidth()
+        screen_height = self.frame_section.frame.winfo_screenheight()
         x_cord = int((screen_width / 2) - (login_window_width / 2))
         y_cord = int((screen_height / 2) - (login_window_height / 2))
         login_window.geometry("{}x{}+{}+{}".format(login_window_width, login_window_height, x_cord, y_cord))
@@ -245,3 +250,56 @@ class Summary:
 
     def show(self):
         self.frame.grid(row=0, column=0, sticky="news")
+
+
+    def on_click(self, e):
+        """ Function called when the user click on this section """
+
+        self.frame_section.on_click(e)
+
+        # Label - Choose data to draw
+        label_data = tk.Label(self.frame_widget_configuration, text="Donnée", bg="white")
+        label_data.grid(row=1, sticky='nwe')
+        font_add_label_data = settings['font']['font_login_username']
+        font_size_add_label_data = settings['font_size']['font_size_login_username']
+        label_data.config(font=(font_add_label_data, font_size_add_label_data))
+
+        # Combobox - Choose data to draw
+        list_data = []
+        for x in widgets_data['data']:
+            list_data.append(x)
+        combo_data = ttk.Combobox(self.frame_widget_configuration, values=list_data)
+        combo_data.current(0)
+        combo_data.grid(row=2, pady=(0,10))
+
+        # Label - Choose background color
+        label_bg_color = tk.Label(self.frame_widget_configuration, text="Couleur du fond", bg="white")
+        label_bg_color.grid(row=3, sticky='n')
+        font_add_label_color = settings['font']['font_login_password']
+        font_size_add_label_color = settings['font_size']['font_size_login_password']
+        label_bg_color.config(font=(font_add_label_color, font_size_add_label_color))
+
+        # Combobox - Choose background color to draw
+        list_color = [" ", "black", "white", "red", "orange", "blue", "yellow", "purple", "green", "white"]
+        combo_bg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color)
+        combo_bg_color.current(0)
+        combo_bg_color.grid(row=4, pady=(0,10))
+
+        # Label - Choose color
+        label_color = tk.Label(self.frame_widget_configuration, text="Couleur de la donnée", bg="white")
+        label_color.grid(row=5, sticky='n')
+        font_add_label_color = settings['font']['font_login_password']
+        font_size_add_label_color = settings['font_size']['font_size_login_password']
+        label_color.config(font=(font_add_label_color, font_size_add_label_color))
+
+        # Combobox - Choose frontground color to draw
+        list_color = [" ", "black", "white", "red", "orange", "blue", "yellow", "purple", "green", "white"]
+        combo_fg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color)
+        combo_fg_color.current(0)
+        combo_fg_color.grid(row=6, pady=(0, 10))
+
+        # Button - Validation
+        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=30)
+        button_validate.grid(row=7, pady=(10, 0), padx=(10, 10))
+        button_validate['command'] = partial(self.change_button, 0, 0, combo_data, combo_bg_color, combo_fg_color)
+

@@ -14,6 +14,8 @@ left_menu_height_initial = window_height_initial - top_menu_height_initial
 
 frame_right_height_initial = left_menu_height_initial
 
+initial_configuration_widget_height = 500
+
 bg_left_menu = settings['colors']['bg_left_menu']
 bg_top_menu = settings['colors']['bg_top_menu']
 bg_left_menu = settings['colors']['bg_left_menu']
@@ -183,6 +185,7 @@ class RightFrame:
 
         # Difference between the initial window width and the resized window width
         offset_width = self.frame_middle.frame.winfo_width() - window_width_initial
+        offset_height = self.frame_middle.frame.winfo_height() - window_height_initial
 
         # Resize the right part
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
@@ -203,6 +206,9 @@ class RightFrame:
             for section in page.poly_sections:
                 section.frame["width"] = int(page.frame["width"]/page.nb_column)*section.columspan
                 section.frame["height"] = int(page.frame["height"]/page.nb_row)*section.rowspan
+
+            for widget_config_frame in page.frames_configuration_widgets:
+                widget_config_frame["height"] = initial_configuration_widget_height + offset_height
 
     def update_values(self):
         """ Function to send values to other classes """
@@ -408,8 +414,10 @@ class FrameContent:
         self.buttons_sections_delete = []
 
         # List containing the widgets
-        self.frames_configuration_widgets = []
         self.widgets = []
+
+        # List containing the widgets configuration frames
+        self.frames_configuration_widgets = []
 
         # Creation of the sections
         self.create_sections()
@@ -470,9 +478,9 @@ class FrameContent:
         for ds in self.displayed_sections:
 
             # Creation of a widget frame configuration for each section
-            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="white", height=200,
+            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="white", height=initial_configuration_widget_height,
                                             width=180)
-            widget_setting_frame.grid(row=1, column=0, pady=(10,10), padx=(10,10))
+            widget_setting_frame.grid(row=1, column=0, pady=(10, 10), padx=(10, 10))
             widget_setting_frame.columnconfigure(0, weight=1)
             widget_setting_frame.grid_propagate(False)
             self.frames_configuration_widgets.append(widget_setting_frame)
@@ -627,10 +635,11 @@ class FrameContent:
         s_width = p_section.frame.winfo_width()
         s_height = p_section.frame.winfo_height()
         widget_group_1 = WidgetGroup(1)
+        widget_configuration_frame = self.frames_configuration_widgets[p_section.id]
 
         # If the selected widget is Summary, create a summary widget in the current section
         if p_id_widget == 0:
-            widget_summary = Summary(p_section, widget_group_1, s_width, s_height)
+            widget_summary = Summary(p_section, widget_configuration_frame, widget_group_1, s_width, s_height)
             self.widgets.append(widget_summary)
 
         # Hide the widget to continue in the edit widget mode
