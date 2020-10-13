@@ -455,7 +455,6 @@ class FrameContent:
                 self.mono_sections.append(section)
 
         # Create all poly FrameSection (size nxp)
-        section_id = 0
         for s in self.source_window.poly_sections:
             width = section_width * s.columnspan
             height = section_height * s.rowspan
@@ -471,16 +470,16 @@ class FrameContent:
         for ds in self.displayed_sections:
 
             # Creation of a widget frame configuration for each section
-            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="orange", height=200,
-                                            width=100)
-            widget_setting_frame.grid(row=1, column=0)
+            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="white", height=200,
+                                            width=180)
+            widget_setting_frame.grid(row=1, column=0, pady=(10,10), padx=(10,10))
             widget_setting_frame.columnconfigure(0, weight=1)
             widget_setting_frame.grid_propagate(False)
             self.frames_configuration_widgets.append(widget_setting_frame)
 
             # Creation of a title in the widget frame configuration
             text = "Widget : " + str(section_id)
-            label_widget = tk.Label(widget_setting_frame, text=text, bg="green", fg="white")
+            label_widget = tk.Label(widget_setting_frame, text=text, bg="#8989ff", fg="white")
             label_widget.grid(row=0, sticky='nwe')
             label_widget.config(font=("Calibri bold", 12))
             section_id += 1
