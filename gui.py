@@ -409,7 +409,8 @@ class FrameContent:
         self.disappeared_sections_group = []    # Sections located behind a poly_sections (they will disappeared)
 
         # Elements that will be used during the "widget configuration" mode
-        self.labels_sections = []
+        self.frame_edit_mode = []
+        self.buttons_widget = []
         self.buttons_sections_add = []
         self.buttons_sections_delete = []
 
@@ -493,7 +494,9 @@ class FrameContent:
             section_id += 1
 
         # Lists containing the labels & buttons used for "widgets configuration mode"
-        self.labels_sections = [tk.Label() for i in range(len(self.displayed_sections))]
+        # self.labels_sections = [tk.Label() for i in range(len(self.displayed_sections))]
+        self.frame_edit_mode = [tk.Frame() for i in range(len(self.displayed_sections))]
+        self.buttons_widget = [tk.Button() for i in range(len(self.displayed_sections))]
         self.buttons_sections_add = [tk.Button() for i in range(len(self.displayed_sections))]
         self.buttons_sections_delete = [tk.Button() for i in range(len(self.displayed_sections))]
 
@@ -520,13 +523,13 @@ class FrameContent:
         for s in self.poly_sections:
             s.frame.grid_forget()
 
-    def edit_widgets(self, p_list_img_widgets, p_list_title_widgets):
+    def edit_widgets(self, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget):
         """ Function called from the edit_widgets_mode function in the main py file """
 
         # If the edit_widgets_mode is enable
         if not self.edit_widget_mode_is_activate:
             self.hide_widgets()
-            self.show_edit_widgets_mode(p_list_img_widgets, p_list_title_widgets)
+            self.show_edit_widgets_mode(p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget)
             self.edit_widget_mode_is_activate = True
 
         # If the edit_widgets_mode is disable
@@ -535,7 +538,7 @@ class FrameContent:
             self.hide_edit_widgets_mode()
             self.edit_widget_mode_is_activate = False
 
-    def show_edit_widgets_mode(self, p_list_img_widgets, p_list_title_widgets):
+    def show_edit_widgets_mode(self, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget):
         """ Show the edit widget mode, in each section you have labels and buttons (add, delete) """
 
         # For each section of the page (= FrameContent)
@@ -543,37 +546,52 @@ class FrameContent:
 
             # Get the section
             s = self.displayed_sections[i]
+            # s.frame.rowconfigure((0, 1), weight=1)
+            # s.frame.columnconfigure((0, 1), weight=1)
+            # s.frame.grid_propagate(False)
+
+            self.frame_edit_mode[i] = tk.Frame(s.frame)
+            self.frame_edit_mode[i].grid(sticky="news")
+            self.frame_edit_mode[i].columnconfigure((0, 1), weight=1)
+            self.frame_edit_mode[i].rowconfigure((0, 1), weight=1)
 
             # Change the background color
             s.frame["bg"] = "#42526C"
 
             # Fix the dimensions of paddings
-            padx = 5 * s.rowspan
-            pady = 5 * s.columspan
+            padx = 2
+            pady = 2
+
 
             # Name of the widget
-            text = "Widget : " + str(i)
-            self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
-            self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+            # text = "Widget : " + str(i)
+            # self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
+            # self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
 
             # Button to add a widget in the section
-            self.buttons_sections_add[i] = tk.Button(s.frame, text="Ajouter", fg="black")
+            self.buttons_widget[i] = tk.Button(self.frame_edit_mode[i], image=p_list_buttons_widget[2], state='disable')
+            self.buttons_widget[i]["command"] = None
+            self.buttons_widget[i].grid(row=0, column=0, columnspan=2, sticky='news', padx=(padx, padx), pady=(pady, pady))
+
+            # Button to add a widget in the section
+            self.buttons_sections_add[i] = tk.Button(self.frame_edit_mode[i], image=p_list_buttons_widget[0])
             self.buttons_sections_add[i]["command"] = partial(self.add_widget, s, p_list_img_widgets, p_list_title_widgets)
             self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
 
             # Button to delete a widget in the section
-            self.buttons_sections_delete[i] = tk.Button(s.frame, text="Supprimer", fg="black")
+            self.buttons_sections_delete[i] = tk.Button(self.frame_edit_mode[i], image=p_list_buttons_widget[1])
             self.buttons_sections_delete[i]["command"] = None
-            self.buttons_sections_delete[i].grid(row=2, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+            self.buttons_sections_delete[i].grid(row=1, column=1, sticky='news', padx=(padx, padx), pady=(pady, pady))
 
     def hide_edit_widgets_mode(self):
         """ Hide the edit widget mode """
 
         # For each section of the page (= FrameContent)
         for i in range(len(self.displayed_sections)):
-            self.labels_sections[i].grid_forget()
-            self.buttons_sections_add[i].grid_forget()
-            self.buttons_sections_delete[i].grid_forget()
+            # self.buttons_widget[i].grid_forget()
+            # self.buttons_sections_add[i].grid_forget()
+            # self.buttons_sections_delete[i].grid_forget()
+            self.frame_edit_mode[i].grid_forget()
             self.displayed_sections[i].frame["bg"] = "white"
 
     def add_widget(self, p_section, p_list_img_widgets, p_list_title_widgets):
@@ -747,7 +765,6 @@ class FrameSection:
     def on_click(self, e):
         """ Function called when the user click on this section """
 
-        self.frame['bg'] = '#8989ff'
         self.frame_left.current_widget = self.id
         self.frame_left.display()
 

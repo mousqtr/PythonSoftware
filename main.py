@@ -34,10 +34,16 @@ img_table = tk.PhotoImage(file="img/widgets/table.png")
 img_histogram_graph = tk.PhotoImage(file="img/widgets/histogram_graph.png")
 img_map = tk.PhotoImage(file="img/widgets/map.png")
 
+# Images used in configuration mode
+img_add = tk.PhotoImage(file="img/add.png")
+img_delete = tk.PhotoImage(file="img/minus.png")
+img_empty = tk.PhotoImage(file="img/empty.png")
+
 # List containing theses images
 list_img_1 = [img_pages, img_widgets, img_settings]
 list_img_2 = [img_pages2, img_widgets2, img_settings2]
 list_img_widgets = [img_summary, img_donut_chart, img_table, img_map, img_graph, img_histogram, img_histogram_graph]
+list_buttons_widget = [img_add, img_delete, img_empty]
 
 # List containing the names of each widget
 list_title_widgets = ["Sommaire", "Graphique\nen anneau", "Table", "Carte", "Graphique", "Histogramme", "Graphe\nHistogramme"]
@@ -53,15 +59,15 @@ frame_right = RightFrame(frame_middle, frame_left)
 
 
 # Initialization of the widget button
-def edit_widgets_mode(p_right_frame, p_list_img_widgets, p_list_title_widgets):
+def edit_widgets_mode(p_right_frame, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget):
     if len(frame_right.frames_content) > 0:
         frame_content_id = p_right_frame.current_frame
         frame_content = p_right_frame.frames_content[frame_content_id]
-        frame_content.edit_widgets(p_list_img_widgets, p_list_title_widgets)
+        frame_content.edit_widgets(p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget)
 
 
 button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame,
-                                         partial(edit_widgets_mode, frame_right, list_img_widgets, list_title_widgets))
+                                         partial(edit_widgets_mode, frame_right, list_img_widgets, list_title_widgets, list_buttons_widget))
 
 # Initialization of the login button
 window_login = Login(main_window.frame)
