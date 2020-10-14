@@ -414,6 +414,12 @@ class FrameContent:
         self.buttons_sections_add = []
         self.buttons_sections_delete = []
 
+        # List of images used
+        self.list_img_widgets = []
+        self.list_img_widgets2 = []
+        self.list_title_widgets = []
+        self.list_buttons_widget = []
+
         # List containing the widgets
         self.widgets = []
 
@@ -425,6 +431,9 @@ class FrameContent:
 
         # Boolean who indicated if the "widget configuration" mode is open or not
         self.edit_widget_mode_is_activate = False
+
+
+
 
     def create_sections(self):
         """ Creation of the sections included in the FrameContent page """
@@ -523,13 +532,28 @@ class FrameContent:
         for s in self.poly_sections:
             s.frame.grid_forget()
 
-    def edit_widgets(self, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget):
+    def send_img_lists(self, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget, p_list_img_widgets2):
+        """ Get images lists from main file """
+
+        # List of images used for buttons during the widget configuration mode
+        self.list_buttons_widget = p_list_buttons_widget
+
+        # List of images used for widgets icons
+        self.list_img_widgets = p_list_img_widgets
+
+        # List of images used as widgets title
+        self.list_title_widgets = p_list_title_widgets
+
+        # List of images used for widgets icons 2
+        self.list_img_widgets2 = p_list_img_widgets2
+
+    def edit_widgets(self):
         """ Function called from the edit_widgets_mode function in the main py file """
 
         # If the edit_widgets_mode is enable
         if not self.edit_widget_mode_is_activate:
             self.hide_widgets()
-            self.show_edit_widgets_mode(p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget)
+            self.show_edit_widgets_mode()
             self.edit_widget_mode_is_activate = True
 
         # If the edit_widgets_mode is disable
@@ -538,7 +562,7 @@ class FrameContent:
             self.hide_edit_widgets_mode()
             self.edit_widget_mode_is_activate = False
 
-    def show_edit_widgets_mode(self, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget):
+    def show_edit_widgets_mode(self):
         """ Show the edit widget mode, in each section you have labels and buttons (add, delete) """
 
         # For each section of the page (= FrameContent)
@@ -546,14 +570,12 @@ class FrameContent:
 
             # Get the section
             s = self.displayed_sections[i]
-            # s.frame.rowconfigure((0, 1), weight=1)
-            # s.frame.columnconfigure((0, 1), weight=1)
-            # s.frame.grid_propagate(False)
 
-            self.frame_edit_mode[i] = tk.Frame(s.frame)
+            self.frame_edit_mode[i] = tk.Frame(s.frame, bg="white")
             self.frame_edit_mode[i].grid(sticky="news")
             self.frame_edit_mode[i].columnconfigure((0, 1), weight=1)
             self.frame_edit_mode[i].rowconfigure((0, 1), weight=1)
+            self.frame_edit_mode[i].grid_propagate(False)
 
             # Change the background color
             s.frame["bg"] = "#42526C"
@@ -569,17 +591,22 @@ class FrameContent:
             # self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
 
             # Button to add a widget in the section
-            self.buttons_widget[i] = tk.Button(self.frame_edit_mode[i], image=p_list_buttons_widget[2], state='disable')
+            self.buttons_widget[i] = tk.Label(self.frame_edit_mode[i])
             self.buttons_widget[i]["command"] = None
-            self.buttons_widget[i].grid(row=0, column=0, columnspan=2, sticky='news', padx=(padx, padx), pady=(pady, pady))
+            self.buttons_widget[i].grid(row=0, rowspan=1, columnspan=2, sticky='news', padx=(padx, padx), pady=(pady, pady))
+            if s.widget_index == -1:
+                self.buttons_widget[i]["image"] = self.list_buttons_widget[2]
+            else :
+                self.buttons_widget[i]["image"] = self.list_img_widgets2[s.widget_index]
+
 
             # Button to add a widget in the section
-            self.buttons_sections_add[i] = tk.Button(self.frame_edit_mode[i], image=p_list_buttons_widget[0])
-            self.buttons_sections_add[i]["command"] = partial(self.add_widget, s, p_list_img_widgets, p_list_title_widgets)
+            self.buttons_sections_add[i] = tk.Button(self.frame_edit_mode[i], image=self.list_buttons_widget[0])
+            self.buttons_sections_add[i]["command"] = partial(self.add_widget, s)
             self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
 
             # Button to delete a widget in the section
-            self.buttons_sections_delete[i] = tk.Button(self.frame_edit_mode[i], image=p_list_buttons_widget[1])
+            self.buttons_sections_delete[i] = tk.Button(self.frame_edit_mode[i], image=self.list_buttons_widget[1])
             self.buttons_sections_delete[i]["command"] = None
             self.buttons_sections_delete[i].grid(row=1, column=1, sticky='news', padx=(padx, padx), pady=(pady, pady))
 
@@ -588,13 +615,10 @@ class FrameContent:
 
         # For each section of the page (= FrameContent)
         for i in range(len(self.displayed_sections)):
-            # self.buttons_widget[i].grid_forget()
-            # self.buttons_sections_add[i].grid_forget()
-            # self.buttons_sections_delete[i].grid_forget()
             self.frame_edit_mode[i].grid_forget()
             self.displayed_sections[i].frame["bg"] = "white"
 
-    def add_widget(self, p_section, p_list_img_widgets, p_list_title_widgets):
+    def add_widget(self, p_section):
         """ Function called the user click on add a widget during the edit_widget_mode """
 
         # Creation of the window where the user can choose the widget
@@ -624,26 +648,26 @@ class FrameContent:
         label_login_title.config(font=(font_login_title, font_size_login_title))
 
         # Grid of widgets
-        nb_widgets = len(p_list_img_widgets)
+        nb_widgets = len(self.list_img_widgets)
         buttons_widgets = [tk.Button() for i in range(nb_widgets)]
         labels_widgets = [tk.Label() for i in range(nb_widgets)]
         j = 0
         for i in range(4):
-            labels_widgets[i] = tk.Label(window_widget_choice, text=p_list_title_widgets[i])
+            labels_widgets[i] = tk.Label(window_widget_choice, text=self.list_title_widgets[i])
             labels_widgets[i].grid(row=1, column=i, padx=(5, 5), pady=(0, 0))
             labels_widgets[i].config(font=("Calibri bold", 12))
 
-            buttons_widgets[i] = tk.Button(window_widget_choice, image=p_list_img_widgets[i], width=100, height=100, borderwidth=2)
+            buttons_widgets[i] = tk.Button(window_widget_choice, image=self.list_img_widgets[i], width=100, height=100, borderwidth=2)
             buttons_widgets[i]["command"] = partial(self.apply_widget, i, p_section)
             buttons_widgets[i].grid(row=2, column=i, padx=(5, 5), pady=(0, 0))
 
         for i in range(nb_widgets - 4):
-            labels_widgets[i] = tk.Label(window_widget_choice, text=p_list_title_widgets[i+4])
+            labels_widgets[i] = tk.Label(window_widget_choice, text=self.list_title_widgets[i+4])
             labels_widgets[i].grid(row=3, column=i, padx=(5, 5), pady=(0, 0))
             labels_widgets[i].config(font=("Calibri bold", 12))
 
-            buttons_widgets[i] = tk.Button(window_widget_choice, image=p_list_img_widgets[i+4], width=100, height=100, borderwidth=2)
-            buttons_widgets[i]["command"] = partial(self.apply_widget, i+4)
+            buttons_widgets[i] = tk.Button(window_widget_choice, image=self.list_img_widgets[i+4], width=100, height=100, borderwidth=2)
+            buttons_widgets[i]["command"] = partial(self.apply_widget, i+4, p_section)
             buttons_widgets[i].grid(row=4, column=i, padx=(5, 5), pady=(0, 0))
 
     def apply_widget(self, p_id_widget, p_section):
@@ -659,6 +683,10 @@ class FrameContent:
         if p_id_widget == 0:
             widget_summary = Summary(p_section, widget_configuration_frame, widget_group_1, s_width, s_height)
             self.widgets.append(widget_summary)
+
+        p_section.widget_index = p_id_widget
+
+        self.buttons_widget[p_section.id]["image"] = self.list_img_widgets2[p_id_widget]
 
         # Hide the widget to continue in the edit widget mode
         self.hide_widgets()
@@ -754,10 +782,13 @@ class FrameSection:
         # Creation of the frame
         self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h, bg="white")
         self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
-        self.frame.config(highlightbackground="black", highlightthickness=1)
+        # self.frame.config(highlightbackground="black", highlightthickness=1)
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
         self.frame.grid_propagate(False)
+
+        # Widget index contained in the section
+        self.widget_index = -1      # - 1 when there is no widget in the FrameSection
 
         # User interaction with the button
         self.frame.bind("<Button-1>", self.on_click)
