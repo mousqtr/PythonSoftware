@@ -264,12 +264,12 @@ class LeftFrame:
         self.static_part.grid_propagate(False)
 
         # Creation of the left moving frames
-        self.moving_frames = [tk.Frame for i in range(3)]
-        self.buttons = [tk.Button() for i in range(3)]
-        self.frames_opened = [False for i in range(3)]
-        self.texts = ["Pages", "Widgets", "Paramètres"]
+        self.moving_frames = [tk.Frame for i in range(len(self.list_img_1))]
+        self.buttons = [tk.Button() for i in range(len(self.list_img_1))]
+        self.frames_opened = [False for i in range(len(self.list_img_1))]
+        self.texts = ["Pages", "Widgets", "Paramètres", "Tableaux"]
 
-        for i in range(3):
+        for i in range(len(self.list_img_1)):
             self.moving_frames[i] = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
             self.moving_frames[i].grid(row=1, column=1)
             self.moving_frames[i].columnconfigure(0, weight=1)

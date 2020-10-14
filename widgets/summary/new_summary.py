@@ -22,7 +22,7 @@ class Summary:
         Initialization of the summary widget that shows some label and data
 
         :param p_parent: Page that will contain this summary widget
-        :param p_row: Row of the page where the widget will be placed
+        :param p_widget_configuration_frame: Frame in the left menu, used to edit the widget
         :param p_widget_group: Group containing this widget
         """
 
@@ -42,7 +42,7 @@ class Summary:
         self.frame.grid(sticky="news")
         self.frame.update_idletasks()  # to display good dimensions with .winfo_width()
         self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
+        # self.frame.rowconfigure(0, weight=1)
         self.frame.rowconfigure(1, weight=10)
 
         # Title of the page
@@ -176,7 +176,7 @@ class Summary:
         self.frame_section.on_click(e)
 
         # Label - Title
-        label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white", height=10)
+        label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
         label_title.grid(row=1, sticky='nwe', pady=(10, 0))
         label_title.config(font=("Calibri", 13))
 

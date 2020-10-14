@@ -19,11 +19,13 @@ main_window = MainWindow()
 img_pages = tk.PhotoImage(file="img/pages2.png")
 img_widgets = tk.PhotoImage(file="img/widgets2.png")
 img_settings = tk.PhotoImage(file="img/setting2.png")
+img_tables = tk.PhotoImage(file="img/table2.png")
 
 # Images used in the left static frame (color 2/2)
 img_pages2 = tk.PhotoImage(file="img/pages3.png")
 img_widgets2 = tk.PhotoImage(file="img/widgets3.png")
 img_settings2 = tk.PhotoImage(file="img/setting3.png")
+img_tables2 = tk.PhotoImage(file="img/table3.png")
 
 # Images used as widgets icons
 img_image = tk.PhotoImage(file="img/widgets/image.png")
@@ -41,8 +43,8 @@ img_delete = tk.PhotoImage(file="img/minus.png")
 img_empty = tk.PhotoImage(file="img/empty.png")
 
 # List containing theses images
-list_img_1 = [img_pages, img_widgets, img_settings]
-list_img_2 = [img_pages2, img_widgets2, img_settings2]
+list_img_1 = [img_pages, img_widgets, img_settings, img_tables]
+list_img_2 = [img_pages2, img_widgets2, img_settings2, img_tables2]
 list_img_widgets = [img_image, img_summary, img_donut_chart, img_table, img_map, img_graph, img_histogram, img_histogram_graph]
 list_buttons_widget = [img_add, img_delete, img_empty]
 list_img_widgets2 = []

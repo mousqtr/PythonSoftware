@@ -15,7 +15,7 @@ class Image_widget:
         Initialization of the summary widget that shows some label and data
 
         :param p_parent: Page that will contain this summary widget
-        :param p_row: Row of the page where the widget will be placed
+        :param p_widget_configuration_frame: Frame in the left menu, used to edit the widget
         :param p_widget_group: Group containing this widget
         """
 
@@ -26,7 +26,7 @@ class Image_widget:
 
         # Add this widget to p_parent widgets
         self.widget_group.widgets.append(self)
-        self.type = "Summary"
+        self.type = "Image"
 
         # Properties of the widget-
         self.frame = tk.Frame(self.frame_section.frame, bg="white", highlightthickness=1)
@@ -39,17 +39,19 @@ class Image_widget:
         self.frame.rowconfigure(1, weight=10)
 
         # Title of the page
-        self.title = tk.Label(self.frame, text="Image", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
+        self.title = tk.Label(self.frame, text=" ", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
         self.title.grid(row=0, column=0, sticky="nwes")
         self.title.config(font=("Calibri bold", 12))
 
-        # # Creation of the buttons that display data
+        # Creation of the buttons that display data
         self.image_tk = Image.open("./img/add.png")
         self.image_pil = Image.open("./img/add.png")
 
         self.image_panel = tk.Label(self.frame)
         self.image_panel.grid(row=1, column=0, sticky="nwes")
         self.image_is_opened = False
+
+        self.filename = tk.StringVar()
 
         # User interaction with the button
         self.frame.bind("<Button-1>", self.on_click)
@@ -89,20 +91,34 @@ class Image_widget:
 
         # Button _ Open image
         button_open_image = tk.Button(self.frame_widget_configuration, text='Ouvrir', width=19, command=self.open_img)
-        button_open_image.grid(row=4, padx=(10, 10))
+        button_open_image.grid(row=4, pady=(5, 0), padx=(10, 10))
         button_open_image.config(font=("Calibri", 10))
+
+        # Button _ Open image
+        label_image_name = tk.Label(self.frame_widget_configuration, width=19, textvariable=self.filename)
+        label_image_name.grid(row=5, pady=(5, 0), padx=(10, 10))
+        label_image_name.config(font=("Calibri", 10))
 
         # Button - Validation
         button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
-        button_validate.grid(row=5, pady=(20, 0), padx=(10, 10))
-        button_validate['command'] = None
+        button_validate.grid(row=9, pady=(20, 0), padx=(10, 10))
+        button_validate['command'] = self.show_title
         button_validate.config(font=("Calibri", 10))
+
+    def show_title(self):
+        # self.title.grid(row=1, sticky='nwe', pady=(10, 0))
+
+        title = self.entry_title.get()
+        self.title["text"] = title
 
 
     def openfilename(self):
         # open file dialog box to select image
         # The dialogue box has a title "Open"
         filename = filedialog.askopenfilename(title='"pen')
+
+        self.filename.set(str(filename))
+
         return filename
 
     def open_img(self):
