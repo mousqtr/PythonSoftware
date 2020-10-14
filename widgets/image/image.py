@@ -72,21 +72,32 @@ class Image_widget:
 
         self.frame_section.on_click(e)
 
-        # # Label - Choose data to draw
-        # label_data = tk.Label(self.frame_widget_configuration, text="Donnée", bg="white")
-        # label_data.grid(row=1, sticky='nwe')
-        # font_add_label_data = settings['font']['font_login_username']
-        # font_size_add_label_data = settings['font_size']['font_size_login_username']
-        # label_data.config(font=(font_add_label_data, font_size_add_label_data))
+        # Label - Title
+        label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
+        label_title.grid(row=1, sticky='nwe', pady=(10, 0))
+        label_title.config(font=("Calibri", 13))
 
-        # Create a button and place it into the window using grid layout
-        btn = tk.Button(self.frame_widget_configuration, text='open image', command=self.open_img).grid(
-            row=1)
+        # Entry - Write the title
+        self.entry_title = tk.Entry(self.frame_widget_configuration, width=19, textvariable=" ")
+        self.entry_title.grid(row=2)
+        self.entry_title.config(font=("Calibri bold", 10))
 
-        # # Button - Validation
-        # button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=30)
-        # button_validate.grid(row=7, pady=(10, 0), padx=(10, 10))
-        # button_validate['command'] = None
+        # Label - Choose image
+        label_select_image = tk.Label(self.frame_widget_configuration, text="Choisir une image", bg="#333333", fg="white")
+        label_select_image.grid(row=3, sticky='nwe', pady=(10, 0))
+        label_select_image.config(font=("Calibri", 13))
+
+        # Button _ Open image
+        button_open_image = tk.Button(self.frame_widget_configuration, text='Ouvrir', width=19, command=self.open_img)
+        button_open_image.grid(row=4, padx=(10, 10))
+        button_open_image.config(font=("Calibri", 10))
+
+        # Button - Validation
+        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
+        button_validate.grid(row=5, pady=(20, 0), padx=(10, 10))
+        button_validate['command'] = None
+        button_validate.config(font=("Calibri", 10))
+
 
     def openfilename(self):
         # open file dialog box to select image

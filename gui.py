@@ -489,7 +489,7 @@ class FrameContent:
         for ds in self.displayed_sections:
 
             # Creation of a widget frame configuration for each section
-            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="white", height=initial_configuration_widget_height,
+            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="#333333", height=initial_configuration_widget_height,
                                             width=180)
             widget_setting_frame.grid(row=1, column=0, pady=(10, 10), padx=(10, 10))
             widget_setting_frame.columnconfigure(0, weight=1)

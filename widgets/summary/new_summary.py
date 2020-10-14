@@ -175,12 +175,20 @@ class Summary:
 
         self.frame_section.on_click(e)
 
+        # Label - Title
+        label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
+        label_title.grid(row=1, sticky='nwe', pady=(10, 0))
+        label_title.config(font=("Calibri", 13))
+
+        # Entry - Write the title
+        self.entry_title = tk.Entry(self.frame_widget_configuration, width=19, textvariable=" ")
+        self.entry_title.grid(row=2)
+        self.entry_title.config(font=("Calibri bold", 10))
+
         # Label - Choose data to draw
-        label_data = tk.Label(self.frame_widget_configuration, text="Donnée", bg="white")
-        label_data.grid(row=1, sticky='nwe')
-        font_add_label_data = settings['font']['font_login_username']
-        font_size_add_label_data = settings['font_size']['font_size_login_username']
-        label_data.config(font=(font_add_label_data, font_size_add_label_data))
+        label_data = tk.Label(self.frame_widget_configuration, text="Donnée", bg="#333333", fg="white")
+        label_data.grid(row=3, sticky='nwe', pady=(10, 0))
+        label_data.config(font=("Calibri", 13))
 
         # Combobox - Choose data to draw
         list_data = []
@@ -188,36 +196,33 @@ class Summary:
             list_data.append(x)
         combo_data = ttk.Combobox(self.frame_widget_configuration, values=list_data)
         combo_data.current(0)
-        combo_data.grid(row=2, pady=(0,10))
+        combo_data.grid(row=4)
 
         # Label - Choose background color
-        label_bg_color = tk.Label(self.frame_widget_configuration, text="Couleur du fond", bg="white")
-        label_bg_color.grid(row=3, sticky='n')
-        font_add_label_color = settings['font']['font_login_password']
-        font_size_add_label_color = settings['font_size']['font_size_login_password']
-        label_bg_color.config(font=(font_add_label_color, font_size_add_label_color))
+        label_bg_color = tk.Label(self.frame_widget_configuration, text="Couleur du fond", bg="#333333", fg="white")
+        label_bg_color.grid(row=5, sticky='n', pady=(10, 0))
+        label_bg_color.config(font=("Calibri", 13))
 
         # Combobox - Choose background color to draw
         list_color = [" ", "black", "white", "red", "orange", "blue", "yellow", "purple", "green", "white"]
         combo_bg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color)
         combo_bg_color.current(0)
-        combo_bg_color.grid(row=4, pady=(0, 10))
+        combo_bg_color.grid(row=6)
 
         # Label - Choose color
-        label_color = tk.Label(self.frame_widget_configuration, text="Couleur de la donnée", bg="white")
-        label_color.grid(row=5, sticky='n')
-        font_add_label_color = settings['font']['font_login_password']
-        font_size_add_label_color = settings['font_size']['font_size_login_password']
-        label_color.config(font=(font_add_label_color, font_size_add_label_color))
+        label_color = tk.Label(self.frame_widget_configuration, text="Couleur de la donnée", bg="#333333", fg="white" )
+        label_color.grid(row=7, sticky='n', pady=(10, 0))
+        label_color.config(font=("Calibri", 13))
 
         # Combobox - Choose frontground color to draw
         list_color = [" ", "black", "white", "red", "orange", "blue", "yellow", "purple", "green", "white"]
         combo_fg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color)
         combo_fg_color.current(0)
-        combo_fg_color.grid(row=6, pady=(0, 10))
+        combo_fg_color.grid(row=8)
 
         # Button - Validation
-        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=30)
-        button_validate.grid(row=7, pady=(10, 0), padx=(10, 10))
+        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
+        button_validate.grid(row=9, pady=(20, 0), padx=(10, 10))
+        button_validate.config(font=("Calibri", 10))
         button_validate['command'] = partial(self.change_button, 0, 0, combo_data, combo_bg_color, combo_fg_color)
 
