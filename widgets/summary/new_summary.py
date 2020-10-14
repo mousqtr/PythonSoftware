@@ -17,7 +17,7 @@ with open('widgets/summary/summary_data.json') as json_file:
 class Summary:
     """ Widget that shows some label and data """
 
-    def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group, p_width, p_height):
+    def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group):
         """
         Initialization of the summary widget that shows some label and data
 
@@ -36,8 +36,6 @@ class Summary:
         self.type = "Summary"
 
         # Properties of the widget-
-        frame_height = p_height
-        frame_width = p_width
         self.frame = tk.Frame(self.frame_section.frame, bg="white", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")

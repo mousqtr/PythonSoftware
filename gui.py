@@ -2,6 +2,7 @@ import tkinter as tk
 import json
 from functools import partial
 from widgets.summary.new_summary import Summary
+from widgets.image.image import Image_widget
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -681,11 +682,20 @@ class FrameContent:
 
         # If the selected widget is Summary, create a summary widget in the current section
         if p_id_widget == 0:
-            widget_summary = Summary(p_section, widget_configuration_frame, widget_group_1, s_width, s_height)
-            self.widgets.append(widget_summary)
+            widget = Summary(p_section, widget_configuration_frame, widget_group_1)
 
+        if p_id_widget == 1:
+            widget = Image_widget(p_section, widget_configuration_frame, widget_group_1)
+
+        if p_id_widget == 2:
+            widget = Summary(p_section, widget_configuration_frame, widget_group_1)
+
+        self.widgets.append(widget)
+
+        # Bind the index of the widget to the FrameSection
         p_section.widget_index = p_id_widget
 
+        # Change the image of the FrameSection in the configuration mode
         self.buttons_widget[p_section.id]["image"] = self.list_img_widgets2[p_id_widget]
 
         # Hide the widget to continue in the edit widget mode
