@@ -682,10 +682,10 @@ class FrameContent:
 
         # If the selected widget is Summary, create a summary widget in the current section
         if p_id_widget == 0:
-            widget = Summary(p_section, widget_configuration_frame, widget_group_1)
+            widget = Image_widget(p_section, widget_configuration_frame, widget_group_1)
 
         if p_id_widget == 1:
-            widget = Image_widget(p_section, widget_configuration_frame, widget_group_1)
+            widget = Summary(p_section, widget_configuration_frame, widget_group_1)
 
         if p_id_widget == 2:
             widget = Summary(p_section, widget_configuration_frame, widget_group_1)

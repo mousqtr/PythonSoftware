@@ -35,7 +35,7 @@ class Image_widget:
         self.frame.grid(sticky="news")
         self.frame.update_idletasks()  # to display good dimensions with .winfo_width()
         self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
+        # self.frame.rowconfigure(0, weight=1)
         self.frame.rowconfigure(1, weight=10)
 
         # Title of the page

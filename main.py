@@ -26,6 +26,7 @@ img_widgets2 = tk.PhotoImage(file="img/widgets3.png")
 img_settings2 = tk.PhotoImage(file="img/setting3.png")
 
 # Images used as widgets icons
+img_image = tk.PhotoImage(file="img/widgets/image.png")
 img_summary = tk.PhotoImage(file="img/widgets/summary.png")
 img_graph = tk.PhotoImage(file="img/widgets/graph.png")
 img_donut_chart = tk.PhotoImage(file="img/widgets/donut_chart.png")
@@ -42,7 +43,7 @@ img_empty = tk.PhotoImage(file="img/empty.png")
 # List containing theses images
 list_img_1 = [img_pages, img_widgets, img_settings]
 list_img_2 = [img_pages2, img_widgets2, img_settings2]
-list_img_widgets = [img_summary, img_donut_chart, img_table, img_map, img_graph, img_histogram, img_histogram_graph]
+list_img_widgets = [img_image, img_summary, img_donut_chart, img_table, img_map, img_graph, img_histogram, img_histogram_graph]
 list_buttons_widget = [img_add, img_delete, img_empty]
 list_img_widgets2 = []
 for img in list_img_widgets:
@@ -51,7 +52,7 @@ for img in list_img_widgets:
     list_img_widgets2.append(img)
 
 # List containing the names of each widget
-list_title_widgets = ["Sommaire", "Graphique\nen anneau", "Table", "Carte", "Graphique", "Histogramme", "Graphe\nHistogramme"]
+list_title_widgets = ["Image", "Sommaire", "Graphique\nen anneau", "Table", "Carte", "Graphique", "Histogramme", "Graphe\nHistogramme"]
 
 # Logo of the company
 img_logo = tk.PhotoImage(file="img/logo.png")

@@ -176,7 +176,7 @@ class Summary:
         self.frame_section.on_click(e)
 
         # Label - Title
-        label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
+        label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white", height=10)
         label_title.grid(row=1, sticky='nwe', pady=(10, 0))
         label_title.config(font=("Calibri", 13))
 
