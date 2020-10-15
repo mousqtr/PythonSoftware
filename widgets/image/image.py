@@ -51,8 +51,7 @@ class Image_widget:
         self.image_panel.grid(row=1, column=0, sticky="nwes")
         self.image_is_opened = False
 
-        self.entry_title = tk.Entry()
-        self.image_load = tk.Label()
+        self.bool_title = True
 
         # User interaction with the button
         self.frame.bind("<Button-1>", self.on_click)
@@ -95,27 +94,30 @@ class Image_widget:
         button_open_image.grid(row=4, pady=(5, 0), padx=(10, 10))
         button_open_image.config(font=("Calibri", 10))
 
-        frame_image_load = tk.Frame(self.frame_widget_configuration, width=80, height=80, bg="#333333")
-        frame_image_load.grid(row=5)
-
-        self.image_load = tk.Label(frame_image_load, bg="#333333")
-        self.image_load.grid(sticky="news", pady=(5, 0), padx=(10, 10))
+        # Label - Choose image
+        self.label_load_image = tk.Label(self.frame_widget_configuration, text=" ", bg="#333333", fg="green")
+        self.label_load_image.grid(row=5, sticky='nwe', pady=(10, 0))
+        self.label_load_image.config(font=("Calibri", 13))
 
         # Button - Validation
         button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
         button_validate.grid(row=9, pady=(20, 0), padx=(10, 10))
-        button_validate['command'] = self.show_title
+        button_validate['command'] = self.validate
         button_validate.config(font=("Calibri", 10))
 
-    def show_title(self):
+    def validate(self):
         # self.title.grid(row=1, sticky='nwe', pady=(10, 0))
         self.image_panel["image"] = self.image_tk
 
         title = self.entry_title.get()
 
-        if title == " " or title == "":
+        if title == " " or title == "" and self.bool_title == True:
             self.title.grid_forget()
+            self.bool_title = False
+            self.title["text"] = " "
         else:
+            self.bool_title = True
+            self.title.grid(row=0, column=0, sticky="nwes")
             self.title["text"] = title
 
 
@@ -123,26 +125,26 @@ class Image_widget:
         # open file dialog box to select image
         # The dialogue box has a title "Open"
 
-        filename = filedialog.askopenfilename(title='"pen')
-
+        filename = filedialog.askopenfilename(title='Ouvrir une Image')
         return filename
 
     def open_img(self):
+
         # Select the Imagename from a folder
         x = self.openfilename()
         img = Image.open(x)
         self.image_pil = img
         width = self.image_panel.winfo_width()
         height = self.image_panel.winfo_height()
-        img = img.resize((90, 90), Image.ANTIALIAS)
+        img = img.resize((width, height), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
-
-
-        self.image_load["image"] = img
 
         self.image_tk = img
 
         self.image_is_opened = True
+
+        self.label_load_image["text"] = "Image chargée"
+
 
     def resize_image(self, event):
         if self.image_is_opened:
