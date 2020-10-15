@@ -173,6 +173,7 @@ class Summary:
     def on_click(self, e):
         """ Function called when the user click on this section """
 
+        # Call the parent on_click function
         self.frame_section.on_click(e)
 
         # Label - Title

@@ -8,11 +8,11 @@ with open('settings.json') as json_file:
     settings = json.load(json_file)
 
 class Image_widget:
-    """ Widget that shows some label and data """
+    """ Widget that shows an image """
 
     def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group):
         """
-        Initialization of the summary widget that shows some label and data
+        Initialization of the image widget that shows some label and data
 
         :param p_parent: Page that will contain this summary widget
         :param p_widget_configuration_frame: Frame in the left menu, used to edit the widget
@@ -35,7 +35,6 @@ class Image_widget:
         self.frame.grid(sticky="news")
         self.frame.update_idletasks()  # to display good dimensions with .winfo_width()
         self.frame.columnconfigure(0, weight=1)
-        # self.frame.rowconfigure(0, weight=1)
         self.frame.rowconfigure(1, weight=10)
 
         # Title of the page
@@ -47,10 +46,12 @@ class Image_widget:
         self.image_tk = Image.open("./img/add.png")
         self.image_pil = Image.open("./img/add.png")
 
+        # Label that indicates when image is loaded
         self.image_panel = tk.Label(self.frame)
         self.image_panel.grid(row=1, column=0, sticky="nwes")
         self.image_is_opened = False
 
+        # Boolean that indicates if the image has a title or not
         self.bool_title = True
 
         # User interaction with the button
@@ -72,6 +73,7 @@ class Image_widget:
     def on_click(self, e):
         """ Function called when the user click on this section """
 
+        # Called the on_click function of its parent
         self.frame_section.on_click(e)
 
         # Label - Title
@@ -106,7 +108,7 @@ class Image_widget:
         button_validate.config(font=("Calibri", 10))
 
     def validate(self):
-        # self.title.grid(row=1, sticky='nwe', pady=(10, 0))
+        """ Function called when the user click on validate button"""
         self.image_panel["image"] = self.image_tk
 
         title = self.entry_title.get()
@@ -122,8 +124,9 @@ class Image_widget:
 
 
     def openfilename(self):
-        # open file dialog box to select image
-        # The dialogue box has a title "Open"
+        """ open file dialog box to select image
+        :return: the name of the image file
+        """
 
         filename = filedialog.askopenfilename(title='Ouvrir une Image')
         return filename
@@ -132,18 +135,23 @@ class Image_widget:
 
         # Select the Imagename from a folder
         x = self.openfilename()
-        img = Image.open(x)
-        self.image_pil = img
-        width = self.image_panel.winfo_width()
-        height = self.image_panel.winfo_height()
-        img = img.resize((width, height), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(img)
 
-        self.image_tk = img
+        try:
+            img = Image.open(x)
+            self.image_pil = img
+            width = self.image_panel.winfo_width()
+            height = self.image_panel.winfo_height()
+            img = img.resize((width, height), Image.ANTIALIAS)
+            img = ImageTk.PhotoImage(img)
 
-        self.image_is_opened = True
+            self.image_tk = img
 
-        self.label_load_image["text"] = "Image chargée"
+            self.image_is_opened = True
+
+            self.label_load_image["text"] = "Image chargée"
+        except:
+            print("Image non chargée")
+
 
 
     def resize_image(self, event):

@@ -1,5 +1,6 @@
 import tkinter as tk
 import json
+import Pmw
 from functools import partial
 from widgets.summary.new_summary import Summary
 from widgets.image.image import Image_widget
@@ -269,6 +270,9 @@ class LeftFrame:
         self.frames_opened = [False for i in range(len(self.list_img_1))]
         self.texts = ["Pages", "Widgets", "Paramètres", "Tableaux"]
 
+        # Overlay message
+        self.message = Pmw.Balloon(self.frame)
+
         for i in range(len(self.list_img_1)):
             self.moving_frames[i] = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=0)
             self.moving_frames[i].grid(row=1, column=1)
@@ -277,6 +281,8 @@ class LeftFrame:
 
             self.buttons[i] = tk.Button(self.static_part, image=self.list_img_1[i], height=50, borderwidth=0, command=partial(self.show, i))
             self.buttons[i].grid(row=i)
+            self.message.bind(self.buttons[i], self.texts[i])
+
 
             label_page = tk.Label(self.moving_frames[i], text=self.texts[i], bg="#333333", fg="white")
             label_page.grid(row=0, sticky='nwe')
@@ -366,10 +372,8 @@ class LeftFrame:
         # Resize the middle frame
         self.middle.resize()
 
-    def display(self):
+    def change_config_widget_frame(self):
         """ Function called when we click on a widget """
-        # print(self.current_widget)
-        # print(self.current_frame)
 
         self.frames_content[self.current_frame].frames_configuration_widgets[self.current_widget].lift()
 
@@ -387,6 +391,7 @@ class FrameContent:
         self.name = p_name
         self.source_window = p_source_window
         self.frame_left = p_frame_right.frame_left
+        self.bg = p_background
 
         # Set parameters to the RightFrame class (add the frame in frame_content list/ set current_frame)
         self.right_frame.frames_content.append(self)
@@ -433,6 +438,8 @@ class FrameContent:
         # Boolean who indicated if the "widget configuration" mode is open or not
         self.edit_widget_mode_is_activate = False
 
+        # Text which appear when a mouse over something
+        self.message = Pmw.Balloon(self.frame)  # Calling the tooltip
 
 
 
@@ -551,14 +558,19 @@ class FrameContent:
     def edit_widgets(self):
         """ Function called from the edit_widgets_mode function in the main py file """
 
+
+
+
         # If the edit_widgets_mode is enable
         if not self.edit_widget_mode_is_activate:
+            self.frame["bg"] = "#333333"
             self.hide_widgets()
             self.show_edit_widgets_mode()
             self.edit_widget_mode_is_activate = True
 
         # If the edit_widgets_mode is disable
         else:
+            self.frame["bg"] = self.bg
             self.show_widgets()
             self.hide_edit_widgets_mode()
             self.edit_widget_mode_is_activate = False
@@ -585,7 +597,6 @@ class FrameContent:
             padx = 2
             pady = 2
 
-
             # Name of the widget
             # text = "Widget : " + str(i)
             # self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
@@ -596,20 +607,24 @@ class FrameContent:
             self.buttons_widget[i]["command"] = None
             self.buttons_widget[i].grid(row=0, rowspan=1, columnspan=2, sticky='news', padx=(padx, padx), pady=(pady, pady))
             if s.widget_index == -1:
-                self.buttons_widget[i]["image"] = self.list_buttons_widget[2]
+                # self.buttons_widget[i]["image"] = self.list_buttons_widget[2]
+                self.buttons_widget[i]["text"] = "No widget"
+                self.buttons_widget[i].config(font=("Calibri bold", 10))
             else :
                 self.buttons_widget[i]["image"] = self.list_img_widgets2[s.widget_index]
-
 
             # Button to add a widget in the section
             self.buttons_sections_add[i] = tk.Button(self.frame_edit_mode[i], image=self.list_buttons_widget[0])
             self.buttons_sections_add[i]["command"] = partial(self.add_widget, s)
             self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
+            self.message.bind(self.buttons_sections_add[i], 'Ajouter un widget')
 
             # Button to delete a widget in the section
             self.buttons_sections_delete[i] = tk.Button(self.frame_edit_mode[i], image=self.list_buttons_widget[1])
             self.buttons_sections_delete[i]["command"] = None
             self.buttons_sections_delete[i].grid(row=1, column=1, sticky='news', padx=(padx, padx), pady=(pady, pady))
+            self.message.bind(self.buttons_sections_delete[i], 'Supprimer le widget')
+
 
     def hide_edit_widgets_mode(self):
         """ Hide the edit widget mode """
@@ -807,21 +822,7 @@ class FrameSection:
         """ Function called when the user click on this section """
 
         self.frame_left.current_widget = self.id
-        self.frame_left.display()
-
-
-class FrameSettingWidget:
-    """  """
-
-    def __init__(self, p_parent):
-        """  """
-
-        self.frame = tk.Frame(p_parent.frame, width=50, height=50, bg="white")
-        self.frame.grid(row=0, column=0 , padx=(5, 5), pady=(5, 5))
-        self.frame.config(highlightbackground="black", highlightthickness=1)
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
-        self.frame.grid_propagate(False)
+        self.frame_left.change_config_widget_frame()
 
 
 class WidgetGroup:
