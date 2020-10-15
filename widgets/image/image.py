@@ -51,7 +51,8 @@ class Image_widget:
         self.image_panel.grid(row=1, column=0, sticky="nwes")
         self.image_is_opened = False
 
-        self.filename = tk.StringVar()
+        self.entry_title = tk.Entry()
+        self.image_load = tk.Label()
 
         # User interaction with the button
         self.frame.bind("<Button-1>", self.on_click)
@@ -94,10 +95,11 @@ class Image_widget:
         button_open_image.grid(row=4, pady=(5, 0), padx=(10, 10))
         button_open_image.config(font=("Calibri", 10))
 
-        # Button _ Open image
-        label_image_name = tk.Label(self.frame_widget_configuration, width=19, textvariable=self.filename)
-        label_image_name.grid(row=5, pady=(5, 0), padx=(10, 10))
-        label_image_name.config(font=("Calibri", 10))
+        frame_image_load = tk.Frame(self.frame_widget_configuration, width=80, height=80, bg="#333333")
+        frame_image_load.grid(row=5)
+
+        self.image_load = tk.Label(frame_image_load, bg="#333333")
+        self.image_load.grid(sticky="news", pady=(5, 0), padx=(10, 10))
 
         # Button - Validation
         button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
@@ -107,17 +109,21 @@ class Image_widget:
 
     def show_title(self):
         # self.title.grid(row=1, sticky='nwe', pady=(10, 0))
+        self.image_panel["image"] = self.image_tk
 
         title = self.entry_title.get()
-        self.title["text"] = title
+
+        if title == " " or title == "":
+            self.title.grid_forget()
+        else:
+            self.title["text"] = title
 
 
     def openfilename(self):
         # open file dialog box to select image
         # The dialogue box has a title "Open"
-        filename = filedialog.askopenfilename(title='"pen')
 
-        self.filename.set(str(filename))
+        filename = filedialog.askopenfilename(title='"pen')
 
         return filename
 
@@ -128,10 +134,12 @@ class Image_widget:
         self.image_pil = img
         width = self.image_panel.winfo_width()
         height = self.image_panel.winfo_height()
-        img = img.resize((width, height), Image.ANTIALIAS)
+        img = img.resize((90, 90), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
 
-        self.image_panel["image"] = img
+
+        self.image_load["image"] = img
+
         self.image_tk = img
 
         self.image_is_opened = True
