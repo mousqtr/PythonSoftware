@@ -2,7 +2,7 @@ import tkinter as tk
 import json
 import Pmw
 from functools import partial
-from widgets.summary.new_summary import WidgetSummary
+from widgets.summary.summary import WidgetSummary
 from widgets.image.image import WidgetImage
 
 with open('settings.json') as json_file:

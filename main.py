@@ -5,7 +5,6 @@ from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, But
 from new_page import NewPage
 from edit_page import EditPage
 from login import Login
-from widgets.summary.summary import Summary
 from widgets.filters.filters import Filters
 from widgets.modifiers.modifiers import Modifiers
 from widgets.table.table import Table

@@ -3,7 +3,6 @@ import json
 from PIL import ImageTk, Image
 from tkinter import filedialog
 
-
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
@@ -59,17 +58,11 @@ class WidgetImage:
         self.frame.bind("<Button-1>", self.on_click)
         self.title.bind("<Button-1>", self.on_click)
         self.image_panel.bind("<Button-1>", self.on_click)
-        self.image_panel.bind('<Configure>', self.resize_image)
+        self.image_panel.bind('<Configure>', self.resize)
 
 
-    def update(self):
-        print("Update Image")
 
-    def hide(self):
-        self.frame.grid_forget()
 
-    def show(self):
-        self.frame.grid(row=0, column=0, sticky="news")
 
     def on_click(self, e):
         """ Function called when the user click on this section """
@@ -125,7 +118,7 @@ class WidgetImage:
 
 
     def openfilename(self):
-        """ open file dialog box to select image
+        """ Open file dialog box to select image
         :return: the name of the image file
         """
 
@@ -155,7 +148,12 @@ class WidgetImage:
 
 
 
-    def resize_image(self, event):
+    def resize(self, event):
+        """ Function called when the parent section is resized"""
+
+        print("Resize ImageWidget")
+
+        # If the image is displayed, get the new section dimension and resize the image accordingly
         if self.image_is_opened:
             new_width = self.image_panel.winfo_width()
             new_height = self.image_panel.winfo_height()
@@ -164,5 +162,33 @@ class WidgetImage:
             img = ImageTk.PhotoImage(img)
             self.image_panel["image"] = img
             self.image_load = img
+
+    def hide(self):
+        """ Hide the widget (during the edit widget mode)"""
+
+        print("Hide ImageWidget")
+        self.frame.grid_forget()
+
+    def show(self):
+        """ Hide the widget (after the edit widget mode)"""
+
+        print("Show ImageWidget")
+        self.frame.grid(row=0, column=0, sticky="news")
+
+    def save(self):
+        """ Function that saves the content of the widget """
+
+        print("Save ImageWidget")
+
+
+    def load(self):
+        """ Function that loads the content of the widget"""
+
+        print("Load ImageWidget")
+
+    def update(self):
+        """ Function that update some values widget_group is updated"""
+
+        print("Update ImageWidget")
 
 
