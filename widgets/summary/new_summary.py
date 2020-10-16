@@ -14,7 +14,7 @@ with open('widgets/summary/summary_data.json') as json_file:
     widgets_data = json.load(json_file)
 
 
-class Summary:
+class WidgetSummary:
     """ Widget that shows some label and data """
 
     def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group):
@@ -42,7 +42,6 @@ class Summary:
         self.frame.grid(sticky="news")
         self.frame.update_idletasks()  # to display good dimensions with .winfo_width()
         self.frame.columnconfigure(0, weight=1)
-        # self.frame.rowconfigure(0, weight=1)
         self.frame.rowconfigure(1, weight=10)
 
         # Title of the page
@@ -53,11 +52,13 @@ class Summary:
         # Creation of the buttons that display data
         self.frame_data = tk.Frame(self.frame)
         self.frame_data.grid(row=1, column=0, sticky="nwes")
+        self.frame_data.columnconfigure((0, 1, 2), weight=1)
+        self.frame_data.rowconfigure((0, 1, 2), weight=1)
 
         # Creation of the buttons that display data
         self.label_data = tk.Label(self.frame_data, text=" ", fg="white")
-        self.label_data.grid(row=0, column=0, sticky="nwes")
-        self.label_data.config(font=("Calibri bold", 10))
+        self.label_data.grid(row=1, column=1)
+        self.label_data.config(font=("Calibri bold", 11))
 
         # Loading and changing the content of the buttons
         self.load()
@@ -69,6 +70,42 @@ class Summary:
         self.frame.bind("<Button-1>", self.on_click)
         self.frame_data.bind("<Button-1>", self.on_click)
         self.title.bind("<Button-1>", self.on_click)
+
+        # User resize interaction
+        self.frame_data.bind('<Configure>', self.resize)
+
+        # lists of differents size and font
+        self.list_size = [i*10 for i in range(100)]
+        self.list_font = [i*3 for i in range(4, 20)]
+        self.current_index_size = 7
+        self.current_index_font = 0
+
+    def resize(self, event):
+        width_frame = self.frame_data.winfo_width()
+        height_frame = self.frame_data.winfo_height()
+        print("width_frame", width_frame)
+        print("height_frame", height_frame)
+
+        index_w = width_frame//10
+        index_h = height_frame//10
+        print("index_w", index_w)
+        print("index_h", index_h)
+
+        index_size = min(index_w, index_h)
+        print("index_size", index_size)
+
+        diff = index_size - self.current_index_size
+        print("self.current_index_size", self.current_index_size)
+        print("index_size", index_size)
+
+        if diff != 0:
+            print("diff")
+            index_font = self.current_index_font + diff
+            self.label_data.config(font=("Calibri bold", self.list_font[index_font]))
+            print("font", self.list_font[index_font])
+
+            self.current_index_font = index_font
+            self.current_index_size = index_size
 
     def change_button(self, p_row, p_column, p_combo_data, p_combo_bg_color, p_combo_fg_color):
         """
@@ -110,65 +147,11 @@ class Summary:
         # Save the data
         self.save(p_row, p_column, data, background_color, frontground_color)
 
-    def save(self, p_row, p_column, p_data, p_bg_color, p_fg_color):
-        """
-        Function that saves the content of each button
-
-        :param p_row: Row of the button
-        :param p_column: Column of the button
-        :param p_data: Name of the data
-        :param p_bg_color: Background color of the data
-        :param p_fg_color: Frontground color of the data
-        """
-
-        # Build the texts that will be add to the saving file
-        key = str(p_row) + ',' + str(p_column)
-        value_data = {key: p_data}
-        value_bg_color = {key: p_bg_color}
-        value_fg_color = {key: p_fg_color}
-
-        # Update the saving file (.json) with these data
-        widgets_data['summary_data'].update(value_data)
-        widgets_data['summary_bg_color'].update(value_bg_color)
-        widgets_data['summary_fg_color'].update(value_fg_color)
-        with open('widgets/summary/summary_data.json', 'w') as outfile:
-            json.dump(widgets_data, outfile, indent=4)
-
-    def load(self):
-        """
-        Function that loads the content of each button
-        """
-
-        # # Get all the data contain in the "summary section" of the saving file
-        # for x in widgets_data['summary_data']:
-        #     coord = x.split(',')
-        #     row = int(coord[0])
-        #     column = int(coord[1])
-        #     data = widgets_data['summary_data'][x]
-        #     bg_color = widgets_data['summary_bg_color'][x]
-        #     fg_color = widgets_data['summary_fg_color'][x]
-        #     if data == ' ':
-        #         data_text = data
-        #     else:
-        #         data_text = data + '\n' + str(widgets_data['data'][data])
-        #     self.buttons[row][column]['text'] = data_text
-        #     self.buttons[row][column]['bg'] = bg_color
-        #     self.buttons[row][column]['fg'] = fg_color
-
-        self.frame_data['bg'] = "red"
-        self.label_data['text'] = "test"
-        self.label_data['bg'] = "red"
-        self.label_data['fg'] = "white"
-
-    def update(self):
-        print("Update Summary")
-
     def hide(self):
         self.frame.grid_forget()
 
     def show(self):
         self.frame.grid(row=0, column=0, sticky="news")
-
 
     def on_click(self, e):
         """ Function called when the user click on this section """
@@ -227,3 +210,57 @@ class Summary:
         button_validate.config(font=("Calibri", 10))
         button_validate['command'] = partial(self.change_button, 0, 0, combo_data, combo_bg_color, combo_fg_color)
 
+
+
+    def save(self, p_row, p_column, p_data, p_bg_color, p_fg_color):
+        """
+        Function that saves the content of each button
+
+        :param p_row: Row of the button
+        :param p_column: Column of the button
+        :param p_data: Name of the data
+        :param p_bg_color: Background color of the data
+        :param p_fg_color: Frontground color of the data
+        """
+
+        # Build the texts that will be add to the saving file
+        key = str(p_row) + ',' + str(p_column)
+        value_data = {key: p_data}
+        value_bg_color = {key: p_bg_color}
+        value_fg_color = {key: p_fg_color}
+
+        # Update the saving file (.json) with these data
+        widgets_data['summary_data'].update(value_data)
+        widgets_data['summary_bg_color'].update(value_bg_color)
+        widgets_data['summary_fg_color'].update(value_fg_color)
+        with open('widgets/summary/summary_data.json', 'w') as outfile:
+            json.dump(widgets_data, outfile, indent=4)
+
+    def load(self):
+        """
+        Function that loads the content of each button
+        """
+
+        # # Get all the data contain in the "summary section" of the saving file
+        # for x in widgets_data['summary_data']:
+        #     coord = x.split(',')
+        #     row = int(coord[0])
+        #     column = int(coord[1])
+        #     data = widgets_data['summary_data'][x]
+        #     bg_color = widgets_data['summary_bg_color'][x]
+        #     fg_color = widgets_data['summary_fg_color'][x]
+        #     if data == ' ':
+        #         data_text = data
+        #     else:
+        #         data_text = data + '\n' + str(widgets_data['data'][data])
+        #     self.buttons[row][column]['text'] = data_text
+        #     self.buttons[row][column]['bg'] = bg_color
+        #     self.buttons[row][column]['fg'] = fg_color
+
+        self.frame_data['bg'] = "red"
+        self.label_data['text'] = "test"
+        self.label_data['bg'] = "red"
+        self.label_data['fg'] = "white"
+
+    def update(self):
+        print("Update Summary")

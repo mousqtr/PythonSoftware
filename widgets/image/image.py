@@ -7,7 +7,8 @@ from tkinter import filedialog
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
-class Image_widget:
+
+class WidgetImage:
     """ Widget that shows an image """
 
     def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group):

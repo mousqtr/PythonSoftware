@@ -2,8 +2,8 @@ import tkinter as tk
 import json
 import Pmw
 from functools import partial
-from widgets.summary.new_summary import Summary
-from widgets.image.image import Image_widget
+from widgets.summary.new_summary import WidgetSummary
+from widgets.image.image import WidgetImage
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -558,9 +558,6 @@ class FrameContent:
     def edit_widgets(self):
         """ Function called from the edit_widgets_mode function in the main py file """
 
-
-
-
         # If the edit_widgets_mode is enable
         if not self.edit_widget_mode_is_activate:
             self.frame["bg"] = "#333333"
@@ -697,13 +694,13 @@ class FrameContent:
 
         # If the selected widget is Summary, create a summary widget in the current section
         if p_id_widget == 0:
-            widget = Image_widget(p_section, widget_configuration_frame, widget_group_1)
+            widget = WidgetImage(p_section, widget_configuration_frame, widget_group_1)
 
         if p_id_widget == 1:
-            widget = Summary(p_section, widget_configuration_frame, widget_group_1)
+            widget = WidgetSummary(p_section, widget_configuration_frame, widget_group_1)
 
         if p_id_widget == 2:
-            widget = Summary(p_section, widget_configuration_frame, widget_group_1)
+            widget = WidgetSummary(p_section, widget_configuration_frame, widget_group_1)
 
         self.widgets.append(widget)
 
