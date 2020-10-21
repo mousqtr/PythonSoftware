@@ -73,11 +73,9 @@ class WidgetTable:
         # Frame that contains headers of the table
         self.frame.update_idletasks()
         frame_header_width = self.frame.winfo_width() - 20
-        print(frame_header_width)
         self.frame_headers = tk.Frame(self.frame, bg="green", width=frame_header_width, height=20)
         self.frame_headers.grid(row=1, sticky="nws")
         self.frame_headers.update_idletasks()
-        print(self.frame_headers.winfo_width())
 
         # Frame that will contain the table
         self.frame_canvas = tk.Frame(self.frame)
@@ -136,9 +134,7 @@ class WidgetTable:
         self.list_columns = p_list_col
         nb_column = len(p_list_col)
         width_column = self.list_width[nb_column - 1]
-        print("self.frame.winfo_width()", self.frame.winfo_width())
         width_column1 = int(self.frame_headers.winfo_width()/6)
-        print("width_column", width_column1)
 
         # Creation of the header
         self.frames_header = [tk.Frame() for j in range(nb_column)]
@@ -202,9 +198,11 @@ class WidgetTable:
 
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
         first5columns_width = sum([self.buttons_table[0][j].winfo_width() for j in range(0, nb_column)])
-        first5rows_height = sum([self.buttons_table[i][0].winfo_height() for i in range(0, 11)])
+        # first5rows_height = sum([self.buttons_table[i][0].winfo_height() for i in range(0, 16)])
+        height = self.frame_section.frame.winfo_height() - 45
+        print(height)
         self.frame_canvas.config(width=first5columns_width + self.vsb.winfo_width(),
-                            height=first5rows_height)
+                            height=height)
 
         # Set the canvas scrolling region
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
