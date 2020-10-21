@@ -430,7 +430,10 @@ class FrameContent:
         # List containing the widgets
         self.widgets = []
 
-        # List containing the widgets configuration frames
+        # List containing the widgets configuration objects
+        self.configuration_widgets = []
+
+        # List containing the widgets configuration objects frames
         self.frames_configuration_widgets = []
 
         # Creation of the sections
@@ -496,19 +499,25 @@ class FrameContent:
         section_id = 0
         for ds in self.displayed_sections:
 
-            # Creation of a widget frame configuration for each section
-            widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="#333333", height=initial_configuration_widget_height,
-                                            width=180)
-            widget_setting_frame.grid(row=1, column=0, pady=(10, 10), padx=(10, 10))
-            widget_setting_frame.columnconfigure(0, weight=1)
-            widget_setting_frame.grid_propagate(False)
-            self.frames_configuration_widgets.append(widget_setting_frame)
+            # # Creation of a widget frame configuration for each section
+            # widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="#333333", height=initial_configuration_widget_height,
+            #                                 width=180)
+            # widget_setting_frame.grid(row=1, column=0, pady=(10, 10), padx=(10, 10))
+            # widget_setting_frame.columnconfigure(0, weight=1)
+            # widget_setting_frame.grid_propagate(False)
+            # self.frames_configuration_widgets.append(widget_setting_frame)
+            #
+            # # Creation of a title in the widget frame configuration
+            # text = "Widget : " + str(section_id)
+            # label_widget_title = tk.Label(widget_setting_frame, text=text, bg="#8989ff", fg="white")
+            # label_widget_title.grid(row=0, sticky='nwe')
+            # label_widget_title.config(font=("Calibri bold", 12))
 
-            # Creation of a title in the widget frame configuration
-            text = "Widget : " + str(section_id)
-            label_widget = tk.Label(widget_setting_frame, text=text, bg="#8989ff", fg="white")
-            label_widget.grid(row=0, sticky='nwe')
-            label_widget.config(font=("Calibri bold", 12))
+            widget_setting = WidgetFrameConfiguration(self.frame_left.moving_widgets_page[self.id], section_id)
+            self.configuration_widgets.append(widget_setting)
+            self.frames_configuration_widgets.append(widget_setting.frame)
+
+
             section_id += 1
 
         # Lists containing the labels & buttons used for "widgets configuration mode"
@@ -691,17 +700,17 @@ class FrameContent:
         s_width = p_section.frame.winfo_width()
         s_height = p_section.frame.winfo_height()
         widget_group_1 = WidgetGroup(1)
-        widget_configuration_frame = self.frames_configuration_widgets[p_section.id]
+        widget_configuration = self.configuration_widgets[p_section.id]
 
         # If the selected widget is Summary, create a summary widget in the current section
         if p_id_widget == 0:
-            widget = WidgetImage(p_section, widget_configuration_frame, widget_group_1)
+            widget = WidgetImage(p_section, widget_configuration, widget_group_1)
 
         if p_id_widget == 1:
-            widget = WidgetSummary(p_section, widget_configuration_frame, widget_group_1)
+            widget = WidgetSummary(p_section, widget_configuration, widget_group_1)
 
         if p_id_widget == 2:
-            widget = WidgetTable(p_section, widget_configuration_frame, widget_group_1)
+            widget = WidgetTable(p_section, widget_configuration, widget_group_1)
 
         self.widgets.append(widget)
 
@@ -725,6 +734,24 @@ class FrameContent:
 
         for w in self.widgets:
             w.show()
+
+
+class WidgetFrameConfiguration:
+    def __init__(self, p_parent, p_id):
+
+        # Creation of a widget frame configuration for each section
+        self.frame = tk.Frame(p_parent, bg="#333333",
+                                        height=initial_configuration_widget_height,
+                                        width=180)
+        self.frame.grid(row=1, column=0, pady=(10, 10), padx=(10, 10))
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.grid_propagate(False)
+
+        # Creation of a title in the widget frame configuration
+        text = "Widget : " + str(p_id)
+        self.label_title = tk.Label(self.frame, text=text, bg="#8989ff", fg="white")
+        self.label_title.grid(row=0, sticky='nwe')
+        self.label_title.config(font=("Calibri bold", 12))
 
 
 class ButtonLeftText:

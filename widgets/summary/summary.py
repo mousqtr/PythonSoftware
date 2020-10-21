@@ -29,7 +29,7 @@ class WidgetSummary:
         # Saving the parameters to use them in each function
         self.frame_section = p_section_frame
         self.widget_group = p_widget_group
-        self.frame_widget_configuration = p_widget_configuration_frame
+        self.frame_widget_configuration = p_widget_configuration_frame.frame
 
         # Add this widget to p_parent widgets
         self.widget_group.widgets.append(self)

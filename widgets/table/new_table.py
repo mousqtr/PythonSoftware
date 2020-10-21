@@ -27,6 +27,8 @@ class WidgetTable:
         # Saving the parameters to use them in each function
         self.frame_section = p_section
         self.widget_group = p_widget_group
+        self.widget_configuration = p_widget_configuration_frame
+        self.frame_widget_configuration = p_widget_configuration_frame.frame
 
         self.frame_section_width = self.frame_section.frame.winfo_width()
         self.frame_section_height = self.frame_section.frame.winfo_height()
@@ -101,6 +103,10 @@ class WidgetTable:
 
         # Creation of the table
         self.create_table(self.list_columns, self.list_rows)
+
+        # User interaction with the button
+        self.frame.bind("<Button-1>", self.on_click)
+        self.title.bind("<Button-1>", self.on_click)
 
         # # Create frame containing buttons
         # frame_buttons = tk.Frame(self.frame, height=40, bg="white")
@@ -206,6 +212,54 @@ class WidgetTable:
 
         # Set the canvas scrolling region
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+    def on_click(self, e):
+        """ Function called when the user click on this section """
+
+        # Called the on_click function of its parent
+        self.frame_section.on_click(e)
+
+        self.frame_widget_configuration.grid_columnconfigure((0, 1), weight=1)
+
+        # Modify the configuration widget title
+        self.widget_configuration.label_title.grid(row=0, columnspan=2)
+
+        # Label - Title
+        label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
+        label_title.grid(row=1, columnspan=2, pady=(10, 0))
+        label_title.config(font=("Calibri", 13))
+
+        # Entry - Write the title
+        self.entry_title = tk.Entry(self.frame_widget_configuration, width=15, textvariable=" ")
+        self.entry_title.grid(row=2, columnspan=2)
+        self.entry_title.config(font=("Calibri bold", 10))
+
+        # Label - Choose columns
+        label_select_column = tk.Label(self.frame_widget_configuration, text="Choix des colonnes", bg="#333333", fg="white")
+        label_select_column.grid(row=3, columnspan=2, pady=(10, 0))
+        label_select_column.config(font=("Calibri", 13))
+
+        # Column choice label
+        labels_column_choice = [tk.Label() for j in range(self.nb_column_max)]
+        combo_column_choice = [ttk.Combobox() for j in range(self.nb_column_max)]
+        list_headers = list(self.df.head())
+        list_headers.insert(0, " ")
+        for j in range(self.nb_column_max):
+            label_text = "Colonne " + str(j + 1)
+            labels_column_choice[j] = tk.Label(self.frame_widget_configuration, text=label_text, width=19, bg="#333333", fg="white")
+            labels_column_choice[j].grid(row=j + 4, column=0, sticky='ne', padx=10, pady=1)
+            labels_column_choice[j].config(font=("Calibri bold", 9))
+
+            combo_column_choice[j] = ttk.Combobox(self.frame_widget_configuration, values=list_headers, state="readonly")
+            combo_column_choice[j].grid(row=j + 4, column=1, sticky='nw', padx=10, pady=1)
+            combo_column_choice[j].config(font=("Calibri bold", 9))
+            combo_column_choice[j].current(0)
+
+        # Button - Validation
+        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
+        button_validate.grid(row=30, columnspan=2, pady=(20, 0))
+        # button_validate['command'] = self.validate
+        button_validate.config(font=("Calibri", 10))
 
     def color_line(self, p_row):
         """
