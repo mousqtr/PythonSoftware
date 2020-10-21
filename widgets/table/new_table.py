@@ -13,10 +13,10 @@ with open('widgets/table/table_data.json') as json_file:
     table_data = json.load(json_file)
 
 
-class Table:
+class WidgetTable:
     """ Widget that displays a table """
 
-    def __init__(self, p_parent, p_widget_group, p_row):
+    def __init__(self, p_section, p_widget_configuration_frame, p_widget_group):
         """
         Initialization of the table widget that shows a table
 
@@ -25,9 +25,12 @@ class Table:
         :param p_row: Row of the page where the widget will be placed
         """
         # Saving the parameters to use them in each function
-        self.parent = p_parent
-        self.row = p_row
+        self.frame_section = p_section
         self.widget_group = p_widget_group
+
+        self.frame_section_width = self.frame_section.frame.winfo_width()
+        self.frame_section_height = self.frame_section.frame.winfo_height()
+
 
         # Initialization of the dataframe
         self.df = pd.read_csv('csv/csv_test.csv')
@@ -41,7 +44,11 @@ class Table:
         self.list_columns = [0, 1, 2, 3, 4, 5]
 
         # Tempo values
-        self.list_width = [98, 48, 32, 23, 18, 15]
+        # print(self.frame_section.frame.winfo_width())
+        # width_column = int(self.frame_section.frame.winfo_width()/self.nb_column)
+        # print(width_column)
+        # self.list_width = [width_column for i in range(6)]
+        self.list_width = [6 for i in range(6)]
         self.selected_row = -1
 
         # Add this widget to p_parent widgets
@@ -49,29 +56,32 @@ class Table:
         self.type = "Table"
 
         # Properties of the widget
-        frame_height = 400
-        frame_width = 780
-        self.frame = tk.Frame(self.parent.frame, bg="white", width=frame_width, height=frame_height, highlightthickness=1)
+        self.frame = tk.Frame(self.frame_section.frame, bg="yellow", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
-        self.frame.grid(row=self.row, column=0, pady=(5, 5))
-        self.frame.columnconfigure((0, 1, 2, 3, 4), weight=1)
+        self.frame.grid(sticky="news")
+        self.frame.columnconfigure(0, weight=1)
 
         # Title - Table
-        self.title = tk.Label(self.frame, text="Table", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised", height=1)
-        self.title.grid(row=0, column=0, columnspan=6, sticky="nwe", ipadx=10, ipady=1)
+        self.title = tk.Label(self.frame, text="Titre", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
+        self.title.grid(row=0, sticky="nwes")
         self.title.config(font=("Calibri bold", 12))
 
         # Update these previous values with saving ones
         self.load()
 
         # Frame that contains headers of the table
-        self.frame_headers = tk.Frame(self.frame, bg="white")
-        self.frame_headers.grid(row=1, padx=40, pady=(10,0))
+        self.frame.update_idletasks()
+        frame_header_width = self.frame.winfo_width() - 10
+        print(frame_header_width)
+        self.frame_headers = tk.Frame(self.frame, bg="green", width=frame_header_width, height=20)
+        self.frame_headers.grid(row=1, sticky="nws")
+        self.frame_headers.update_idletasks()
+        print(self.frame_headers.winfo_width())
 
         # Frame that will contain the table
         self.frame_canvas = tk.Frame(self.frame)
-        self.frame_canvas.grid(row=2, column=0, padx=(40, 0), pady=(0, 0), sticky='nw')
+        self.frame_canvas.grid(row=2, sticky='nwes')
         self.frame_canvas.grid_rowconfigure(0, weight=1)
         self.frame_canvas.grid_columnconfigure(0, weight=1)
         self.frame_canvas.grid_propagate(False)
@@ -94,22 +104,22 @@ class Table:
         # Creation of the table
         self.create_table(self.list_columns, self.list_rows)
 
-        # Create frame containing buttons
-        frame_buttons = tk.Frame(self.frame, height=40, bg="white")
-        frame_buttons.grid(row=3, column=0, columnspan=6, sticky="nwe", pady=(10,0))
-        frame_buttons.grid_propagate(False)
-
-        # Button - Settings (column choice)
-        button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
-        button_settings.config(font=("Calibri", 10))
-        button_settings.grid(row=0, column=0, sticky="nw", padx=(40, 0))
-        button_settings['command'] = self.settings_window
-
-        # Button - Details
-        button_details = tk.Button(frame_buttons, width=20, height=1, text="Détails")
-        button_details.config(font=("Calibri", 10))
-        button_details.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
-        button_details['command'] = self.details_window
+        # # Create frame containing buttons
+        # frame_buttons = tk.Frame(self.frame, height=40, bg="white")
+        # frame_buttons.grid(row=3, column=0, columnspan=6, sticky="nwe", pady=(10,0))
+        # frame_buttons.grid_propagate(False)
+        #
+        # # Button - Settings (column choice)
+        # button_settings = tk.Button(frame_buttons, width=20, height=1, text="Paramètres")
+        # button_settings.config(font=("Calibri", 10))
+        # button_settings.grid(row=0, column=0, sticky="nw", padx=(40, 0))
+        # button_settings['command'] = self.settings_window
+        #
+        # # Button - Details
+        # button_details = tk.Button(frame_buttons, width=20, height=1, text="Détails")
+        # button_details.config(font=("Calibri", 10))
+        # button_details.grid(row=0, column=1,  sticky="nw", padx=(10, 0))
+        # button_details['command'] = self.details_window
 
     def create_table(self, p_list_col, p_list_rows):
         """
@@ -126,26 +136,37 @@ class Table:
         self.list_columns = p_list_col
         nb_column = len(p_list_col)
         width_column = self.list_width[nb_column - 1]
+        print("self.frame.winfo_width()", self.frame.winfo_width())
+        width_column1 = int(self.frame_headers.winfo_width()/6)
+        print("width_column", width_column1)
 
         # Creation of the header
+        self.frames_header = [tk.Frame() for j in range(nb_column)]
         self.buttons_header = [tk.Button() for j in range(nb_column)]
         current_col = 0
         for j in self.list_columns:
-            self.buttons_header[current_col] = tk.Button(self.frame_headers, width=width_column, text=list(self.df)[j-1],
-                                          font=("Consolas bold", 10))
+            self.frames_header[current_col] = tk.Frame(self.frame_headers, width=width_column1, height=20, bg="blue")
+            self.frames_header[current_col].grid(row=0, column=current_col)
+            self.frames_header[current_col].grid_propagate(False)
+            self.frames_header[current_col].grid_columnconfigure(0, weight=1)
+            self.frames_header[current_col].grid_rowconfigure(0, weight=1)
+
+            self.buttons_header[current_col] = tk.Button(self.frames_header[current_col], text=list(self.df)[j-1])
             self.buttons_header[current_col].config(bg="green", fg="white")
-            self.buttons_header[current_col].grid(row=0, column=current_col)
-            self.buttons_header[current_col].config(borderwidth=2, relief="ridge")
+            self.buttons_header[current_col].grid(row=0,column=0, sticky="news")
+            # self.buttons_header[current_col].config(borderwidth=2, relief="ridge")
             current_col += 1
 
         # Creation of the table content
         self.buttons_table = [[tk.Button() for j in range(nb_column)] for i in range(self.nb_row_df)]
+
+
         current_col = 0
         current_row = len(self.list_rows)
         for j in self.list_columns:
             for i in range(0, self.nb_row_df):
                 self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=width_column,
-                                                               text=(self.df.iloc[i][j - 1]))
+                                                               text=(self.df.iloc[i][j - 1]), compound="top")
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i)
                 self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
                 if i in p_list_rows:
@@ -334,6 +355,18 @@ class Table:
         for widget in self.frame_buttons.winfo_children():
             widget.destroy()
 
+    def hide(self):
+        """ Hide the widget (during the edit widget mode)"""
+
+        print("Hide ImageWidget")
+        self.frame.grid_forget()
+
+    def show(self):
+        """ Hide the widget (after the edit widget mode)"""
+
+        print("Show ImageWidget")
+        self.frame.grid(row=0, column=0, sticky="news")
+
     def update(self):
         """
         Functions that create a new table with new rows
@@ -386,3 +419,5 @@ class Table:
         num_id = self.widget_group.id
         table_name = "table_" + str(num_id)
         self.list_columns = table_data[table_name]['list_columns']
+
+

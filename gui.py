@@ -4,6 +4,7 @@ import Pmw
 from functools import partial
 from widgets.summary.summary import WidgetSummary
 from widgets.image.image import WidgetImage
+from widgets.table.new_table import WidgetTable
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -700,7 +701,7 @@ class FrameContent:
             widget = WidgetSummary(p_section, widget_configuration_frame, widget_group_1)
 
         if p_id_widget == 2:
-            widget = WidgetSummary(p_section, widget_configuration_frame, widget_group_1)
+            widget = WidgetTable(p_section, widget_configuration_frame, widget_group_1)
 
         self.widgets.append(widget)
 
