@@ -72,7 +72,7 @@ class WidgetTable:
 
         # Frame that contains headers of the table
         self.frame.update_idletasks()
-        frame_header_width = self.frame.winfo_width() - 10
+        frame_header_width = self.frame.winfo_width() - 20
         print(frame_header_width)
         self.frame_headers = tk.Frame(self.frame, bg="green", width=frame_header_width, height=20)
         self.frame_headers.grid(row=1, sticky="nws")
@@ -158,6 +158,7 @@ class WidgetTable:
             current_col += 1
 
         # Creation of the table content
+        self.frames_header = [[tk.Frame() for j in range(nb_column)] for i in range(self.nb_row_df)]
         self.buttons_table = [[tk.Button() for j in range(nb_column)] for i in range(self.nb_row_df)]
 
 
@@ -165,17 +166,34 @@ class WidgetTable:
         current_row = len(self.list_rows)
         for j in self.list_columns:
             for i in range(0, self.nb_row_df):
-                self.buttons_table[i][current_col] = tk.Button(self.frame_buttons, width=width_column,
-                                                               text=(self.df.iloc[i][j - 1]), compound="top")
+                self.frames_header[i][current_col] = tk.Frame(self.frame_buttons, width=width_column1, height=20,
+                                                           bg="blue")
+
+                self.frames_header[i][current_col].grid_propagate(False)
+                self.frames_header[i][current_col].grid_columnconfigure(0, weight=1)
+                self.frames_header[i][current_col].grid_rowconfigure(0, weight=1)
+
+
+                self.buttons_table[i][current_col] = tk.Button(self.frames_header[i][current_col], text=(self.df.iloc[i][j - 1]))
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i)
                 self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
+
                 if i in p_list_rows:
+
+                    self.frames_header[i][current_col].grid(row=0, column=current_col)
+                    self.frames_header[i][current_col].grid(row=self.list_rows.index(i), column=current_col)
+
                     self.buttons_table[i][current_col].config(fg="black")
-                    self.buttons_table[i][current_col].grid(row=self.list_rows.index(i), column=current_col)
+
+
                 else:
-                    self.buttons_table[i][current_col].grid(row=current_row, column=current_col)
-                    self.buttons_table[i][current_col].config(state=tk.DISABLED, disabledforeground="SystemButtonFace")
+                    self.frames_header[i][current_col].grid(row=current_row, column=current_col)
                     current_row += 1
+
+                    self.buttons_table[i][current_col].config(state=tk.DISABLED, disabledforeground="SystemButtonFace")
+
+                self.buttons_table[i][current_col].grid(row=0, column=0, sticky="news")
+
             current_row = len(self.list_rows)
             current_col += 1
 
