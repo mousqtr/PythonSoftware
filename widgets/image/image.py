@@ -60,10 +60,6 @@ class WidgetImage:
         self.image_panel.bind("<Button-1>", self.on_click)
         self.image_panel.bind('<Configure>', self.resize)
 
-
-
-
-
     def on_click(self, e):
         """ Function called when the user click on this section """
 
@@ -115,7 +111,6 @@ class WidgetImage:
             self.bool_title = True
             self.title.grid(row=0, column=0, sticky="nwes")
             self.title["text"] = title
-
 
     def openfilename(self):
         """ Open file dialog box to select image

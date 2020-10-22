@@ -4,7 +4,7 @@ import Pmw
 from functools import partial
 from widgets.summary.summary import WidgetSummary
 from widgets.image.image import WidgetImage
-from widgets.table.new_table import WidgetTable
+from widgets.table.table import WidgetTable
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -292,8 +292,11 @@ class LeftFrame:
         # List containing the widget frames configuration
         self.moving_widgets_page = []
 
-        # List which contains the buttons in the left menu
-        self.buttons_left = []
+        # List which contains the page buttons in the left menu
+        self.buttons_page = []
+
+        # List which contains the table buttons in the left menu
+        self.buttons_table = []
 
     def resize(self):
         """ Function that resizes the LeftFrame, StaticPart and MovingPart """

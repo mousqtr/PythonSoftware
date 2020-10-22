@@ -4,15 +4,17 @@ from functools import partial
 from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText, MiddleFrame
 from new_page import NewPage
 from edit_page import EditPage
+from new_table import NewTable
 from login import Login
 from widgets.filters.filters import Filters
 from widgets.modifiers.modifiers import Modifiers
-from widgets.table.table import Table
+from widgets.table.old_table import Table
 from widgets.donut_chart.donut_chart import DonutChart
 
 
 # Main window initialization
 main_window = MainWindow()
+
 
 # Images used in the left static frame (color 1/2)
 img_pages = tk.PhotoImage(file="img/pages2.png")
@@ -40,6 +42,20 @@ img_map = tk.PhotoImage(file="img/widgets/map.png")
 img_add = tk.PhotoImage(file="img/add.png")
 img_delete = tk.PhotoImage(file="img/minus.png")
 img_empty = tk.PhotoImage(file="img/empty.png")
+
+# Images used during the addition of a table
+img_csv = tk.PhotoImage(file="img/extensions/csv.png")
+img_xls = tk.PhotoImage(file="img/extensions/xls.png")
+img_sql = tk.PhotoImage(file="img/extensions/sql.png")
+img_txt = tk.PhotoImage(file="img/extensions/txt.png")
+img_docx = tk.PhotoImage(file="img/extensions/docx.png")
+
+list_extensions_icon = [img_csv, img_xls, img_sql, img_txt, img_docx]
+list_extensions_icon2 = []
+for img in list_extensions_icon:
+    img = img.zoom(30)
+    img = img.subsample(30)
+    list_extensions_icon2.append(img)
 
 # List containing theses images
 list_img_1 = [img_pages, img_widgets, img_settings, img_tables]
@@ -95,13 +111,26 @@ button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame,
 
 
 # Initialization of the create page button
-def create_page():
+def add_page():
+    """ Function called when the user clicks on the add_page button """
+    print("New Page")
     nb_buttons_max = 11
-    if len(frame_left.buttons_left) < nb_buttons_max:
+    if len(frame_left.buttons_page) < nb_buttons_max:
         NewPage(main_window.frame, frame_left, frame_right, frame_top)
 
 
-button_create_page = ButtonLeftText(" + ", 20, frame_left.moving_frames[0], "white", create_page)
+button_add_page = ButtonLeftText(" + ", 20, frame_left.moving_frames[0], "white", add_page)
+
+
+# Initialization of the add_table button
+def add_table():
+    print("New Table")
+    nb_tables_max = 11
+    if len(frame_left.buttons_table) < nb_tables_max:
+        NewTable(main_window.frame, frame_left, frame_right, frame_top, list_extensions_icon2)
+
+
+button_add_table = ButtonLeftText(" + ", 20, frame_left.moving_frames[3], "white", add_table)
 
 
 # Detect the window resize
@@ -136,6 +165,7 @@ def stop_window_resize():
 main_window.frame.bind("<Configure>", window_resize)
 
 
+# When the user closes the window
 def on_closing():
     """ Function called when the user try to close the window """
 

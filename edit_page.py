@@ -184,7 +184,7 @@ class EditPage:
         new_name = self.entry_page_name.get()
         if (new_name != " ") and (new_name != ""):
             self.frame_content.name = new_name
-            self.left_frame.buttons_left[self.frame_content_id].button["text"] = new_name
+            self.left_frame.buttons_page[self.frame_content_id].button["text"] = new_name
 
         # Destroy the existing sections
         self.frame_content.destroy_sections()

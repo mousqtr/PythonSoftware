@@ -191,9 +191,9 @@ class NewPage:
         new_frame_content = FrameContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
 
         # Create the left button
-        row = len(self.left_frame.buttons_left) + 1
+        row = len(self.left_frame.buttons_page) + 1
         new_button_left = ButtonLeftText(name, row, self.left_frame.moving_frames[0], "white", new_frame_content.change_page)
-        self.left_frame.buttons_left.append(new_button_left)
+        self.left_frame.buttons_page.append(new_button_left)
 
         # Destroy the new page window
         self.window_new_page.destroy()
