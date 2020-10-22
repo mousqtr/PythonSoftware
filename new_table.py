@@ -1,7 +1,9 @@
 import tkinter as tk
 import json
 from gui import FrameContent, ButtonLeftText
+from functools import partial
 from tkinter import filedialog
+import pandas as pd
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -61,13 +63,15 @@ class NewTable:
 
         self.frame_open = [[tk.Frame() for i in range(3)] for j in range(3)]
         self.button_open = [[tk.Button() for i in range(3)] for j in range(3)]
-        for j in range(3):
-            for i in range(3):
+        id = 0
+        for i in range(3):
+            for j in range(3):
                 self.frame_open[i][j] = tk.Frame(self.frame_extensions, bg="white", height=100, width=100)
                 self.frame_open[i][j].grid(row=i, column=j, padx=(15, 15), pady=(10, 10))
                 self.frame_open[i][j].grid_propagate(False)
-                self.button_open[i][j] = tk.Button(self.frame_open[i][j], width=95, height=95, command=None)
+                self.button_open[i][j] = tk.Button(self.frame_open[i][j], width=95, height=95, command=partial(self.create_table, id))
                 self.button_open[i][j].grid(row=0)
+                id += 1
 
         self.button_open[0][0].config(image=self.extension_images[0])
         self.button_open[0][1].config(image=self.extension_images[1])
@@ -82,6 +86,23 @@ class NewTable:
 
         filename = filedialog.askopenfilename(title='Ouvrir un fichier')
         return filename
+
+    def create_table(self, p_id):
+
+        if p_id == 0:
+            filename = self.openfilename()
+            df = pd.read_csv(filename)
+            print(df)
+
+        if p_id == 1:
+            filename = self.openfilename()
+            df = pd.read_excel(filename)
+            print(df)
+
+        row = len(self.left_frame.buttons_table) + 1
+        new_button_left = ButtonLeftText(str(filename), row, self.left_frame.moving_frames[3], "white", None)
+        self.left_frame.buttons_table.append(new_button_left)
+
 
 
 
