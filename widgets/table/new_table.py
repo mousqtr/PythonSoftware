@@ -69,38 +69,38 @@ class WidgetTable:
 
         # Frame that contains headers of the table
         self.frame.update_idletasks()
-        frame_header_width = self.frame.winfo_width() - 20
+        frame_header_width = self.frame.winfo_width() - 17
         self.frame_containing_headers = tk.Frame(self.frame, bg="green", width=frame_header_width, height=20)
         self.frame_containing_headers.grid(row=1, sticky="nws")
         self.frame_containing_headers.update_idletasks()
 
         # Frame that will contain the table
-        self.frame_canvas = tk.Frame(self.frame)
-        self.frame_canvas.grid(row=2, sticky='nwes')
-        self.frame_canvas.grid_rowconfigure(0, weight=1)
-        self.frame_canvas.grid_columnconfigure(0, weight=1)
-        self.frame_canvas.grid_propagate(False)
+        self.frame_containing_cells = tk.Frame(self.frame)
+        self.frame_containing_cells.grid(row=2, sticky='nwes')
+        self.frame_containing_cells.grid_rowconfigure(0, weight=1)
+        self.frame_containing_cells.grid_columnconfigure(0, weight=1)
+        self.frame_containing_cells.grid_propagate(False)
 
         # Add a canvas in that frame
-        self.canvas = tk.Canvas(self.frame_canvas, bg="grey")
-        self.canvas.grid(row=0, column=0, sticky="news")
+        self.canvas_cell = tk.Canvas(self.frame_containing_cells, bg="grey")
+        self.canvas_cell.grid(row=0, column=0, sticky="news")
 
         # Link a scrollbar to the canvas
-        self.vsb = tk.Scrollbar(self.frame_canvas, orient="vertical", command=self.canvas.yview)
+        self.vsb = tk.Scrollbar(self.frame_containing_cells, orient="vertical", command=self.canvas_cell.yview, width=17)
         self.vsb.grid(row=0, column=1, sticky='ns')
-        self.canvas.configure(yscrollcommand=self.vsb.set)
+        self.canvas_cell.configure(yscrollcommand=self.vsb.set)
 
         # Frames and Buttons of the header
         self.frames_header = [tk.Button() for j in range(self.nb_column)]
         self.buttons_header = [tk.Button() for j in range(self.nb_column)]
 
         # Objects that will contained the table content
-        self.frame_buttons = tk.Frame(self.canvas, bg="grey")
-        self.canvas.create_window((0, 0), window=self.frame_buttons, anchor='nw')
+        self.frame_buttons = tk.Frame(self.canvas_cell, bg="grey")
+        self.canvas_cell.create_window((0, 0), window=self.frame_buttons, anchor='nw')
 
         # Frames and Buttons of the table content
-        self.frames_table = [[tk.Button() for j in range(self.nb_column)] for i in range(self.nb_row_df)]
-        self.buttons_table = [[tk.Button() for j in range(self.nb_column)] for i in range(self.nb_row_df)]
+        self.frames_cell = [[tk.Button() for j in range(self.nb_column)] for i in range(self.nb_row_df)]
+        self.buttons_cell = [[tk.Button() for j in range(self.nb_column)] for i in range(self.nb_row_df)]
 
         # Boolean that indicates the creation of the table
         self.is_table_created = False
@@ -108,17 +108,27 @@ class WidgetTable:
         # Creation of the table
         self.create_table(self.list_columns, self.list_rows)
 
-        # User interaction with the button
+        # Boolean that indicates if the section has a title or not
+        self.bool_title = True
+
+        # Call the on_click function when the user left mouse click on these elements
         self.frame.bind("<Button-1>", self.on_click)
         self.title.bind("<Button-1>", self.on_click)
+        self.frame_containing_headers.bind("<Button-1>", self.on_click)
+        self.frame_containing_cells.bind("<Button-1>", self.on_click)
+        for i in range(self.nb_column):
+            self.buttons_header[i].bind("<Button-1>", self.on_click)
+        for j in range(self.nb_column):
+            for i in range(self.nb_row_df):
+                self.buttons_cell[i][j].bind("<Button-1>", self.on_click)
+
+        # Link the resize function to the resize event of the frame
         self.frame.bind('<Configure>', self.resize)
 
     def create_table(self, p_list_col, p_list_rows):
         """
         Function that creates of the table
 
-        :param p_nb_column: Number of column of the table
-        :param p_width_column: Width of each column
         :param p_list_col: List which contains the column name of the table
         :param p_list_rows: List which contains the rows to draw
         """
@@ -134,7 +144,7 @@ class WidgetTable:
         self.buttons_header = [tk.Button() for j in range(nb_column)]
         current_col = 0
         for j in self.list_columns:
-            self.frames_header[current_col] = tk.Frame(self.frame_containing_headers, width=width_column, height=20, bg="blue")
+            self.frames_header[current_col] = tk.Frame(self.frame_containing_headers, width=width_column, height=20)
             self.frames_header[current_col].grid(row=0, column=current_col)
             self.frames_header[current_col].grid_propagate(False)
             self.frames_header[current_col].grid_columnconfigure(0, weight=1)
@@ -146,39 +156,36 @@ class WidgetTable:
             current_col += 1
 
         # Creation of the table content
-        self.frames_table = [[tk.Frame() for j in range(nb_column)] for i in range(self.nb_row_df)]
-        self.buttons_table = [[tk.Button() for j in range(nb_column)] for i in range(self.nb_row_df)]
+        self.frames_cell = [[tk.Frame() for j in range(nb_column)] for i in range(self.nb_row_df)]
+        self.buttons_cell = [[tk.Button() for j in range(nb_column)] for i in range(self.nb_row_df)]
 
         current_col = 0
         current_row = len(self.list_rows)
         for j in self.list_columns:
             for i in range(0, self.nb_row_df):
-                self.frames_table[i][current_col] = tk.Frame(self.frame_buttons, width=width_column, height=20,
-                                                           bg="blue")
+                self.frames_cell[i][current_col] = tk.Frame(self.frame_buttons, width=width_column, height=20)
+                self.frames_cell[i][current_col].grid_propagate(False)
+                self.frames_cell[i][current_col].grid_columnconfigure(0, weight=1)
+                self.frames_cell[i][current_col].grid_rowconfigure(0, weight=1)
 
-                self.frames_table[i][current_col].grid_propagate(False)
-                self.frames_table[i][current_col].grid_columnconfigure(0, weight=1)
-                self.frames_table[i][current_col].grid_rowconfigure(0, weight=1)
-
-                self.buttons_table[i][current_col] = tk.Button(self.frames_table[i][current_col], text=(self.df.iloc[i][j - 1]))
-                self.buttons_table[i][current_col]['command'] = partial(self.color_line, i)
-                self.buttons_table[i][current_col].config(borderwidth=2, relief="groove")
+                self.buttons_cell[i][current_col] = tk.Button(self.frames_cell[i][current_col], text=(self.df.iloc[i][j - 1]))
+                self.buttons_cell[i][current_col]['command'] = partial(self.color_line, i)
+                self.buttons_cell[i][current_col].config(borderwidth=2, relief="groove")
 
                 if i in p_list_rows:
 
-                    self.frames_table[i][current_col].grid(row=0, column=current_col)
-                    self.frames_table[i][current_col].grid(row=self.list_rows.index(i), column=current_col)
+                    self.frames_cell[i][current_col].grid(row=0, column=current_col)
+                    self.frames_cell[i][current_col].grid(row=self.list_rows.index(i), column=current_col)
 
-                    self.buttons_table[i][current_col].config(fg="black")
-
+                    self.buttons_cell[i][current_col].config(fg="black")
 
                 else:
-                    self.frames_table[i][current_col].grid(row=current_row, column=current_col)
+                    self.frames_cell[i][current_col].grid(row=current_row, column=current_col)
                     current_row += 1
 
-                    self.buttons_table[i][current_col].config(state=tk.DISABLED, disabledforeground="SystemButtonFace")
+                    self.buttons_cell[i][current_col].config(state=tk.DISABLED, disabledforeground="SystemButtonFace")
 
-                self.buttons_table[i][current_col].grid(row=0, column=0, sticky="news")
+                self.buttons_cell[i][current_col].grid(row=0, column=0, sticky="news")
 
             current_row = len(self.list_rows)
             current_col += 1
@@ -187,14 +194,13 @@ class WidgetTable:
         self.frame_buttons.update_idletasks()
 
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
-        first5columns_width = sum([self.buttons_table[0][j].winfo_width() for j in range(0, nb_column)])
-        # first5rows_height = sum([self.buttons_table[i][0].winfo_height() for i in range(0, 16)])
-        height = self.section.frame.winfo_height() - 45
-        self.frame_canvas.config(width=first5columns_width + self.vsb.winfo_width(),
+        first5columns_width = sum([self.buttons_cell[0][j].winfo_width() for j in range(0, nb_column)])
+        height = self.section.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
+        self.frame_containing_cells.config(width=first5columns_width + self.vsb.winfo_width(),
                             height=height)
 
         # Set the canvas scrolling region
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+        self.canvas_cell.config(scrollregion=self.canvas_cell.bbox("all"))
 
         # Boolean that indicates the creation of the table
         self.is_table_created = True
@@ -256,15 +262,13 @@ class WidgetTable:
         #Update values
         nb_column = len(self.list_columns)
         self.selected_row = p_row
-        print(self.selected_row)
 
         for i in range(0, self.nb_row_df):
             for j in range(0, nb_column):
                 if i == p_row:
-                    self.buttons_table[i][j].config(bg="beige")
+                    self.buttons_cell[i][j].config(bg="beige")
                 else:
-                    self.buttons_table[i][j].config(bg="SystemButtonFace")
-
+                    self.buttons_cell[i][j].config(bg="SystemButtonFace")
 
 
     def details_window(self):
@@ -301,7 +305,7 @@ class WidgetTable:
         row_colored = 0
         for i in range(0, self.nb_row_df):
             for j in range(0, nb_column):
-                if self.buttons_table[i][j]['bg'] == "beige":
+                if self.buttons_cell[i][j]['bg'] == "beige":
                     row_colored = i
 
         # Label - Details
@@ -340,9 +344,26 @@ class WidgetTable:
         if number_col != 0:
             self.delete_buttons()
             self.create_table(list_columns, self.list_rows)
+            self.list_columns = list_columns
 
+        # Get the title entry
+        title = self.entry_title.get()
+
+        # If there is no title
+        if title == " " or title == "" and self.bool_title:
+            self.title.grid_forget()
+            self.bool_title = False
+            self.title["text"] = " "
+            frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height()
+
+        else:
+            self.bool_title = True
+            self.title.grid(row=0, column=0, sticky="nwes")
+            self.title["text"] = title
+            frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
+        self.frame_containing_cells.config(height=frame_canvas_height)
         # Save the columns state
-        self.list_columns = list_columns
+
         # self.save(p_combo)
 
     def delete_buttons(self):
@@ -368,8 +389,8 @@ class WidgetTable:
             # Get the number of column
             nb_column = len(self.list_columns)
 
-            # Change frame_headers width
-            frame_header_width = self.frame.winfo_width() - 20
+            # Change the frame_containing_headers width
+            frame_header_width = self.frame.winfo_width() - self.vsb.winfo_width()
             self.frame_containing_headers.config(width=frame_header_width)
 
             # Calculate the new column width
@@ -385,13 +406,15 @@ class WidgetTable:
             current_col = 0
             for j in self.list_columns:
                 for i in range(0, self.nb_row_df):
-                    self.frames_table[i][current_col].config(width=new_column_width)
+                    self.frames_cell[i][current_col].config(width=new_column_width)
                 current_col += 1
 
-            # Change the canvas height
-            frame_canvas_height = self.frame.winfo_height() - 45
-            self.frame_canvas.config(height=frame_canvas_height)
-
+            # Change the frame_containing_cells height
+            if self.bool_title:
+                frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
+            else:
+                frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height()
+            self.frame_containing_cells.config(height=frame_canvas_height)
 
     def hide(self):
         """ Hide the widget (during the edit widget mode)"""
