@@ -16,23 +16,23 @@ with open('widgets/table/table_data.json') as json_file:
 class WidgetTable:
     """ Widget that displays a table """
 
-    def __init__(self, p_section, p_widget_configuration_frame, p_widget_group):
+    def __init__(self, p_section, p_widget_configuration, p_widget_group):
         """
         Initialization of the table widget that shows a table
 
-        :param p_parent: Page that will contain this table widget
+        :param p_section: Section that will contain this table widget
+        :param p_widget_configuration: Object in the left menu, specific to each widget and used to configure the widget
         :param p_widget_group: Group containing this widget
-        :param p_row: Row of the page where the widget will be placed
         """
-        # Saving the parameters to use them in each function
-        self.frame_section = p_section
+        # Saving the parameters to use them in each class function
+        self.section = p_section
         self.widget_group = p_widget_group
-        self.widget_configuration = p_widget_configuration_frame
-        self.frame_widget_configuration = p_widget_configuration_frame.frame
+        self.widget_configuration = p_widget_configuration
+        self.frame_widget_configuration = p_widget_configuration.frame
 
-        self.frame_section_width = self.frame_section.frame.winfo_width()
-        self.frame_section_height = self.frame_section.frame.winfo_height()
-
+        # Dimension of the section
+        self.frame_section_width = self.section.frame.winfo_width()
+        self.frame_section_height = self.section.frame.winfo_height()
 
         # Initialization of the dataframe
         self.df = pd.read_csv('csv/csv_test.csv')
@@ -45,8 +45,7 @@ class WidgetTable:
         self.nb_column_max = 6
         self.list_columns = [0, 1, 2, 3, 4, 5]
 
-        
-        self.list_width = [6 for i in range(6)]
+        # Row selected by the user
         self.selected_row = -1
 
         # Add this widget to p_parent widgets
@@ -54,7 +53,7 @@ class WidgetTable:
         self.type = "Table"
 
         # Properties of the widget
-        self.frame = tk.Frame(self.frame_section.frame, bg="green", highlightthickness=1)
+        self.frame = tk.Frame(self.section.frame, bg="green", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
         self.frame.grid(sticky="news")
@@ -71,9 +70,9 @@ class WidgetTable:
         # Frame that contains headers of the table
         self.frame.update_idletasks()
         frame_header_width = self.frame.winfo_width() - 20
-        self.frame_headers = tk.Frame(self.frame, bg="green", width=frame_header_width, height=20)
-        self.frame_headers.grid(row=1, sticky="nws")
-        self.frame_headers.update_idletasks()
+        self.frame_containing_headers = tk.Frame(self.frame, bg="green", width=frame_header_width, height=20)
+        self.frame_containing_headers.grid(row=1, sticky="nws")
+        self.frame_containing_headers.update_idletasks()
 
         # Frame that will contain the table
         self.frame_canvas = tk.Frame(self.frame)
@@ -91,10 +90,16 @@ class WidgetTable:
         self.vsb.grid(row=0, column=1, sticky='ns')
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
-        # Objects specific to the table
+        # Frames and Buttons of the header
+        self.frames_header = [tk.Button() for j in range(self.nb_column)]
+        self.buttons_header = [tk.Button() for j in range(self.nb_column)]
+
+        # Objects that will contained the table content
         self.frame_buttons = tk.Frame(self.canvas, bg="grey")
         self.canvas.create_window((0, 0), window=self.frame_buttons, anchor='nw')
-        self.buttons_header = [tk.Button() for j in range(self.nb_column)]
+
+        # Frames and Buttons of the table content
+        self.frames_table = [[tk.Button() for j in range(self.nb_column)] for i in range(self.nb_row_df)]
         self.buttons_table = [[tk.Button() for j in range(self.nb_column)] for i in range(self.nb_row_df)]
 
         # Boolean that indicates the creation of the table
@@ -107,7 +112,6 @@ class WidgetTable:
         self.frame.bind("<Button-1>", self.on_click)
         self.title.bind("<Button-1>", self.on_click)
         self.frame.bind('<Configure>', self.resize)
-
 
     def create_table(self, p_list_col, p_list_rows):
         """
@@ -123,15 +127,14 @@ class WidgetTable:
         self.list_rows = p_list_rows
         self.list_columns = p_list_col
         nb_column = len(p_list_col)
-        width_column = self.list_width[nb_column - 1]
-        width_column1 = int(self.frame_headers.winfo_width()/nb_column)
+        width_column = int(self.frame_containing_headers.winfo_width()/nb_column)
 
         # Creation of the header
         self.frames_header = [tk.Frame() for j in range(nb_column)]
         self.buttons_header = [tk.Button() for j in range(nb_column)]
         current_col = 0
         for j in self.list_columns:
-            self.frames_header[current_col] = tk.Frame(self.frame_headers, width=width_column1, height=20, bg="blue")
+            self.frames_header[current_col] = tk.Frame(self.frame_containing_headers, width=width_column, height=20, bg="blue")
             self.frames_header[current_col].grid(row=0, column=current_col)
             self.frames_header[current_col].grid_propagate(False)
             self.frames_header[current_col].grid_columnconfigure(0, weight=1)
@@ -140,25 +143,22 @@ class WidgetTable:
             self.buttons_header[current_col] = tk.Button(self.frames_header[current_col], text=list(self.df)[j-1])
             self.buttons_header[current_col].config(bg="green", fg="white")
             self.buttons_header[current_col].grid(row=0,column=0, sticky="news")
-            # self.buttons_header[current_col].config(borderwidth=2, relief="ridge")
             current_col += 1
 
         # Creation of the table content
         self.frames_table = [[tk.Frame() for j in range(nb_column)] for i in range(self.nb_row_df)]
         self.buttons_table = [[tk.Button() for j in range(nb_column)] for i in range(self.nb_row_df)]
 
-
         current_col = 0
         current_row = len(self.list_rows)
         for j in self.list_columns:
             for i in range(0, self.nb_row_df):
-                self.frames_table[i][current_col] = tk.Frame(self.frame_buttons, width=width_column1, height=20,
+                self.frames_table[i][current_col] = tk.Frame(self.frame_buttons, width=width_column, height=20,
                                                            bg="blue")
 
                 self.frames_table[i][current_col].grid_propagate(False)
                 self.frames_table[i][current_col].grid_columnconfigure(0, weight=1)
                 self.frames_table[i][current_col].grid_rowconfigure(0, weight=1)
-
 
                 self.buttons_table[i][current_col] = tk.Button(self.frames_table[i][current_col], text=(self.df.iloc[i][j - 1]))
                 self.buttons_table[i][current_col]['command'] = partial(self.color_line, i)
@@ -189,7 +189,7 @@ class WidgetTable:
         # Resize the canvas frame to show exactly 5-by-5 buttons and the scrollbar
         first5columns_width = sum([self.buttons_table[0][j].winfo_width() for j in range(0, nb_column)])
         # first5rows_height = sum([self.buttons_table[i][0].winfo_height() for i in range(0, 16)])
-        height = self.frame_section.frame.winfo_height() - 45
+        height = self.section.frame.winfo_height() - 45
         self.frame_canvas.config(width=first5columns_width + self.vsb.winfo_width(),
                             height=height)
 
@@ -203,7 +203,7 @@ class WidgetTable:
         """ Function called when the user click on this section """
 
         # Called the on_click function of its parent
-        self.frame_section.on_click(e)
+        self.section.on_click(e)
 
         self.frame_widget_configuration.grid_columnconfigure((0, 1), weight=1)
 
@@ -341,7 +341,6 @@ class WidgetTable:
             self.delete_buttons()
             self.create_table(list_columns, self.list_rows)
 
-
         # Save the columns state
         self.list_columns = list_columns
         # self.save(p_combo)
@@ -352,12 +351,12 @@ class WidgetTable:
         """
 
         # Destruction of the headers buttons
-        for widget in self.frame_headers.winfo_children():
-            widget.destroy()
+        for header in self.frame_containing_headers.winfo_children():
+            header.destroy()
 
         # Destruction of the headers buttons
-        for widget in self.frame_buttons.winfo_children():
-            widget.destroy()
+        for cell in self.frame_buttons.winfo_children():
+            cell.destroy()
 
     def resize(self, event):
         """ Function called when the parent section is resized"""
@@ -371,7 +370,7 @@ class WidgetTable:
 
             # Change frame_headers width
             frame_header_width = self.frame.winfo_width() - 20
-            self.frame_headers.config(width=frame_header_width)
+            self.frame_containing_headers.config(width=frame_header_width)
 
             # Calculate the new column width
             new_column_width = int(frame_header_width / nb_column)

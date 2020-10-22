@@ -10,17 +10,17 @@ with open('settings.json') as json_file:
 class WidgetImage:
     """ Widget that shows an image """
 
-    def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group):
+    def __init__(self, p_section, p_widget_configuration_frame, p_widget_group):
         """
         Initialization of the image widget that shows some label and data
 
-        :param p_parent: Page that will contain this summary widget
+        :param p_parent: Section that will contain this summary widget
         :param p_widget_configuration_frame: Frame in the left menu, used to edit the widget
         :param p_widget_group: Group containing this widget
         """
 
         # Saving the parameters to use them in each function
-        self.frame_section = p_section_frame
+        self.section = p_section
         self.widget_group = p_widget_group
         self.frame_widget_configuration = p_widget_configuration_frame.frame
 
@@ -29,7 +29,7 @@ class WidgetImage:
         self.type = "Image"
 
         # Properties of the widget-
-        self.frame = tk.Frame(self.frame_section.frame, bg="white", highlightthickness=1)
+        self.frame = tk.Frame(self.section.frame, bg="white", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
         self.frame.grid(sticky="news")
@@ -68,7 +68,7 @@ class WidgetImage:
         """ Function called when the user click on this section """
 
         # Called the on_click function of its parent
-        self.frame_section.on_click(e)
+        self.section.on_click(e)
 
         # Label - Title
         label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")

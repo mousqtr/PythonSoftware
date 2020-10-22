@@ -17,7 +17,7 @@ with open('widgets/summary/summary_data.json') as json_file:
 class WidgetSummary:
     """ Widget that shows some label and data """
 
-    def __init__(self, p_section_frame, p_widget_configuration_frame, p_widget_group):
+    def __init__(self, p_section, p_widget_configuration_frame, p_widget_group):
         """
         Initialization of the summary widget that shows some label and data
 
@@ -27,7 +27,7 @@ class WidgetSummary:
         """
 
         # Saving the parameters to use them in each function
-        self.frame_section = p_section_frame
+        self.section = p_section
         self.widget_group = p_widget_group
         self.frame_widget_configuration = p_widget_configuration_frame.frame
 
@@ -36,7 +36,7 @@ class WidgetSummary:
         self.type = "Summary"
 
         # Properties of the widget-
-        self.frame = tk.Frame(self.frame_section.frame, bg="white", highlightthickness=1)
+        self.frame = tk.Frame(self.section.frame, bg="white", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
         self.frame.grid(sticky="news")
@@ -90,7 +90,7 @@ class WidgetSummary:
         """
 
         # Call the parent on_click function
-        self.frame_section.on_click(e)
+        self.section.on_click(e)
 
         # Label - Title
         label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
