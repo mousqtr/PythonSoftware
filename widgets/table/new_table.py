@@ -58,7 +58,7 @@ class WidgetTable:
         self.type = "Table"
 
         # Properties of the widget
-        self.frame = tk.Frame(self.frame_section.frame, bg="yellow", highlightthickness=1)
+        self.frame = tk.Frame(self.frame_section.frame, bg="green", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
         self.frame.grid(sticky="news")
@@ -140,7 +140,7 @@ class WidgetTable:
         self.list_columns = p_list_col
         nb_column = len(p_list_col)
         width_column = self.list_width[nb_column - 1]
-        width_column1 = int(self.frame_headers.winfo_width()/6)
+        width_column1 = int(self.frame_headers.winfo_width()/nb_column)
 
         # Creation of the header
         self.frames_header = [tk.Frame() for j in range(nb_column)]
@@ -258,7 +258,7 @@ class WidgetTable:
         # Button - Validation
         button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
         button_validate.grid(row=30, columnspan=2, pady=(20, 0))
-        # button_validate['command'] = self.validate
+        button_validate['command'] = partial(self.validate, combo_column_choice)
         button_validate.config(font=("Calibri", 10))
 
     def color_line(self, p_row):
@@ -279,61 +279,7 @@ class WidgetTable:
                 else:
                     self.buttons_table[i][j].config(bg="SystemButtonFace")
 
-    def settings_window(self):
-        """
-        Functions called when the user clicks on validate button
-        """
 
-        # Window handle
-        window_settings = tk.Toplevel(self.frame)
-        window_settings.resizable(False, False)
-        window_settings.title("Paramètres")
-        window_icon = tk.PhotoImage(file="img/settings.png")
-        window_settings.iconphoto(False, window_icon)
-        # login_window_width = settings['dimensions']['window_login_width']
-        # login_window_height = settings['dimensions']['window_login_height']
-        window_settings_width = 550
-        window_settings_height = 260
-        screen_width = self.frame.winfo_screenwidth()
-        screen_height = self.frame.winfo_screenheight()
-        x_cord = int((screen_width / 2) - (window_settings_width / 2))
-        y_cord = int((screen_height / 2) - (window_settings_height / 2))
-        window_settings.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
-        window_settings.columnconfigure((0, 1), weight=1)
-
-        # Title - Settings
-        bg_identification = settings['colors']['bg_identification']
-        label_login_title = tk.Label(window_settings, text="Paramètres", bg=bg_identification, fg="white")
-        label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
-        font_login_title = settings['font']['font_login_title']
-        font_size_login_title = settings['font_size']['font_size_login_title']
-        label_login_title.config(font=(font_login_title, font_size_login_title))
-
-        # Title - choice of the columns
-        label_login_title = tk.Label(window_settings, text="Choix des colonnes")
-        label_login_title.grid(row=1, sticky='nw', padx=10, pady=(0, 10))
-        label_login_title.config(font=("Calibri bold", 12))
-
-        # Column choice label
-        labels_column_choice = [tk.Label() for j in range(self.nb_column_max)]
-        combo_column_choice = [ttk.Combobox() for j in range(self.nb_column_max)]
-        list_headers = list(self.df.head())
-        list_headers.insert(0, " ")
-        for j in range(self.nb_column_max):
-            label_text = "Column " + str(j + 1)
-            labels_column_choice[j] = tk.Label(window_settings, text=label_text)
-            labels_column_choice[j].grid(row=j + 2, column=0, sticky='ne', padx=30, pady=1)
-            labels_column_choice[j].config(font=("Calibri bold", 10))
-            combo_column_choice[j] = ttk.Combobox(window_settings, values=list_headers, state="readonly")
-            combo_column_choice[j].grid(row=j + 2, column=1, sticky='nw', padx=10, pady=1)
-            combo_column_choice[j].config(font=("Calibri bold", 10))
-            combo_column_choice[j].current(0)
-
-        # Button - Validation
-        button_validate = tk.Button(window_settings, width=30, height=1, text="Appliquer")
-        button_validate.config(font=("Calibri", 10))
-        button_validate.grid(row=self.nb_column_max + 2, column=1, sticky="ne", padx=10, pady=(10, 0))
-        button_validate['command'] = partial(self.change_column, combo_column_choice)
 
     def details_window(self):
         """
@@ -384,7 +330,7 @@ class WidgetTable:
             labels_2[j].grid(row=j + 2, column=1, sticky='nw', padx=30, pady=1)
             labels_2[j].config(font=("Calibri bold", 10))
 
-    def change_column(self, p_combo):
+    def validate(self, p_combo):
         """
         Functions called when the user clicks on validate button - Change columns
         """
@@ -409,8 +355,10 @@ class WidgetTable:
             self.delete_buttons()
             self.create_table(list_columns, self.list_rows)
 
+
         # Save the columns state
-        self.save(p_combo)
+        self.list_columns = list_columns
+        # self.save(p_combo)
 
     def delete_buttons(self):
         """
