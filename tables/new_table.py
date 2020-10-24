@@ -128,6 +128,8 @@ class NewTable:
         self.button_confirmation.grid(row=1, pady=(50, 0))
         self.button_confirmation.config(font=("Calibri bold", 10))
 
+        self.frame_table = tk.Frame()
+
     def open_table(self, p_id):
 
         # TODO : avoid the error when we close the document window
@@ -167,35 +169,45 @@ class NewTable:
                 df = pd.read_excel(self.filename)
                 print(df)
 
-        # Create a previsualisation window
-        window_height = settings['dimensions']['window_height']
-        top_menu_height = settings['dimensions']['top_menu_height']
-        frame_width = self.right_frame.frame["width"]
-        frame_height = window_height - top_menu_height
-        frame = tk.Frame(self.right_frame.frame, bg="yellow", width=frame_width, height=frame_height)
-        frame.grid(row=1)
-        frame.grid_propagate(False)
-        frame.lift()
+        page_table = PageTable(self.right_frame, self.filename, table_name)
 
         # Create a left button
         row = len(self.left_frame.buttons_table) + 1
-        new_button_left = ButtonLeftText(str(table_name), row, self.left_frame.moving_frames[3], "white", partial(self.change_page, frame))
+        new_button_left = ButtonLeftText(str(table_name), row, self.left_frame.moving_frames[3], "white", partial(self.change_page, page_table.frame))
         self.left_frame.buttons_table.append(new_button_left)
+
+        self.right_frame.pages_table.append(page_table)
+
+
+
+    def change_page(self, p_frame):
+        p_frame.lift()
+
+
+class PageTable:
+    def __init__(self, p_right_frame, p_filename, p_name):
+
+        # Create a previsualisation window
+        window_height = settings['dimensions']['window_height']
+        top_menu_height = settings['dimensions']['top_menu_height']
+        frame_width = p_right_frame.frame["width"]
+        frame_height = window_height - top_menu_height
+        self.frame = tk.Frame(p_right_frame.frame, bg="white", width=frame_width, height=frame_height)
+        self.frame.grid(row=1)
+        self.frame.grid_propagate(False)
+        self.frame.lift()
 
         # Frame_Table
         frame_table_width = frame_width - 10
         frame_table_height = frame_height - 10
-        frame_table = tk.Frame(frame, bg="blue", width=frame_table_width, height=frame_table_height)
-        frame_table.grid(row=0, padx=(5, 5), pady=(5, 5))
-        frame_table.columnconfigure(0, weight=1)
-        frame_table.rowconfigure(0, weight=1)
-        frame_table.grid_propagate(False)
+        self.frame_table = tk.Frame(self.frame, bg="blue", width=frame_table_width, height=frame_table_height)
+        self.frame_table.grid(row=0, padx=(5, 5), pady=(5, 5))
+        self.frame_table.columnconfigure(0, weight=1)
+        self.frame_table.rowconfigure(0, weight=1)
+        self.frame_table.grid_propagate(False)
 
         # Fill the section with the table
-        PrevisualisationTable(frame_table, self.filename, table_name)
-
-    def change_page(self, p_frame):
-        p_frame.lift()
+        self.table = PrevisualisationTable(self.frame_table, p_filename, p_name)
 
 
 class PrevisualisationTable:
@@ -222,12 +234,12 @@ class PrevisualisationTable:
         self.list_rows = [i for i in range(0, self.nb_row_df)]
 
         # Initial values
-        self.nb_column = 6
-        self.nb_column_max = 6
-        self.list_columns = [0, 1, 2, 3, 4, 5]
+        self.nb_column = self.nb_column_df
+        self.nb_column_max = 20
+        self.list_columns = [i for i in range(self.nb_column)]
 
         # Properties of the widget
-        self.frame = tk.Frame(p_table_frame, bg="green", highlightthickness=1)
+        self.frame = tk.Frame(p_table_frame, bg="red", highlightthickness=1)
         self.frame.grid_propagate(False)
         self.frame.config(highlightbackground="grey")
         self.frame.grid(sticky="news")
@@ -241,7 +253,7 @@ class PrevisualisationTable:
         # Frame that contains headers of the table
         self.frame.update_idletasks()
         frame_header_width = self.frame.winfo_width() - 17
-        self.frame_containing_headers = tk.Frame(self.frame, bg="green", width=frame_header_width, height=20)
+        self.frame_containing_headers = tk.Frame(self.frame, bg="red", width=frame_header_width, height=20)
         self.frame_containing_headers.grid(row=1, sticky="nws")
         self.frame_containing_headers.update_idletasks()
 
@@ -279,8 +291,8 @@ class PrevisualisationTable:
         # Creation of the table
         self.create_table(self.list_columns, self.list_rows)
 
-        # # Link the resize function to the resize event of the frame
-        # self.frame.bind('<Configure>', self.resize)
+        # Link the resize function to the resize event of the frame
+        self.frame.bind('<Configure>', self.resize)
 
     def create_table(self, p_list_col, p_list_rows):
         """
@@ -308,7 +320,7 @@ class PrevisualisationTable:
             self.frames_header[current_col].grid_rowconfigure(0, weight=1)
 
             self.buttons_header[current_col] = tk.Button(self.frames_header[current_col], text=list(self.df)[j-1])
-            self.buttons_header[current_col].config(bg="green", fg="white")
+            self.buttons_header[current_col].config(bg="red", fg="white")
             self.buttons_header[current_col].grid(row=0,column=0, sticky="news")
             current_col += 1
 
@@ -361,6 +373,41 @@ class PrevisualisationTable:
 
         # Boolean that indicates the creation of the table
         self.is_table_created = True
+
+    def resize(self, event):
+        """ Function called when the parent section is resized"""
+
+        print("Resize TableWidget")
+
+        if self.is_table_created:
+
+            # Get the number of column
+            nb_column = len(self.list_columns)
+
+            # Change the frame_containing_headers width
+            frame_header_width = self.frame.winfo_width() - self.vsb.winfo_width()
+            self.frame_containing_headers.config(width=frame_header_width)
+
+            # Calculate the new column width
+            new_column_width = int(frame_header_width / nb_column)
+
+            # Change frame_headers width
+            current_col = 0
+            for j in self.list_columns:
+                self.frames_header[current_col].config(width=new_column_width)
+                current_col += 1
+
+            # Change the frame_table width
+            current_col = 0
+            for j in self.list_columns:
+                for i in range(0, self.nb_row_df):
+                    self.frames_cell[i][current_col].config(width=new_column_width)
+                current_col += 1
+
+            # Change the frame_containing_cells height=
+            frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
+            self.frame_containing_cells.config(height=frame_canvas_height)
+
 
 
 

@@ -177,8 +177,11 @@ class RightFrame:
         self.frame = tk.Frame(self.frame_middle.frame, width=self.frame_right_width_initial, height=frame_right_height_initial)
         self.frame.grid(row=1, column=1, sticky='n')
 
-        # List containig of pages (= each FrameContent)
+        # List containing pages (= each FrameContent)
         self.frames_content = []
+
+        # List containing  tables (= each NewTable)
+        self.pages_table = []
 
         # Current page (= current FrameContent)
         self.current_frame = 0
@@ -212,6 +215,15 @@ class RightFrame:
 
             for widget_config_frame in page.frames_configuration_widgets:
                 widget_config_frame["height"] = initial_configuration_widget_height + offset_height
+
+        for page in self.pages_table:
+            page.frame["width"] = self.frame_right_width_initial + offset_width
+            page.frame["height"] = self.frame_middle.frame["height"]
+
+            page.frame_table["width"] = page.frame["width"] - 10
+            page.frame_table["height"] = page.frame["height"] - 10
+
+
 
     def update_values(self):
         """ Function to send values to other classes """
