@@ -1,16 +1,12 @@
 import tkinter as tk
 from functools import partial
+from tkinter import messagebox
 
 from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText, MiddleFrame
-from new_page import NewPage
-from edit_page import EditPage
-from new_table import NewTable
+from pages.new_page import NewPage
+from pages.edit_page import EditPage
+from tables.new_table import NewTable
 from login import Login
-from widgets.filters.filters import Filters
-from widgets.modifiers.modifiers import Modifiers
-from widgets.table.old_table import Table
-from widgets.donut_chart.donut_chart import DonutChart
-
 
 # Main window initialization
 main_window = MainWindow()
@@ -169,7 +165,7 @@ main_window.frame.bind("<Configure>", window_resize)
 def on_closing():
     """ Function called when the user try to close the window """
 
-    if tk.messagebox.askokcancel("Fermer", "Voulez-vous vraiment quitter ?"):
+    if messagebox.askokcancel("Fermer", "Voulez-vous vraiment quitter ?"):
         stop_window_resize()
         main_window.frame.destroy()
 

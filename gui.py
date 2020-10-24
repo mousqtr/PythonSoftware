@@ -284,7 +284,6 @@ class LeftFrame:
             self.buttons[i].grid(row=i)
             self.message.bind(self.buttons[i], self.texts[i])
 
-
             label_page = tk.Label(self.moving_frames[i], text=self.texts[i], bg="#333333", fg="white")
             label_page.grid(row=0, sticky='nwe')
             label_page.config(font=("Calibri bold", 12))
@@ -447,7 +446,6 @@ class FrameContent:
 
         # Text which appear when a mouse over something
         self.message = Pmw.Balloon(self.frame)  # Calling the tooltip
-
 
 
     def create_sections(self):
@@ -634,7 +632,6 @@ class FrameContent:
             self.buttons_sections_delete[i]["command"] = None
             self.buttons_sections_delete[i].grid(row=1, column=1, sticky='news', padx=(padx, padx), pady=(pady, pady))
             self.message.bind(self.buttons_sections_delete[i], 'Supprimer le widget')
-
 
     def hide_edit_widgets_mode(self):
         """ Hide the edit widget mode """

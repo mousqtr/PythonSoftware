@@ -300,7 +300,6 @@ class NewPage:
 
         if len(self.selected_sections) == 2:
             self.merge_sections(self.selected_sections[0], self.selected_sections[1])
-            bg_identification = settings['colors']['bg_identification']
             self.selected_sections[0].button["bg"] = bg_identification
             self.selected_sections[1].button["bg"] = bg_identification
             self.selected_sections = []
