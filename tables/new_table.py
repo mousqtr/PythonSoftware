@@ -153,8 +153,6 @@ class NewTable:
 
     def confirm(self):
 
-        print("ok")
-
         # Get the new table name
         table_name = self.entry_name.get()
 
@@ -162,37 +160,42 @@ class NewTable:
         if self.extension == 0:
             if self.filename != '':
                 df = pd.read_csv(self.filename)
-                print(df)
+                # print(df)
 
         if self.extension == 1:
             if self.filename != '':
                 df = pd.read_excel(self.filename)
-                print(df)
+                # print(df)
 
         page_table = PageTable(self.right_frame, self.filename, table_name)
+        page_table.change_page()
 
         # Create a left button
         row = len(self.left_frame.buttons_table) + 1
-        new_button_left = ButtonLeftText(str(table_name), row, self.left_frame.moving_frames[3], "white", partial(self.change_page, page_table.frame))
+        new_button_left = ButtonLeftText(str(table_name), row, self.left_frame.moving_frames[3], "white", page_table.change_page)
         self.left_frame.buttons_table.append(new_button_left)
-
-        self.right_frame.pages_table.append(page_table)
-
-
 
     def change_page(self, p_frame):
         p_frame.lift()
+
+        self.right_frame.mode = 0
+
+        # Set this frame as current_frame
+        self.right_frame.current_table = self.id
 
 
 class PageTable:
     def __init__(self, p_right_frame, p_filename, p_name):
 
+        # Transform parameters into class variables
+        self.right_frame = p_right_frame
+
         # Create a previsualisation window
         window_height = settings['dimensions']['window_height']
         top_menu_height = settings['dimensions']['top_menu_height']
-        frame_width = p_right_frame.frame["width"]
+        frame_width = self.right_frame.frame["width"]
         frame_height = window_height - top_menu_height
-        self.frame = tk.Frame(p_right_frame.frame, bg="white", width=frame_width, height=frame_height)
+        self.frame = tk.Frame(self.right_frame.frame, bg="white", width=frame_width, height=frame_height)
         self.frame.grid(row=1)
         self.frame.grid_propagate(False)
         self.frame.lift()
@@ -208,6 +211,36 @@ class PageTable:
 
         # Fill the section with the table
         self.table = PrevisualisationTable(self.frame_table, p_filename, p_name)
+
+        # Set parameters to the RightFrame class (add the frame in frame_content list/ set current_frame)
+        self.right_frame.pages_table.append(self)
+        self.id = len(self.right_frame.pages_table) - 1
+        self.right_frame.current_table = self.id
+
+        print("table", self.right_frame.pages_table)
+
+    def change_page(self):
+        """ Change the page (= FrameContent) """
+
+        # Set this table as current_table
+        self.right_frame.current_table = self.id
+
+        # Indicates that we are in the FrameContent mode
+        self.right_frame.mode = 1
+
+        # Resize the frame
+        self.right_frame.resize()
+
+        for page in self.right_frame.pages_table:
+            page.frame.grid_forget()
+
+        for page in self.right_frame.frames_content:
+            page.frame.grid_forget()
+
+        self.frame.grid(row=1)
+
+        # Change the page - put frame in forward
+        self.frame.lift()
 
 
 class PrevisualisationTable:
@@ -377,7 +410,7 @@ class PrevisualisationTable:
     def resize(self, event):
         """ Function called when the parent section is resized"""
 
-        print("Resize TableWidget")
+        print("Resize Table")
 
         if self.is_table_created:
 

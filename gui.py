@@ -186,6 +186,14 @@ class RightFrame:
         # Current page (= current FrameContent)
         self.current_frame = 0
 
+        # Current page (= current PageTable)
+        self.current_table = 0
+
+        # Current mode
+        # mode 0 : FrameContent mode
+        # mode 1 : Table mode
+        self.mode = 0
+
     def resize(self):
         """ Function that resizes the RightFrames, FrameContents and Sections """
 
@@ -199,31 +207,43 @@ class RightFrame:
         self.frame["height"] = self.frame_middle.frame.winfo_height()
 
         # Resize the frameContent part
-        for page in self.frames_content:
-            page.frame["width"] = self.frame_right_width_initial + offset_width
-            page.frame["height"] = self.frame_middle.frame["height"]
+        if self.mode == 0:
 
-            # Resize mono sections
-            for section in page.mono_sections:
-                section.frame["width"] = int(page.frame["width"]/page.nb_column)
-                section.frame["height"] = int(page.frame["height"] / page.nb_row)
+            if self.frames_content != []:
 
-            # Resize poly sections
-            for section in page.poly_sections:
-                section.frame["width"] = int(page.frame["width"]/page.nb_column)*section.columspan
-                section.frame["height"] = int(page.frame["height"]/page.nb_row)*section.rowspan
+                print("Resize FrameContent ", self.current_frame)
 
-            for widget_config_frame in page.frames_configuration_widgets:
-                widget_config_frame["height"] = initial_configuration_widget_height + offset_height
+                page = self.frames_content[self.current_frame]
+                page.frame["width"] = self.frame_right_width_initial + offset_width
+                page.frame["height"] = self.frame_middle.frame["height"]
 
-        for page in self.pages_table:
-            page.frame["width"] = self.frame_right_width_initial + offset_width
-            page.frame["height"] = self.frame_middle.frame["height"]
+                # Resize mono sections
+                for section in page.mono_sections:
+                    section.frame["width"] = int(page.frame["width"]/page.nb_column)
+                    section.frame["height"] = int(page.frame["height"] / page.nb_row)
 
-            page.frame_table["width"] = page.frame["width"] - 10
-            page.frame_table["height"] = page.frame["height"] - 10
+                # Resize poly sections
+                for section in page.poly_sections:
+                    section.frame["width"] = int(page.frame["width"]/page.nb_column)*section.columspan
+                    section.frame["height"] = int(page.frame["height"]/page.nb_row)*section.rowspan
 
+                for widget_config_frame in page.frames_configuration_widgets:
+                    widget_config_frame["height"] = initial_configuration_widget_height + offset_height
 
+        # Resize the PageTable part
+        if self.mode == 1:
+
+            if self.pages_table != []:
+
+                print("Resize PageTable ", self.current_table)
+
+                page = self.pages_table[self.current_table]
+
+                page.frame["width"] = self.frame_right_width_initial + offset_width
+                page.frame["height"] = self.frame_middle.frame["height"]
+
+                page.frame_table["width"] = page.frame["width"] - 10
+                page.frame_table["height"] = page.frame["height"] - 10
 
     def update_values(self):
         """ Function to send values to other classes """
@@ -459,7 +479,6 @@ class FrameContent:
         # Text which appear when a mouse over something
         self.message = Pmw.Balloon(self.frame)  # Calling the tooltip
 
-
     def create_sections(self):
         """ Creation of the sections included in the FrameContent page """
 
@@ -530,7 +549,6 @@ class FrameContent:
             self.configuration_widgets.append(widget_setting)
             self.frames_configuration_widgets.append(widget_setting.frame)
 
-
             section_id += 1
 
         # Lists containing the labels & buttons used for "widgets configuration mode"
@@ -543,14 +561,28 @@ class FrameContent:
     def change_page(self):
         """ Change the page (= FrameContent) """
 
-        # Change the page - put frame in forward
-        self.frame.lift()
-
         # Set this frame as current_frame
         self.right_frame.current_frame = self.id
 
+        # Indicates that we are in the FrameContent mode
+        self.right_frame.mode = 0
+
         # Update values in others class (in left_frame for example)
         self.right_frame.update_values()
+
+        # Resize the frame
+        self.right_frame.resize()
+
+        for page in self.right_frame.pages_table:
+            page.frame.grid_forget()
+
+        for page in self.right_frame.frames_content:
+            page.frame.grid_forget()
+
+        self.frame.grid(row=1)
+
+        # Change the page - put frame in forward
+        self.frame.lift()
 
     def destroy_sections(self):
         """ Destroy all sections """
