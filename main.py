@@ -2,7 +2,7 @@ import tkinter as tk
 from functools import partial
 from tkinter import messagebox
 
-from gui import MainWindow, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText, MiddleFrame
+from gui import MainWindow, Menu, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText, MiddleFrame
 from pages.new_page import NewPage
 from pages.edit_page import EditPage
 from tables.new_table import NewTable
@@ -10,6 +10,8 @@ from login import Login
 
 # Main window initialization
 main_window = MainWindow()
+
+menu = Menu(main_window)
 
 
 # Images used in the left static frame (color 1/2)

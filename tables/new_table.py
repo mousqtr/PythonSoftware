@@ -8,6 +8,9 @@ import pandas as pd
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
+with open('tables/tables.json') as json_file:
+    tables_json = json.load(json_file)
+
 window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
 top_menu_height_initial = settings['dimensions']['top_menu_height']
@@ -255,6 +258,9 @@ class PrevisualisationTable:
         :param p_widget_group: Group containing this widget
         """
 
+        self.filename = p_filename
+        self.table_name = p_table_name
+
         # Dimension of the section
         self.frame_table = p_table_frame
         self.frame_section_width = self.frame_table.winfo_width()
@@ -407,6 +413,8 @@ class PrevisualisationTable:
         # Boolean that indicates the creation of the table
         self.is_table_created = True
 
+        self.save_table()
+
     def resize(self, event):
         """ Function called when the parent section is resized"""
 
@@ -440,6 +448,16 @@ class PrevisualisationTable:
             # Change the frame_containing_cells height=
             frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
             self.frame_containing_cells.config(height=frame_canvas_height)
+
+    def save_table(self):
+
+        # Build the data that will be add to the saving file
+        value_data = {str(self.table_name): str(self.filename)}
+
+        # Update the saving file (.json) with these data
+        tables_json['list_tables'].update(value_data)
+        with open('tables/tables.json', 'w') as outfile:
+            json.dump(tables_json, outfile, indent=4)
 
 
 

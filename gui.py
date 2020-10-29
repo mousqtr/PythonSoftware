@@ -59,6 +59,46 @@ class MainWindow:
         self.resized = True
 
 
+class Menu:
+    """ Top menu """
+
+    def __init__(self, p_main_window):
+
+        menu_bar = tk.Menu(p_main_window.frame)
+
+        menu_file = tk.Menu(menu_bar, tearoff=0)
+        menu_file.add_command(label="New", command=None)
+        menu_file.add_command(label="Open", command=None)
+        menu_file.add_command(label="Save", command=None)
+        menu_file.add_separator()
+        menu_file.add_command(label="Exit", command=None)
+
+        menu_bar.add_cascade(label="File", menu=menu_file)
+
+        menu_edit = tk.Menu(menu_bar, tearoff=0)
+        menu_edit.add_command(label="Undo", command=None)
+        menu_edit.add_separator()
+        menu_edit.add_command(label="Copy", command=None)
+        menu_edit.add_command(label="Cut", command=None)
+        menu_edit.add_command(label="Paste", command=None)
+
+        menu_bar.add_cascade(label="Edit", menu=menu_edit)
+
+        menu_help = tk.Menu(menu_bar, tearoff=0)
+        menu_help.add_command(label="About", command=None)
+
+        menu_bar.add_cascade(label="Help", menu=menu_help)
+
+        p_main_window.frame.config(menu=menu_bar)
+
+        # Fix the window position
+        screen_width = p_main_window.frame.winfo_screenwidth()
+        screen_height = p_main_window.frame.winfo_screenheight()
+        x_cordinate = int((screen_width / 2) - (window_width_initial / 2))
+        y_cordinate = int((screen_height / 2) - (window_height_initial / 2))
+        p_main_window.frame.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
+
+
 class TopFrame:
     """ Top frame class, includes all gui elements located in the top of the window """
 

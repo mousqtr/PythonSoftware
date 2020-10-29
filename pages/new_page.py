@@ -164,7 +164,7 @@ class NewPage:
 
         # Right part of the window
         self.part_right = tk.Frame(self.window_new_page, bg="#DCDCDC", width=200, height=400)
-        self.part_right.grid(row=0, column=3, columnspan=1, padx=(5,5), pady=(5,5))
+        self.part_right.grid(row=0, column=3, columnspan=1, padx=(5, 5), pady=(5, 5))
         self.part_right.rowconfigure(1, weight=1)
         self.part_right.grid_propagate(False)
 

@@ -111,6 +111,9 @@ class WidgetTable:
         # Boolean that indicates if the section has a title or not
         self.bool_title = True
 
+        self.list_tables = []
+        self.combo_tables = ttk.Combobox()
+
         # Call the on_click function when the user left mouse click on these elements
         self.frame.bind("<Button-1>", self.on_click)
         self.title.bind("<Button-1>", self.on_click)
@@ -216,19 +219,30 @@ class WidgetTable:
         # Modify the configuration widget title
         self.widget_configuration.label_title.grid(row=0, columnspan=2)
 
+        label_table = tk.Label(self.frame_widget_configuration, text="Tableau", width=19, bg="#333333",
+                                           fg="white")
+        label_table.grid(row=1, column=0, sticky='ne', padx=10, pady=1)
+        label_table.config(font=("Calibri bold", 9))
+
+        self.list_tables = []
+        self.combo_tables = ttk.Combobox(self.frame_widget_configuration, values=list_tables, state="readonly")
+        self.combo_tables.grid(row=2, column=1, sticky='nw', padx=10, pady=1)
+        self.combo_tables.config(font=("Calibri bold", 9))
+        self.combo_tables.current(0)
+
         # Label - Title
         label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
-        label_title.grid(row=1, columnspan=2, pady=(10, 0))
+        label_title.grid(row=3, columnspan=2, pady=(10, 0))
         label_title.config(font=("Calibri", 13))
 
         # Entry - Write the title
         self.entry_title = tk.Entry(self.frame_widget_configuration, width=15, textvariable=" ")
-        self.entry_title.grid(row=2, columnspan=2)
+        self.entry_title.grid(row=4, columnspan=2)
         self.entry_title.config(font=("Calibri bold", 10))
 
         # Label - Choose columns
         label_select_column = tk.Label(self.frame_widget_configuration, text="Choix des colonnes", bg="#333333", fg="white")
-        label_select_column.grid(row=3, columnspan=2, pady=(10, 0))
+        label_select_column.grid(row=5, columnspan=2, pady=(10, 0))
         label_select_column.config(font=("Calibri", 13))
 
         # Column choice label
@@ -239,11 +253,11 @@ class WidgetTable:
         for j in range(self.nb_column_max):
             label_text = "Colonne " + str(j + 1)
             labels_column_choice[j] = tk.Label(self.frame_widget_configuration, text=label_text, width=19, bg="#333333", fg="white")
-            labels_column_choice[j].grid(row=j + 4, column=0, sticky='ne', padx=10, pady=1)
+            labels_column_choice[j].grid(row=j + 6, column=0, sticky='ne', padx=10, pady=1)
             labels_column_choice[j].config(font=("Calibri bold", 9))
 
             combo_column_choice[j] = ttk.Combobox(self.frame_widget_configuration, values=list_headers, state="readonly")
-            combo_column_choice[j].grid(row=j + 4, column=1, sticky='nw', padx=10, pady=1)
+            combo_column_choice[j].grid(row=j + 6, column=1, sticky='nw', padx=10, pady=1)
             combo_column_choice[j].config(font=("Calibri bold", 9))
             combo_column_choice[j].current(0)
 
