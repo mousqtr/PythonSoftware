@@ -2,7 +2,7 @@ import tkinter as tk
 from functools import partial
 from tkinter import messagebox
 
-from gui import MainWindow, Menu, LeftFrame, RightFrame, ButtonLeftText, MiddleFrame, PageInitial
+from gui import MainWindow, Menu, LeftFrame, RightFrame, ButtonLeftText, PageInitial
 from pages.new_page import NewPage
 from pages.edit_page import EditPage
 from tables.new_table import NewTable
@@ -73,10 +73,8 @@ list_title_widgets = ["Image", "Sommaire", "Table", "Graphique\nen anneau", "Car
 img_logo = tk.PhotoImage(file="img/logo.png")
 
 # Creation of each frame of the window
-# frame_top = TopFrame(main_window, img_logo)
-frame_middle = MiddleFrame(main_window)
-frame_left = LeftFrame(frame_middle, list_img_1, list_img_2)
-frame_right = RightFrame(frame_middle, frame_left)
+frame_left = LeftFrame(main_window, list_img_1, list_img_2)
+frame_right = RightFrame(main_window, frame_left)
 
 page_initial = PageInitial(frame_right)
 
@@ -148,8 +146,6 @@ def window_resize(event):
             main_window.height = height
 
         # Resize the window and internal elements
-        # frame_top.resize()
-        frame_middle.resize()
         frame_left.resize()
         frame_right.resize()
 

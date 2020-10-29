@@ -44,6 +44,9 @@ class MainWindow:
         self.frame.iconphoto(False, window_icon)
         self.frame.grid_propagate(False)
 
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+
         # Window dimension
         screen_width = self.frame.winfo_screenwidth()
         screen_height = self.frame.winfo_screenheight()
@@ -99,122 +102,19 @@ class Menu:
         p_main_window.frame.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
 
 
-# class TopFrame:
-#     """ Top frame class, includes all gui elements located in the top of the window """
-#
-#     def __init__(self, p_main_window, p_icon):
-#         """ Top frame class, includes all gui elements located in the top of the window """
-#
-#         # Transform parameters into class variables
-#         self.main_window = p_main_window
-#         self.company_icon = p_icon
-#
-#         # Creation of the frame
-#         self.frame = tk.Frame(self.main_window.frame, bg=bg_top_menu, width=window_width_initial, height=top_menu_height_initial)
-#         self.frame.grid_propagate(False)
-#         self.frame.grid(row=0)
-#
-#         # Creation of the first frame (1/3) - company logo, company name
-#         self.width_first_frame = 50
-#         self.first_top_frame = tk.Frame(self.frame, width=self.width_first_frame, height=top_menu_height_initial)
-#         self.first_top_frame.grid(row=0, column=0)
-#         self.first_top_frame.grid_propagate(False)
-#         self.first_top_frame.columnconfigure(0, weight=1)
-#         self.first_top_frame.rowconfigure(0, weight=1)
-#
-#         # Creation of the second frame (2/3)
-#         self.width_second_frame = 250
-#         self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=self.width_second_frame, height=top_menu_height_initial)
-#         self.second_top_frame.grid(row=0, column=1)
-#
-#         # Creation of the third frame (3/3) - buttons
-#         width_3 = 500
-#         self.third_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=width_3, height=top_menu_height_initial)
-#         self.third_top_frame.grid(row=0, column=2)
-#
-#         # Company name in the first frame
-#         self.label_company_title = tk.Label(self.first_top_frame, text=company_name, bg=bg_company_name, fg="white")
-#         self.label_company_title.config(font=(font_company_name, font_size_company_name))
-#
-#         # Company icon in the first frame
-#         self.company_icon = self.company_icon.zoom(4)
-#         self.company_icon = self.company_icon.subsample(32)
-#         self.button_company = tk.Button(self.first_top_frame, image=self.company_icon, height=50, borderwidth=0, command=None)
-#         self.button_company.grid(row=0)
-#
-#         self.window_open = True
-#
-#     def resize(self):
-#         """ Function that resizes the frame and the second frame """
-#
-#         # Difference between the initial window width and the resized window width
-#         offset_width = self.main_window.frame.winfo_width() - window_width_initial
-#
-#         # Resize the top frame
-#         self.frame["width"] = window_width_initial + offset_width
-#
-#         # Resize the second top frame
-#         self.second_top_frame["width"] = self.width_second_frame + offset_width
-#
-#     def open(self, p_bool):
-#         """ Function that draw the company icon or the company name depending on the p_bool value """
-#
-#         # The left window is opened
-#         if p_bool == True:
-#             self.width_first_frame = 250
-#             self.first_top_frame["width"] = 250
-#             self.width_second_frame = 50
-#             self.resize()
-#             self.label_company_title.grid(row=0, column=0, sticky='news')
-#             self.button_company.grid_forget()
-#
-#         # The left window is closed
-#         else:
-#             self.width_first_frame = 50
-#             self.first_top_frame["width"] = 50
-#             self.width_second_frame = 250
-#             self.resize()
-#             self.label_company_title.grid_forget()
-#             self.button_company.grid(row=0, column=0, sticky='news')
-
-
-class MiddleFrame:
-    """ Middle frame class, includes all gui elements located in the second part of the window (after the top) """
-
-    def __init__(self, p_main_window):
-        """ Middle frame class, includes all gui elements located in the second part of the window (after the top) """
-
-        # Transform parameters into class variables
-        self.main_window = p_main_window
-
-        # Creation of the frame
-        self.frame = tk.Frame(self.main_window.frame, width=window_width_initial, height=window_height_initial)
-        self.frame.grid_propagate(False)
-        self.frame.grid(row=1)
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
-
-    def resize(self):
-        """ Function that resizes the frame and children frames (LeftFrame and RightFrame) """
-
-        # Resize the frame
-        self.frame["width"] = self.main_window.frame.winfo_width()
-        self.frame["height"] = self.main_window.frame.winfo_height()
-
-
 class RightFrame:
     """ Right frame of the window, includes FrameContent """
 
-    def __init__(self, p_middle, p_left):
+    def __init__(self, p_main_frame, p_left):
         """ Right frame of the window, includes FrameContent """
 
         # Transform parameters into class variables
-        self.frame_middle = p_middle
+        self.frame_main = p_main_frame
         self.frame_left = p_left
 
         # Creation of the frame
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
-        self.frame = tk.Frame(self.frame_middle.frame, width=self.frame_right_width_initial, height=frame_right_height_initial)
+        self.frame = tk.Frame(self.frame_main.frame, width=self.frame_right_width_initial, height=frame_right_height_initial, bg="yellow")
         self.frame.grid(row=1, column=1, sticky='n')
 
         #
@@ -241,13 +141,13 @@ class RightFrame:
         """ Function that resizes the RightFrames, FrameContents and Sections """
 
         # Difference between the initial window width and the resized window width
-        offset_width = self.frame_middle.frame.winfo_width() - window_width_initial
-        offset_height = self.frame_middle.frame.winfo_height() - window_height_initial
+        offset_width = self.frame_main.frame.winfo_width() - window_width_initial
+        offset_height = self.frame_main.frame.winfo_height() - window_height_initial
 
         # Resize the right part
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
         self.frame["width"] = self.frame_right_width_initial + offset_width
-        self.frame["height"] = self.frame_middle.frame.winfo_height()
+        self.frame["height"] = self.frame_main.frame.winfo_height()
 
         # Resize the frameContent part
         if self.mode == -1:
@@ -256,7 +156,7 @@ class RightFrame:
 
             page = self.frames_initial[0]
             page.frame["width"] = self.frame_right_width_initial + offset_width
-            page.frame["height"] = self.frame_middle.frame["height"]
+            page.frame["height"] = self.frame_main.frame.winfo_height()
 
         # Resize the frameContent part
         if self.mode == 0:
@@ -267,7 +167,7 @@ class RightFrame:
 
                 page = self.frames_content[self.current_frame]
                 page.frame["width"] = self.frame_right_width_initial + offset_width
-                page.frame["height"] = self.frame_middle.frame["height"]
+                page.frame["height"] = self.frame_main.frame.winfo_height()
 
                 # Resize mono sections
                 for section in page.mono_sections:
@@ -292,7 +192,7 @@ class RightFrame:
                 page = self.pages_table[self.current_table]
 
                 page.frame["width"] = self.frame_right_width_initial + offset_width
-                page.frame["height"] = self.frame_middle.frame["height"]
+                page.frame["height"] = self.frame_main.frame.winfo_height()
 
                 page.frame_table["width"] = page.frame["width"] - 10
                 page.frame_table["height"] = page.frame["height"] - 10
@@ -308,12 +208,11 @@ class RightFrame:
 class LeftFrame:
     """ Left frame of the window, included in the MiddleFrame """
 
-    def __init__(self, p_middle, p_list_img_1, p_list_img_2):
+    def __init__(self, p_main_frame, p_list_img_1, p_list_img_2):
         """ Left frame of the window, included in the MiddleFrame """
 
         # Transform parameters into class variables
-        self.middle = p_middle
-        self.frame_middle = p_middle.frame
+        self.frame_main = p_main_frame
         self.list_img_1 = p_list_img_1
         self.list_img_2 = p_list_img_2
 
@@ -338,7 +237,7 @@ class LeftFrame:
 
         # Creation of the left frame
         self.frame_initial_width = 50
-        self.frame = tk.Frame(self.frame_middle, bg=bg_left, width=left_menu_width_initial, height=left_menu_height_initial)
+        self.frame = tk.Frame(self.frame_main.frame, bg=bg_left, width=left_menu_width_initial, height=left_menu_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=1, column=0)
 
@@ -384,10 +283,10 @@ class LeftFrame:
         """ Function that resizes the LeftFrame, StaticPart and MovingPart """
 
         # Difference between the initial window height and the resized window height
-        offset = self.frame_middle.winfo_height() - left_menu_height_initial
+        offset = self.frame_main.frame.winfo_height() - left_menu_height_initial
 
         # Resize the entire frame
-        self.frame["height"] = self.frame_middle.winfo_height()
+        self.frame["height"] = self.frame_main.frame.winfo_height()
 
         # Resize the static part
         self.static_part["height"] = left_menu_height_initial + offset
@@ -448,9 +347,6 @@ class LeftFrame:
             # If it is the widget moving frame, close it
             if p_id == 1 and self.frames_content != []:
                 self.moving_widgets_page[self.current_frame].grid_forget()
-
-        # Resize the middle frame
-        self.middle.resize()
 
     def change_config_widget_frame(self):
         """ Function called when we click on a widget """
