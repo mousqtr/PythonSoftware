@@ -7,15 +7,14 @@ with open('settings.json') as json_file:
 
 window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
-top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = 50
-left_menu_height_initial = window_height_initial - top_menu_height_initial
+left_menu_height_initial = window_height_initial
 bg_identification = settings['colors']['bg_identification']
 
 class NewPage:
     """ Create a new page window """
 
-    def __init__(self, p_parent, p_left_frame, p_right_frame, p_top_frame):
+    def __init__(self, p_parent, p_left_frame, p_right_frame):
         """ Initialization of create page window """
 
         # Parameters
@@ -24,7 +23,6 @@ class NewPage:
         self.nb_column = 5
         self.left_frame = p_left_frame
         self.right_frame = p_right_frame
-        self.top_frame = p_top_frame
 
         # Window handle
         self.window_new_page = tk.Toplevel(self.parent)

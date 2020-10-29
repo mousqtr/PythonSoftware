@@ -13,16 +13,15 @@ with open('tables/tables.json') as json_file:
 
 window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
-top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = 50
-left_menu_height_initial = window_height_initial - top_menu_height_initial
+left_menu_height_initial = window_height_initial
 bg_identification = settings['colors']['bg_identification']
 
 
 class NewTable:
     """ Create a new page window """
 
-    def __init__(self, p_parent, p_left_frame, p_right_frame, p_top_frame, p_extension_images):
+    def __init__(self, p_parent, p_left_frame, p_right_frame, p_extension_images):
         """ Initialization of create page window """
 
         # Parameters
@@ -31,7 +30,6 @@ class NewTable:
         self.nb_column = 5
         self.left_frame = p_left_frame
         self.right_frame = p_right_frame
-        self.top_frame = p_top_frame
         self.extension_images = p_extension_images
 
         # Window handle
@@ -195,9 +193,8 @@ class PageTable:
 
         # Create a previsualisation window
         window_height = settings['dimensions']['window_height']
-        top_menu_height = settings['dimensions']['top_menu_height']
         frame_width = self.right_frame.frame["width"]
-        frame_height = window_height - top_menu_height
+        frame_height = window_height
         self.frame = tk.Frame(self.right_frame.frame, bg="white", width=frame_width, height=frame_height)
         self.frame.grid(row=1)
         self.frame.grid_propagate(False)

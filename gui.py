@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.font as font
 import json
 import Pmw
 from functools import partial
@@ -11,9 +12,8 @@ with open('settings.json') as json_file:
 
 window_width_initial = settings['dimensions']['window_width']
 window_height_initial = settings['dimensions']['window_height']
-top_menu_height_initial = settings['dimensions']['top_menu_height']
 left_menu_width_initial = 50
-left_menu_height_initial = window_height_initial - top_menu_height_initial
+left_menu_height_initial = window_height_initial
 
 frame_right_height_initial = left_menu_height_initial
 
@@ -91,7 +91,7 @@ class Menu:
 
         p_main_window.frame.config(menu=menu_bar)
 
-        # Fix the window position
+        # Window position
         screen_width = p_main_window.frame.winfo_screenwidth()
         screen_height = p_main_window.frame.winfo_screenheight()
         x_cordinate = int((screen_width / 2) - (window_width_initial / 2))
@@ -99,83 +99,83 @@ class Menu:
         p_main_window.frame.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
 
 
-class TopFrame:
-    """ Top frame class, includes all gui elements located in the top of the window """
-
-    def __init__(self, p_main_window, p_icon):
-        """ Top frame class, includes all gui elements located in the top of the window """
-
-        # Transform parameters into class variables
-        self.main_window = p_main_window
-        self.company_icon = p_icon
-
-        # Creation of the frame
-        self.frame = tk.Frame(self.main_window.frame, bg=bg_top_menu, width=window_width_initial, height=top_menu_height_initial)
-        self.frame.grid_propagate(False)
-        self.frame.grid(row=0)
-
-        # Creation of the first frame (1/3) - company logo, company name
-        self.width_first_frame = 50
-        self.first_top_frame = tk.Frame(self.frame, width=self.width_first_frame, height=top_menu_height_initial)
-        self.first_top_frame.grid(row=0, column=0)
-        self.first_top_frame.grid_propagate(False)
-        self.first_top_frame.columnconfigure(0, weight=1)
-        self.first_top_frame.rowconfigure(0, weight=1)
-
-        # Creation of the second frame (2/3)
-        self.width_second_frame = 250
-        self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=self.width_second_frame, height=top_menu_height_initial)
-        self.second_top_frame.grid(row=0, column=1)
-
-        # Creation of the third frame (3/3) - buttons
-        width_3 = 500
-        self.third_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=width_3, height=top_menu_height_initial)
-        self.third_top_frame.grid(row=0, column=2)
-
-        # Company name in the first frame
-        self.label_company_title = tk.Label(self.first_top_frame, text=company_name, bg=bg_company_name, fg="white")
-        self.label_company_title.config(font=(font_company_name, font_size_company_name))
-
-        # Company icon in the first frame
-        self.company_icon = self.company_icon.zoom(4)
-        self.company_icon = self.company_icon.subsample(32)
-        self.button_company = tk.Button(self.first_top_frame, image=self.company_icon, height=50, borderwidth=0, command=None)
-        self.button_company.grid(row=0)
-
-        self.window_open = True
-
-    def resize(self):
-        """ Function that resizes the frame and the second frame """
-
-        # Difference between the initial window width and the resized window width
-        offset_width = self.main_window.frame.winfo_width() - window_width_initial
-
-        # Resize the top frame
-        self.frame["width"] = window_width_initial + offset_width
-
-        # Resize the second top frame
-        self.second_top_frame["width"] = self.width_second_frame + offset_width
-
-    def open(self, p_bool):
-        """ Function that draw the company icon or the company name depending on the p_bool value """
-
-        # The left window is opened
-        if p_bool == True:
-            self.width_first_frame = 250
-            self.first_top_frame["width"] = 250
-            self.width_second_frame = 50
-            self.resize()
-            self.label_company_title.grid(row=0, column=0, sticky='news')
-            self.button_company.grid_forget()
-
-        # The left window is closed
-        else:
-            self.width_first_frame = 50
-            self.first_top_frame["width"] = 50
-            self.width_second_frame = 250
-            self.resize()
-            self.label_company_title.grid_forget()
-            self.button_company.grid(row=0, column=0, sticky='news')
+# class TopFrame:
+#     """ Top frame class, includes all gui elements located in the top of the window """
+#
+#     def __init__(self, p_main_window, p_icon):
+#         """ Top frame class, includes all gui elements located in the top of the window """
+#
+#         # Transform parameters into class variables
+#         self.main_window = p_main_window
+#         self.company_icon = p_icon
+#
+#         # Creation of the frame
+#         self.frame = tk.Frame(self.main_window.frame, bg=bg_top_menu, width=window_width_initial, height=top_menu_height_initial)
+#         self.frame.grid_propagate(False)
+#         self.frame.grid(row=0)
+#
+#         # Creation of the first frame (1/3) - company logo, company name
+#         self.width_first_frame = 50
+#         self.first_top_frame = tk.Frame(self.frame, width=self.width_first_frame, height=top_menu_height_initial)
+#         self.first_top_frame.grid(row=0, column=0)
+#         self.first_top_frame.grid_propagate(False)
+#         self.first_top_frame.columnconfigure(0, weight=1)
+#         self.first_top_frame.rowconfigure(0, weight=1)
+#
+#         # Creation of the second frame (2/3)
+#         self.width_second_frame = 250
+#         self.second_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=self.width_second_frame, height=top_menu_height_initial)
+#         self.second_top_frame.grid(row=0, column=1)
+#
+#         # Creation of the third frame (3/3) - buttons
+#         width_3 = 500
+#         self.third_top_frame = tk.Frame(self.frame, bg=bg_top_menu, width=width_3, height=top_menu_height_initial)
+#         self.third_top_frame.grid(row=0, column=2)
+#
+#         # Company name in the first frame
+#         self.label_company_title = tk.Label(self.first_top_frame, text=company_name, bg=bg_company_name, fg="white")
+#         self.label_company_title.config(font=(font_company_name, font_size_company_name))
+#
+#         # Company icon in the first frame
+#         self.company_icon = self.company_icon.zoom(4)
+#         self.company_icon = self.company_icon.subsample(32)
+#         self.button_company = tk.Button(self.first_top_frame, image=self.company_icon, height=50, borderwidth=0, command=None)
+#         self.button_company.grid(row=0)
+#
+#         self.window_open = True
+#
+#     def resize(self):
+#         """ Function that resizes the frame and the second frame """
+#
+#         # Difference between the initial window width and the resized window width
+#         offset_width = self.main_window.frame.winfo_width() - window_width_initial
+#
+#         # Resize the top frame
+#         self.frame["width"] = window_width_initial + offset_width
+#
+#         # Resize the second top frame
+#         self.second_top_frame["width"] = self.width_second_frame + offset_width
+#
+#     def open(self, p_bool):
+#         """ Function that draw the company icon or the company name depending on the p_bool value """
+#
+#         # The left window is opened
+#         if p_bool == True:
+#             self.width_first_frame = 250
+#             self.first_top_frame["width"] = 250
+#             self.width_second_frame = 50
+#             self.resize()
+#             self.label_company_title.grid(row=0, column=0, sticky='news')
+#             self.button_company.grid_forget()
+#
+#         # The left window is closed
+#         else:
+#             self.width_first_frame = 50
+#             self.first_top_frame["width"] = 50
+#             self.width_second_frame = 250
+#             self.resize()
+#             self.label_company_title.grid_forget()
+#             self.button_company.grid(row=0, column=0, sticky='news')
 
 
 class MiddleFrame:
@@ -188,7 +188,7 @@ class MiddleFrame:
         self.main_window = p_main_window
 
         # Creation of the frame
-        self.frame = tk.Frame(self.main_window.frame, width=window_width_initial, height=window_height_initial - top_menu_height_initial)
+        self.frame = tk.Frame(self.main_window.frame, width=window_width_initial, height=window_height_initial)
         self.frame.grid_propagate(False)
         self.frame.grid(row=1)
         self.frame.columnconfigure(0, weight=1)
@@ -199,7 +199,7 @@ class MiddleFrame:
 
         # Resize the frame
         self.frame["width"] = self.main_window.frame.winfo_width()
-        self.frame["height"] = self.main_window.frame.winfo_height() - top_menu_height_initial
+        self.frame["height"] = self.main_window.frame.winfo_height()
 
 
 class RightFrame:
@@ -217,6 +217,9 @@ class RightFrame:
         self.frame = tk.Frame(self.frame_middle.frame, width=self.frame_right_width_initial, height=frame_right_height_initial)
         self.frame.grid(row=1, column=1, sticky='n')
 
+        #
+        self.frames_initial = []
+
         # List containing pages (= each FrameContent)
         self.frames_content = []
 
@@ -232,7 +235,7 @@ class RightFrame:
         # Current mode
         # mode 0 : FrameContent mode
         # mode 1 : Table mode
-        self.mode = 0
+        self.mode = -1
 
     def resize(self):
         """ Function that resizes the RightFrames, FrameContents and Sections """
@@ -245,6 +248,15 @@ class RightFrame:
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
         self.frame["width"] = self.frame_right_width_initial + offset_width
         self.frame["height"] = self.frame_middle.frame.winfo_height()
+
+        # Resize the frameContent part
+        if self.mode == -1:
+
+            print("Resize initial frame")
+
+            page = self.frames_initial[0]
+            page.frame["width"] = self.frame_right_width_initial + offset_width
+            page.frame["height"] = self.frame_middle.frame["height"]
 
         # Resize the frameContent part
         if self.mode == 0:
@@ -296,12 +308,11 @@ class RightFrame:
 class LeftFrame:
     """ Left frame of the window, included in the MiddleFrame """
 
-    def __init__(self, p_middle, p_top_frame, p_list_img_1, p_list_img_2):
+    def __init__(self, p_middle, p_list_img_1, p_list_img_2):
         """ Left frame of the window, included in the MiddleFrame """
 
         # Transform parameters into class variables
         self.middle = p_middle
-        self.frame_top = p_top_frame
         self.frame_middle = p_middle.frame
         self.list_img_1 = p_list_img_1
         self.list_img_2 = p_list_img_2
@@ -419,9 +430,6 @@ class LeftFrame:
             # Indicate that the p_id frame is opened
             self.frames_opened[p_id] = True
 
-            # Open the company name frame
-            self.frame_top.open(True)
-
         # When the p_id frame is open
         else:
 
@@ -432,9 +440,6 @@ class LeftFrame:
 
             # Indicate that the window is closed
             self.frames_opened[p_id] = False
-
-            # Close the company name frame
-            self.frame_top.open(False)
 
             # Change color of left buttons
             for i in range(len(self.buttons)):
@@ -949,3 +954,29 @@ class WidgetGroup:
         for w in self.widgets:
             w.update()
 
+
+class PageInitial:
+    def __init__(self, p_right_frame):
+
+        # Transform parameters into class variables
+        self.right_frame = p_right_frame
+
+        self.right_frame.frames_initial.append(self)
+
+        # Create a previsualisation window
+        window_height = settings['dimensions']['window_height']
+        top_menu_height = settings['dimensions']['top_menu_height']
+        frame_width = self.right_frame.frame["width"]
+        frame_height = window_height - top_menu_height
+        self.frame = tk.Frame(self.right_frame.frame, bg="white", width=frame_width, height=frame_height)
+        self.frame.grid(row=1)
+        self.frame.grid_propagate(False)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.lift()
+
+        presentation_text = "Bienvenue sur ce logiciel \n \n Pour commencer, rendez-vous dans le premier onglet \n et appuyer sur '+' pour créer une nouvelle page "
+        self.label_title = tk.Label(self.frame, text=presentation_text, fg="black")
+        self.label_title.grid(row=0, column=0, sticky="news")
+        init_font = font.Font(size=13)
+        self.label_title.config(font=init_font)

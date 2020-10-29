@@ -2,7 +2,7 @@ import tkinter as tk
 from functools import partial
 from tkinter import messagebox
 
-from gui import MainWindow, Menu, LeftFrame, RightFrame, TopFrame, ButtonLeftText, ButtonTopText, MiddleFrame
+from gui import MainWindow, Menu, LeftFrame, RightFrame, ButtonLeftText, MiddleFrame, PageInitial
 from pages.new_page import NewPage
 from pages.edit_page import EditPage
 from tables.new_table import NewTable
@@ -73,11 +73,12 @@ list_title_widgets = ["Image", "Sommaire", "Table", "Graphique\nen anneau", "Car
 img_logo = tk.PhotoImage(file="img/logo.png")
 
 # Creation of each frame of the window
-frame_top = TopFrame(main_window, img_logo)
+# frame_top = TopFrame(main_window, img_logo)
 frame_middle = MiddleFrame(main_window)
-frame_left = LeftFrame(frame_middle, frame_top, list_img_1, list_img_2)
+frame_left = LeftFrame(frame_middle, list_img_1, list_img_2)
 frame_right = RightFrame(frame_middle, frame_left)
 
+page_initial = PageInitial(frame_right)
 
 # Initialization of the widget button
 def edit_widgets_mode(p_right_frame, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget, p_list_buttons_widget2):
@@ -90,22 +91,23 @@ def edit_widgets_mode(p_right_frame, p_list_img_widgets, p_list_title_widgets, p
         frame_content.edit_widgets()
 
 
-button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame,
-                                         partial(edit_widgets_mode, frame_right, list_img_widgets, list_title_widgets, list_buttons_widget, list_img_widgets2))
+# button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame,
+#                                          partial(edit_widgets_mode, frame_right, list_img_widgets, list_title_widgets, list_buttons_widget, list_img_widgets2))
 
 # Initialization of the login button
 window_login = Login(main_window.frame)
-button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, window_login.create_login_window)
+# button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, window_login.create_login_window)
 
 
 # Initialization of the edit button
-def edit_page():
-    if len(frame_right.frames_content) > 0:
-        EditPage(main_window.frame, frame_left, frame_right, frame_top)
+# def edit_page():
+#     if len(frame_right.frames_content) > 0:
+#         EditPage(main_window.frame, frame_left, frame_right, frame_top)
+
     # print(frame_left.widgets_frames)
 
 
-button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame, edit_page)
+# button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame, edit_page)
 
 
 # Initialization of the create page button
@@ -114,7 +116,7 @@ def add_page():
     print("New Page")
     nb_buttons_max = 11
     if len(frame_left.buttons_page) < nb_buttons_max:
-        NewPage(main_window.frame, frame_left, frame_right, frame_top)
+        NewPage(main_window.frame, frame_left, frame_right)
 
 
 button_add_page = ButtonLeftText(" + ", 20, frame_left.moving_frames[0], "white", add_page)
@@ -125,7 +127,7 @@ def add_table():
     print("New Table")
     nb_tables_max = 11
     if len(frame_left.buttons_table) < nb_tables_max:
-        NewTable(main_window.frame, frame_left, frame_right, frame_top, list_extensions_icon2)
+        NewTable(main_window.frame, frame_left, frame_right, list_extensions_icon2)
 
 
 button_add_table = ButtonLeftText(" + ", 20, frame_left.moving_frames[3], "white", add_table)
@@ -146,7 +148,7 @@ def window_resize(event):
             main_window.height = height
 
         # Resize the window and internal elements
-        frame_top.resize()
+        # frame_top.resize()
         frame_middle.resize()
         frame_left.resize()
         frame_right.resize()
