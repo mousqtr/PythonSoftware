@@ -95,7 +95,7 @@ class WidgetSummary:
         label_title.config(font=("Calibri", 13))
 
         # Entry - Write the title
-        self.entry_title = tk.Entry(self.frame_widget_configuration, width=19, textvariable=" ")
+        self.entry_title = tk.Entry(self.frame_widget_configuration, width=22, textvariable=" ")
         self.entry_title.grid(row=2)
         self.entry_title.config(font=("Calibri bold", 10))
 
@@ -108,7 +108,7 @@ class WidgetSummary:
         list_data = []
         for x in widgets_data['data']:
             list_data.append(x)
-        combo_data = ttk.Combobox(self.frame_widget_configuration, values=list_data)
+        combo_data = ttk.Combobox(self.frame_widget_configuration, values=list_data, width=22)
         combo_data.current(0)
         combo_data.grid(row=4)
 
@@ -119,7 +119,7 @@ class WidgetSummary:
 
         # Combobox - Choose background color to draw
         list_color = [" ", "black", "white", "red", "orange", "blue", "yellow", "purple", "green", "white"]
-        combo_bg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color)
+        combo_bg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color, width=22)
         combo_bg_color.current(0)
         combo_bg_color.grid(row=6)
 
@@ -130,7 +130,7 @@ class WidgetSummary:
 
         # Combobox - Choose frontground color to draw
         list_color = [" ", "black", "white", "red", "orange", "blue", "yellow", "purple", "green", "white"]
-        combo_fg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color)
+        combo_fg_color = ttk.Combobox(self.frame_widget_configuration, values=list_color, width=22)
         combo_fg_color.current(0)
         combo_fg_color.grid(row=8)
 
@@ -141,12 +141,12 @@ class WidgetSummary:
 
         # Combobox - Choose frontground color to draw
         list_font = [i*3 for i in range(4, 20)]
-        combo_font = ttk.Combobox(self.frame_widget_configuration, values=list_font)
+        combo_font = ttk.Combobox(self.frame_widget_configuration, values=list_font, width=22)
         combo_font.current(0)
         combo_font.grid(row=10)
 
         # Button - Validation
-        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
+        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=22, bg="orange", fg="white")
         button_validate.grid(row=11, pady=(20, 0), padx=(10, 10))
         button_validate.config(font=("Calibri", 10))
         button_validate['command'] = partial(self.validate, 0, 0, combo_data, combo_bg_color, combo_fg_color, combo_font)

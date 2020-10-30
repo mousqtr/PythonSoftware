@@ -14,6 +14,8 @@ class PageTable:
 
         # Transform parameters into class variables
         self.right_frame = p_right_frame
+        self.filename = p_filename
+        self.name = p_name
 
         # Create a previsualisation window
         window_height = settings['dimensions']['window_height']

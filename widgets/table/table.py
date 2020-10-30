@@ -219,14 +219,15 @@ class WidgetTable:
 
         label_table = tk.Label(self.frame_widget_configuration, text="Tableau", width=19, bg="#333333",
                                            fg="white")
-        label_table.grid(row=1, column=0, sticky='ne', padx=10, pady=1)
-        label_table.config(font=("Calibri bold", 9))
+        label_table.grid(row=1, columnspan=2, pady=(10, 0))
+        label_table.config(font=("Calibri bold", 13))
 
         self.list_tables = []
         self.combo_tables = ttk.Combobox(self.frame_widget_configuration, values=self.list_tables, state="readonly")
-        self.combo_tables.grid(row=2, column=1, sticky='nw', padx=10, pady=1)
-        self.combo_tables.config(font=("Calibri bold", 9))
-        self.combo_tables.current(0)
+        self.combo_tables.grid(row=2, columnspan=2)
+        self.combo_tables.config(font=("Calibri bold", 10))
+        if self.list_tables:
+            self.combo_tables.current(0)
 
         # Label - Title
         label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
@@ -234,7 +235,7 @@ class WidgetTable:
         label_title.config(font=("Calibri", 13))
 
         # Entry - Write the title
-        self.entry_title = tk.Entry(self.frame_widget_configuration, width=15, textvariable=" ")
+        self.entry_title = tk.Entry(self.frame_widget_configuration, width=22, textvariable=" ")
         self.entry_title.grid(row=4, columnspan=2)
         self.entry_title.config(font=("Calibri bold", 10))
 
@@ -260,7 +261,7 @@ class WidgetTable:
             combo_column_choice[j].current(0)
 
         # Button - Validation
-        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
+        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=22, bg="orange", fg="white")
         button_validate.grid(row=30, columnspan=2, pady=(20, 0))
         button_validate['command'] = partial(self.validate, combo_column_choice)
         button_validate.config(font=("Calibri", 10))

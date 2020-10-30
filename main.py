@@ -69,9 +69,6 @@ for img in list_extensions_icon:
 
 
 
-
-
-
 # Logo of the company
 img_logo = tk.PhotoImage(file="img/logo.png")
 
@@ -82,8 +79,7 @@ frame_right = RightFrame(main_window, frame_left)
 page_initial = PageInitial(frame_right)
 
 
-
-menu = Menu(main_window, frame_right, list_widgets)
+menu = Menu(main_window, list_widgets)
 
 # Initialization of the login button
 window_login = Login(main_window.frame)

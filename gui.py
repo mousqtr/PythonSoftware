@@ -90,12 +90,13 @@ class MainWindow:
 class Menu:
     """ Top menu """
 
-    def __init__(self, p_main_window, p_right_frame, p_widget_images):
+    def __init__(self, p_main_window, p_widget_images):
         """ Top menu """
 
         # Transform parameters into class variables
         self.main_window = p_main_window
-        self.frame_right = p_right_frame
+        self.frame_left = self.main_window.childrens[0]
+        self.frame_right = self.main_window.childrens[1]
         self.widget_images = p_widget_images
 
         # Creation of the menu
@@ -105,7 +106,7 @@ class Menu:
         menu_file = tk.Menu(menu_bar, tearoff=0)
         menu_file.add_command(label="Nouveau fichier", command=None)
         menu_file.add_command(label="Ouvrir un fichier", command=None)
-        menu_file.add_command(label="Enregistrer", command=None)
+        menu_file.add_command(label="Enregistrer", command=self.save)
         menu_file.add_command(label="Enregistrer sous", command=None)
         menu_file.add_separator()
         menu_file.add_command(label="Exit", command=None)
@@ -147,7 +148,6 @@ class Menu:
         y_cordinate = int((screen_height / 2) - (window_height_initial / 2))
         p_main_window.frame.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
 
-    # Initialization of the widget button
     def open_edit_widgets_mode(self):
         """ Function call when we click on 'Configure widgets' button """
 
@@ -166,7 +166,6 @@ class Menu:
             # Pass the current PageContent to edit_widgets mode
             page_content.open_edit_widgets()
 
-    # Initialization of the widget button
     def close_edit_widgets_mode(self):
         """ Function call when we click on 'Close edit widgets' button """
 
@@ -181,6 +180,24 @@ class Menu:
 
             # Pass the current PageContent to edit_widgets mode
             page_content.close_edit_widgets()
+
+    def save(self):
+        """ Function call when we click on 'Save' button """
+
+        print("Saving ...")
+
+        with open('save/save1.json') as json_file:
+            save_json = json.load(json_file)
+
+        for table in self.frame_left.pages_table:
+            # Build the data that will be add to the saving file
+            table_data = {str(table.name): str(table.filename)}
+
+            # Update the saving file (.json) with these data
+            save_json['tables'].update(table_data)
+
+        with open('save/save1.json', 'w') as outfile:
+            json.dump(save_json, outfile, indent=4)
 
 
 class RightFrame:
@@ -315,6 +332,9 @@ class LeftFrame:
 
         # List of pages (= PageContent)
         self.pages_content = []
+
+        # List of tables (= PageTable)
+        self.pages_table = []
 
         # Resize and modify the left icons
         for i in range(len(self.list_img_1)):

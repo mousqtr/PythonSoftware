@@ -176,6 +176,9 @@ class NewTable:
         new_button_left = ButtonLeftText(str(table_name), row, self.left_frame.moving_frames[3], "white", page_table.change_page)
         self.left_frame.buttons_table.append(new_button_left)
 
+        # Add to list of tables
+        self.left_frame.pages_table.append(page_table)
+
     def change_page(self, p_frame):
         p_frame.lift()
 

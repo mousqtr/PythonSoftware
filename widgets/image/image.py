@@ -69,7 +69,7 @@ class WidgetImage:
         label_title.config(font=("Calibri", 13))
 
         # Entry - Write the title
-        self.entry_title = tk.Entry(self.frame_widget_configuration, width=19, textvariable=" ")
+        self.entry_title = tk.Entry(self.frame_widget_configuration, width=22, textvariable=" ")
         self.entry_title.grid(row=2)
         self.entry_title.config(font=("Calibri bold", 10))
 
@@ -79,7 +79,7 @@ class WidgetImage:
         label_select_image.config(font=("Calibri", 13))
 
         # Button _ Open image
-        button_open_image = tk.Button(self.frame_widget_configuration, text='Ouvrir', width=19, command=self.open_img)
+        button_open_image = tk.Button(self.frame_widget_configuration, text='Ouvrir', width=22, command=self.open_img)
         button_open_image.grid(row=4, pady=(5, 0), padx=(10, 10))
         button_open_image.config(font=("Calibri", 10))
 
@@ -89,7 +89,7 @@ class WidgetImage:
         self.label_load_image.config(font=("Calibri", 13))
 
         # Button - Validation
-        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=19, bg="orange", fg="white")
+        button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=22, bg="orange", fg="white")
         button_validate.grid(row=9, pady=(20, 0), padx=(10, 10))
         button_validate['command'] = self.validate
         button_validate.config(font=("Calibri", 10))
