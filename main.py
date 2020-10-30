@@ -1,18 +1,14 @@
 import tkinter as tk
-from functools import partial
 from tkinter import messagebox
 
-from gui import MainWindow, Menu, LeftFrame, RightFrame, ButtonLeftText, PageInitial
+from gui import MainWindow, LeftFrame, RightFrame, ButtonLeftText, PageInitial
 from pages.new_page import NewPage
-from pages.edit_page import EditPage
 from tables.new_table import NewTable
 from login import Login
+from menu import Menu
 
 # Main window initialization
 main_window = MainWindow()
-
-
-
 
 # Images used in the left static frame (color 1/2)
 img_pages = tk.PhotoImage(file="img/pages4.png")

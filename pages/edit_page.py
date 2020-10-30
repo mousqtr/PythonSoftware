@@ -10,19 +10,18 @@ with open('settings.json') as json_file:
 class EditPage:
     """ Create a new page window """
 
-    def __init__(self, p_parent, p_left_frame, p_right_frame, p_top_frame):
+    def __init__(self, p_parent, p_left_frame, p_right_frame):
         """ Initialization of create page window """
 
         self.frame_content_id = p_right_frame.current_frame
-        self.frame_content = p_right_frame.frames_content[self.frame_content_id]
+        self.page_content = p_right_frame.pages_content[self.frame_content_id]
 
         # Parameters
         self.parent = p_parent
-        self.nb_row = self.frame_content.nb_row
-        self.nb_column = self.frame_content.nb_column
+        self.nb_row = self.page_content.nb_row
+        self.nb_column = self.page_content.nb_column
         self.left_frame = p_left_frame
         self.right_frame = p_right_frame
-        self.top_frame = p_top_frame
 
         # Window handle
         self.window_edit_page = tk.Toplevel(self.parent)
@@ -62,7 +61,7 @@ class EditPage:
         self.label_page_name.grid(row=0, sticky='nwe')
         self.label_page_name.config(font=("Calibri bold", 12))
 
-        frame_content_name = self.frame_content.name
+        frame_content_name = self.page_content.name
         var_name = tk.StringVar()
         var_name.set(frame_content_name)
         self.entry_page_name = tk.Entry(self.first_left_frame, width=18, textvariable=var_name)
@@ -140,7 +139,7 @@ class EditPage:
                 ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
-        for l in self.frame_content.disappeared_sections_group:
+        for l in self.page_content.disappeared_sections_group:
             x1, y1 = l[0].row, l[0].column
             x2, y2 = l[-1].row, l[-1].column
             id1 = self.get_id_by_pos(x1, y1)
@@ -176,39 +175,37 @@ class EditPage:
     def apply(self):
         """ Runs the creation of a page """
 
-        old_mono_sections = self.frame_content.mono_sections
-        old_poly_sections = self.frame_content.poly_sections
-        old_name = self.frame_content.name
+        old_mono_sections = self.page_content.mono_sections
+        old_poly_sections = self.page_content.poly_sections
+        old_name = self.page_content.name
 
         new_name = self.entry_page_name.get()
         if (new_name != " ") and (new_name != ""):
-            self.frame_content.name = new_name
+            self.page_content.name = new_name
             self.left_frame.buttons_page[self.frame_content_id].button["text"] = new_name
 
         # Destroy the existing sections
-        self.frame_content.destroy_sections()
+        self.page_content.destroy_sections()
 
         # Update the frame_content parameters
-        self.frame_content.nb_row = self.nb_row
-        self.frame_content.nb_column = self.nb_column
-        self.frame_content.source_window = self
+        self.page_content.nb_row = self.nb_row
+        self.page_content.nb_column = self.nb_column
+        self.page_content.source_window = self
 
         # Creation of the sections
-        self.frame_content.create_sections()
+        self.page_content.create_sections()
 
-        for s1 in self.frame_content.mono_sections:
-            for s2 in old_mono_sections:
-                if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columspan == s2.columspan):
-                    s1.frame.configure(bg="yellow")
-
-        for s1 in self.frame_content.poly_sections:
-            for s2 in old_poly_sections:
-                if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columspan == s2.columspan):
-                    s1.frame.configure(bg="yellow")
+        # for s1 in self.page_content.mono_sections:
+        #     for s2 in old_mono_sections:
+        #         if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columnspan == s2.columnspan):
+        #             s1.frame.configure(bg="yellow")
+        #
+        # for s1 in self.page_content.poly_sections:
+        #     for s2 in old_poly_sections:
+        #         if (s1.row == s2.row) and (s1.column == s2.column) and (s1.rowspan == s2.rowspan) and (s1.columnspan == s2.columnspan):
+        #             s1.frame.configure(bg="yellow")
 
         self.window_edit_page.destroy()
-
-
 
     def update_grid(self):
         """ Updates the grid when dimensions are changed """
@@ -351,7 +348,6 @@ class ButtonSection:
             id = self.parent.poly_sections.index(self)
             del self.parent.poly_sections[id]
             del self.parent.disappeared_sections_group[id]
-
 
     def destroy(self):
         if self.rowspan != 1 or self.columnspan != 1:
