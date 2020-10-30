@@ -1,6 +1,7 @@
 import tkinter as tk
 import json
-from gui import FrameContent, ButtonLeftText
+from gui import ButtonLeftText
+from pages.page_content import PageContent
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -10,6 +11,7 @@ window_height_initial = settings['dimensions']['window_height']
 left_menu_width_initial = 50
 left_menu_height_initial = window_height_initial
 bg_identification = settings['colors']['bg_identification']
+
 
 class NewPage:
     """ Create a new page window """
@@ -186,7 +188,7 @@ class NewPage:
 
         # Get the name of the page
         name = self.entry_page_name.get()
-        new_frame_content = FrameContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
+        new_frame_content = PageContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
         new_frame_content.change_page()
 
         # Create the left button

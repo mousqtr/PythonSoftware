@@ -10,22 +10,19 @@ with open('settings.json') as json_file:
 class WidgetImage:
     """ Widget that shows an image """
 
-    def __init__(self, p_section, p_widget_configuration_frame, p_widget_group):
+    def __init__(self, p_section, p_widget_configuration_frame):
         """
         Initialization of the image widget that shows some label and data
 
         :param p_parent: Section that will contain this summary widget
         :param p_widget_configuration_frame: Frame in the left menu, used to edit the widget
-        :param p_widget_group: Group containing this widget
         """
 
         # Saving the parameters to use them in each function
         self.section = p_section
-        self.widget_group = p_widget_group
         self.frame_widget_configuration = p_widget_configuration_frame.frame
 
-        # Add this widget to p_parent widgets
-        self.widget_group.widgets.append(self)
+        # Indicate the widget type
         self.type = "Image"
 
         # Properties of the widget-

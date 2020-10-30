@@ -17,22 +17,19 @@ with open('widgets/summary/summary_data.json') as json_file:
 class WidgetSummary:
     """ Widget that shows some label and data """
 
-    def __init__(self, p_section, p_widget_configuration_frame, p_widget_group):
+    def __init__(self, p_section, p_widget_configuration_frame):
         """
         Initialization of the summary widget that shows some label and data
 
         :param p_parent: Page that will contain this summary widget
         :param p_widget_configuration_frame: Frame in the left menu, used to edit the widget
-        :param p_widget_group: Group containing this widget
         """
 
         # Saving the parameters to use them in each function
         self.section = p_section
-        self.widget_group = p_widget_group
         self.frame_widget_configuration = p_widget_configuration_frame.frame
 
-        # Add this widget to p_parent widgets
-        self.widget_group.widgets.append(self)
+        # Indicate the widget type
         self.type = "Summary"
 
         # Properties of the widget-

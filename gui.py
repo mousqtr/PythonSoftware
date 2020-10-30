@@ -3,9 +3,7 @@ import tkinter.font as font
 import json
 import Pmw
 from functools import partial
-from widgets.summary.summary import WidgetSummary
-from widgets.image.image import WidgetImage
-from widgets.table.table import WidgetTable
+
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -60,8 +58,10 @@ class MainWindow:
         # Boolean that indicates if the window has to be resized or not
         self.resized = True
 
+        # When the left menu state changes, this boolean is set to True
         self.left_menu_changed = False
 
+        # List which contains LeftFrame and RightFrame
         self.childrens = []
 
         # Bind the resize function to the main_window
@@ -91,9 +91,17 @@ class Menu:
     """ Top menu """
 
     def __init__(self, p_main_window, p_right_frame, p_widget_images):
+        """ Top menu """
 
-        menu_bar = tk.Menu(p_main_window.frame)
+        # Transform parameters into class variables
+        self.main_window = p_main_window
+        self.frame_right = p_right_frame
+        self.widget_images = p_widget_images
 
+        # Creation of the menu
+        menu_bar = tk.Menu(self.main_window.frame)
+
+        # File button
         menu_file = tk.Menu(menu_bar, tearoff=0)
         menu_file.add_command(label="Nouveau fichier", command=None)
         menu_file.add_command(label="Ouvrir un fichier", command=None)
@@ -101,31 +109,38 @@ class Menu:
         menu_file.add_command(label="Enregistrer sous", command=None)
         menu_file.add_separator()
         menu_file.add_command(label="Exit", command=None)
-
         menu_bar.add_cascade(label="Fichier", menu=menu_file)
 
+        # Edit button
         menu_edit = tk.Menu(menu_bar, tearoff=0)
-        menu_edit.add_command(label="Ouvrir la configuration des widgets", command=partial(self.edit_widgets_mode, p_right_frame, p_widget_images))
-        menu_edit.add_command(label="Quitter la configuration des widgets", command=None)
+        menu_edit.add_command(label="Ouvrir la configuration des widgets", command=self.open_edit_widgets_mode)
+        menu_edit.add_command(label="Quitter la configuration des widgets", command=self.close_edit_widgets_mode)
         menu_edit.add_separator()
         menu_edit.add_command(label="Réinitialiser la page", command=None)
-
         menu_bar.add_cascade(label="Edition", menu=menu_edit)
 
+        # Preferences button
         menu_preferences = tk.Menu(menu_bar, tearoff=0)
         menu_preferences.add_command(label="Paramètres", command=None)
         menu_preferences.add_command(label="Thèmes", command=None)
-
         menu_bar.add_cascade(label="Préférences", menu=menu_preferences)
 
+        # User button
+        menu_user = tk.Menu(menu_bar, tearoff=0)
+        menu_user.add_command(label="Se connecter", command=None)
+        menu_user.add_command(label="Se déconnecter", command=None)
+        menu_user.add_command(label="Propriétés", command=None)
+        menu_bar.add_cascade(label="Utilisateurs", menu=menu_user)
+
+        # Help button
         menu_help = tk.Menu(menu_bar, tearoff=0)
         menu_help.add_command(label="À propos", command=None)
-
         menu_bar.add_cascade(label="Aide", menu=menu_help)
 
-        p_main_window.frame.config(menu=menu_bar)
+        # Add the bar to the window
+        self.main_window.frame.config(menu=menu_bar)
 
-        # Window position
+        # Correct the window position
         screen_width = p_main_window.frame.winfo_screenwidth()
         screen_height = p_main_window.frame.winfo_screenheight()
         x_cordinate = int((screen_width / 2) - (window_width_initial / 2))
@@ -133,26 +148,52 @@ class Menu:
         p_main_window.frame.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
 
     # Initialization of the widget button
-    def edit_widgets_mode(self, p_right_frame, p_list_widget):
-        if len(p_right_frame.frames_content) > 0:
-            frame_content_id = p_right_frame.current_frame
-            frame_content = p_right_frame.frames_content[frame_content_id]
+    def open_edit_widgets_mode(self):
+        """ Function call when we click on 'Configure widgets' button """
 
-            frame_content.send_img_lists(p_list_widget[0], p_list_widget[1], p_list_widget[2], p_list_widget[3])
+        # If there is at least one PageContent
+        if len(self.frame_right.pages_content) > 0:
 
-            frame_content.edit_widgets()
+            # Get the id of the current PageContent
+            page_content_id = self.frame_right.current_frame
+
+            # Get the current PageContent
+            page_content = self.frame_right.pages_content[page_content_id]
+
+            # Get images to the current PageContent
+            page_content.send_img_lists(self.widget_images)
+
+            # Pass the current PageContent to edit_widgets mode
+            page_content.open_edit_widgets()
+
+    # Initialization of the widget button
+    def close_edit_widgets_mode(self):
+        """ Function call when we click on 'Close edit widgets' button """
+
+        # If there is at least one PageContent
+        if len(self.frame_right.pages_content) > 0:
+
+            # Get the id of the current PageContent
+            page_content_id = self.frame_right.current_frame
+
+            # Get the current PageContent
+            page_content = self.frame_right.pages_content[page_content_id]
+
+            # Pass the current PageContent to edit_widgets mode
+            page_content.close_edit_widgets()
 
 
 class RightFrame:
-    """ Right frame of the window, includes FrameContent """
+    """ Right frame of the window, includes PageInitial, PageContent, PageTable """
 
     def __init__(self, p_main_frame, p_left):
-        """ Right frame of the window, includes FrameContent """
+        """ Right frame of the window, includes PageInitial, PageContent, PageTable """
 
         # Transform parameters into class variables
         self.frame_main = p_main_frame
         self.frame_left = p_left
 
+        # Set this class available from MainWindow
         self.frame_main.childrens.append(self)
 
         # Creation of the frame
@@ -163,28 +204,29 @@ class RightFrame:
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
 
-        #
+        # List containing initial pages (= each PageInitial)
         self.frames_initial = []
 
-        # List containing pages (= each FrameContent)
-        self.frames_content = []
+        # List containing pages (= each PageContent)
+        self.pages_content = []
 
-        # List containing  tables (= each NewTable)
+        # List containing tables (= each NewTable)
         self.pages_table = []
 
-        # Current page (= current FrameContent)
+        # Current page (= current PageContent)
         self.current_frame = 0
 
         # Current page (= current PageTable)
         self.current_table = 0
 
         # Current mode
-        # mode 0 : FrameContent mode
-        # mode 1 : Table mode
-        self.mode = -1
+        # mode 0 : PageInitial mode
+        # mode 1 : PageContent mode
+        # mode 2 : PageTable mode
+        self.mode = 0
 
     def resize(self):
-        """ Function that resizes the RightFrames, FrameContents and Sections """
+        """ Function that resizes the RightFrame, PageInitial/PageContent/PageTable and Sections """
 
         # Difference between the initial window width and the resized window width
         offset_width = self.frame_main.frame.winfo_width() - window_width_initial
@@ -195,8 +237,8 @@ class RightFrame:
         self.frame["width"] = self.frame_right_width_initial + offset_width
         self.frame["height"] = self.frame_main.frame.winfo_height()
 
-        # Resize the frameContent part
-        if self.mode == -1:
+        # Resize the PageInitial part
+        if self.mode == 0:
 
             print("Resize initial frame")
 
@@ -204,29 +246,16 @@ class RightFrame:
             page.frame["width"] = self.frame_right_width_initial + offset_width
             page.frame["height"] = self.frame_main.frame.winfo_height()
 
-        # Resize the frameContent part
-        if self.mode == 0:
+        # Resize the PageContent part
+        if self.mode == 1:
 
-            if self.frames_content != []:
+            if self.pages_content != []:
 
-                print("Resize FrameContent ", self.current_frame)
+                print("Resize PageContent ", self.current_frame)
 
-                page = self.frames_content[self.current_frame]
+                page = self.pages_content[self.current_frame]
                 page.frame["width"] = self.frame_right_width_initial + offset_width
                 page.frame["height"] = self.frame_main.frame.winfo_height()
-
-                # # Resize mono sections
-                # for section in page.mono_sections:
-                #     section.frame["width"] = int(page.frame["width"]/page.nb_column)
-                #     section.frame["height"] = int(page.frame["height"] / page.nb_row)
-                #
-                # # Resize poly sections
-                # for section in page.poly_sections:
-                #     section.frame["width"] = int(page.frame["width"]/page.nb_column)*section.columspan
-                #     section.frame["height"] = int(page.frame["height"]/page.nb_row)*section.rowspan
-                #
-                # for widget_config_frame in page.frames_configuration_widgets:
-                #     widget_config_frame["height"] = initial_configuration_widget_height + offset_height
 
                 # Resize mono sections
                 for section in page.mono_sections:
@@ -241,9 +270,8 @@ class RightFrame:
                 for widget_config_frame in page.frames_configuration_widgets:
                     widget_config_frame["height"] = initial_configuration_widget_height + offset_height
 
-
         # Resize the PageTable part
-        if self.mode == 1:
+        if self.mode == 2:
 
             if self.pages_table != []:
 
@@ -263,7 +291,7 @@ class RightFrame:
 
         # Send some values to left frame
         self.frame_left.current_frame = self.current_frame
-        self.frame_left.frames_content = self.frames_content
+        self.frame_left.pages_content = self.pages_content
 
 
 class LeftFrame:
@@ -285,8 +313,8 @@ class LeftFrame:
         # Current selected widget
         self.current_widget = 0
 
-        # List of pages (= FrameContent)
-        self.frames_content = []
+        # List of pages (= PageContent)
+        self.pages_content = []
 
         # Resize and modify the left icons
         for i in range(len(self.list_img_1)):
@@ -374,7 +402,7 @@ class LeftFrame:
             self.moving_frames[p_id]["width"] = 200
 
             # If it is the widget moving frame
-            if p_id == 1 and self.frames_content != []:
+            if p_id == 1 and self.pages_content != []:
                 self.moving_widgets_page[self.current_frame].grid(row=1, column=1, sticky="news")
                 self.moving_widgets_page[self.current_frame].lift()
             else:
@@ -408,7 +436,7 @@ class LeftFrame:
                 self.buttons[i]["image"] = self.list_img_1[i]
 
             # If it is the widget moving frame, close it
-            if p_id == 1 and self.frames_content != []:
+            if p_id == 1 and self.pages_content != []:
                 self.moving_widgets_page[self.current_frame].grid_forget()
 
         self.frame_main.left_menu_changed = True
@@ -416,392 +444,13 @@ class LeftFrame:
     def change_config_widget_frame(self):
         """ Function called when we click on a widget """
 
-        self.frames_content[self.current_frame].frames_configuration_widgets[self.current_widget].lift()
+        self.pages_content[self.current_frame].frames_configuration_widgets[self.current_widget].lift()
 
 
-class FrameContent:
-    """ Page /or Frame content of the window, included in the RightFrame """
 
-    def __init__(self, p_frame_right, p_name, p_background, p_nb_row, p_nb_column, p_source_window):
-        """ Page /or Frame content of the window, included in the RightFrame """
 
-        # Transform parameters to class variables
-        self.nb_row = p_nb_row
-        self.nb_column = p_nb_column
-        self.right_frame = p_frame_right
-        self.name = p_name
-        self.source_window = p_source_window
-        self.frame_left = p_frame_right.frame_left
-        self.bg = p_background
 
-        # Set parameters to the RightFrame class (add the frame in frame_content list/ set current_frame)
-        self.right_frame.frames_content.append(self)
-        self.right_frame.update_values()
-        self.id = len(self.right_frame.frames_content) - 1
-        self.right_frame.current_frame = self.id
 
-        # Creation of the main frame
-        # window_height = settings['dimensions']['window_height']
-        self.frame_width = self.right_frame.frame["width"]
-        self.frame_height = self.right_frame.frame["height"]
-        self.frame = tk.Frame(self.right_frame.frame, bg=p_background, width=self.frame_width, height=self.frame_height)
-        self.frame.grid(row=0, column=0)
-        self.frame.grid_propagate(False)
-
-        # Lists which will contain sections
-        self.mono_sections = []                 # list of 1 x 1 sections
-        self.poly_sections = []                 # list of n x m sections
-        self.displayed_sections = []            # Addition of mono_sections and poly_sections
-        self.disappeared_sections_group = []    # Sections located behind a poly_sections (they will disappeared)
-
-        # Elements that will be used during the "widget configuration" mode
-        self.frame_edit_mode = []
-        self.buttons_widget = []
-        self.buttons_sections_add = []
-        self.buttons_sections_delete = []
-
-        # List of images used
-        self.list_img_widgets = []
-        self.list_img_widgets2 = []
-        self.list_title_widgets = []
-        self.list_buttons_widget = []
-
-        # List containing the widgets
-        self.widgets = []
-
-        # List containing the widgets configuration objects
-        self.configuration_widgets = []
-
-        # List containing the widgets configuration objects frames
-        self.frames_configuration_widgets = []
-
-        # Creation of the sections
-        self.create_sections()
-
-        # Boolean who indicated if the "widget configuration" mode is open or not
-        self.edit_widget_mode_is_activate = False
-
-        # Text which appear when a mouse over something
-        self.message = Pmw.Balloon(self.frame)  # Calling the tooltip
-
-    def create_sections(self):
-        """ Creation of the sections included in the FrameContent page """
-
-        # Lists which will contain sections
-        self.mono_sections = []
-        self.poly_sections = []
-        self.displayed_sections = []
-        self.disappeared_sections_group = self.source_window.disappeared_sections_group
-
-        # Adapt the configuration of the frame to number of row/col of sections
-        t_row = []
-        t_column = []
-        for i in range(self.nb_row):
-            t_row.append(i)
-        for i in range(self.nb_column):
-            t_column.append(i)
-        self.frame.columnconfigure(tuple(t_column), weight=1)
-        self.frame.rowconfigure(tuple(t_row), weight=1)
-
-        # Calculate the dimensions of a mono section
-        section_width = int(self.frame["width"] / self.nb_column)
-        section_height = int(self.frame["height"] / self.nb_row)
-        print(section_height)
-
-        # Convert "list of list" to list
-        disappeared_sections = []
-        for x in self.source_window.disappeared_sections_group:
-            for y in x:
-                disappeared_sections.append(y)
-
-        # Create all mono FrameSection (size 1x1)
-        section_id = 0
-        for s in self.source_window.mono_sections:
-            if s not in disappeared_sections:
-                section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id, self.frame_left)
-                section_id += 1
-                self.mono_sections.append(section)
-
-        # Create all poly FrameSection (size nxp)
-        for s in self.source_window.poly_sections:
-            width = section_width * s.columnspan
-            height = section_height * s.rowspan
-            section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id, self.frame_left)
-            self.poly_sections.append(section)
-            section_id += 1
-
-        # List containing all FrameSection
-        self.displayed_sections = self.mono_sections + self.poly_sections
-
-        # Create Frame setting widget for each section
-        section_id = 0
-        for ds in self.displayed_sections:
-
-            # # Creation of a widget frame configuration for each section
-            # widget_setting_frame = tk.Frame(self.frame_left.moving_widgets_page[self.id], bg="#333333", height=initial_configuration_widget_height,
-            #                                 width=180)
-            # widget_setting_frame.grid(row=1, column=0, pady=(10, 10), padx=(10, 10))
-            # widget_setting_frame.columnconfigure(0, weight=1)
-            # widget_setting_frame.grid_propagate(False)
-            # self.frames_configuration_widgets.append(widget_setting_frame)
-            #
-            # # Creation of a title in the widget frame configuration
-            # text = "Widget : " + str(section_id)
-            # label_widget_title = tk.Label(widget_setting_frame, text=text, bg="#8989ff", fg="white")
-            # label_widget_title.grid(row=0, sticky='nwe')
-            # label_widget_title.config(font=("Calibri bold", 12))
-
-            widget_setting = WidgetFrameConfiguration(self.frame_left.moving_widgets_page[self.id], section_id)
-            self.configuration_widgets.append(widget_setting)
-            self.frames_configuration_widgets.append(widget_setting.frame)
-
-            section_id += 1
-
-        # Lists containing the labels & buttons used for "widgets configuration mode"
-        # self.labels_sections = [tk.Label() for i in range(len(self.displayed_sections))]
-        self.frame_edit_mode = [tk.Frame() for i in range(len(self.displayed_sections))]
-        self.buttons_widget = [tk.Button() for i in range(len(self.displayed_sections))]
-        self.buttons_sections_add = [tk.Button() for i in range(len(self.displayed_sections))]
-        self.buttons_sections_delete = [tk.Button() for i in range(len(self.displayed_sections))]
-
-    def change_page(self):
-        """ Change the page (= FrameContent) """
-
-        # Set this frame as current_frame
-        self.right_frame.current_frame = self.id
-
-        # Indicates that we are in the FrameContent mode
-        self.right_frame.mode = 0
-
-        # Update values in others class (in left_frame for example)
-        self.right_frame.update_values()
-
-        # Resize the frame
-        self.right_frame.resize()
-
-        for page in self.right_frame.pages_table:
-            page.frame.grid_forget()
-
-        for page in self.right_frame.frames_content:
-            page.frame.grid_forget()
-
-        self.frame.grid(row=1)
-
-        # Change the page - put frame in forward
-        self.frame.lift()
-
-    def destroy_sections(self):
-        """ Destroy all sections """
-
-        # Destroy mono sections
-        for s in self.mono_sections:
-            s.frame.grid_forget()
-
-        # Destroy poly sections
-        for s in self.poly_sections:
-            s.frame.grid_forget()
-
-    def send_img_lists(self, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget, p_list_img_widgets2):
-        """ Get images lists from main file """
-
-        # List of images used for buttons during the widget configuration mode
-        self.list_buttons_widget = p_list_buttons_widget
-
-        # List of images used for widgets icons
-        self.list_img_widgets = p_list_img_widgets
-
-        # List of images used as widgets title
-        self.list_title_widgets = p_list_title_widgets
-
-        # List of images used for widgets icons 2
-        self.list_img_widgets2 = p_list_img_widgets2
-
-    def edit_widgets(self):
-        """ Function called from the edit_widgets_mode function in the main py file """
-
-        # If the edit_widgets_mode is enable
-        if not self.edit_widget_mode_is_activate:
-            self.frame["bg"] = "#e8e8e8"
-            self.hide_widgets()
-            self.show_edit_widgets_mode()
-            self.edit_widget_mode_is_activate = True
-
-        # If the edit_widgets_mode is disable
-        else:
-            self.frame["bg"] = self.bg
-            self.show_widgets()
-            self.hide_edit_widgets_mode()
-            self.edit_widget_mode_is_activate = False
-
-    def show_edit_widgets_mode(self):
-        """ Show the edit widget mode, in each section you have labels and buttons (add, delete) """
-
-        # For each section of the page (= FrameContent)
-        for i in range(len(self.displayed_sections)):
-
-            # Get the section
-            s = self.displayed_sections[i]
-
-            self.frame_edit_mode[i] = tk.Frame(s.frame, bg="white")
-            self.frame_edit_mode[i].grid(sticky="news")
-            self.frame_edit_mode[i].columnconfigure((0, 1), weight=1)
-            self.frame_edit_mode[i].rowconfigure((0, 1), weight=1)
-            self.frame_edit_mode[i].grid_propagate(False)
-
-            # Change the background color
-            s.frame["bg"] = "#005dac"
-
-            # Fix the dimensions of paddings
-            padx = 2
-            pady = 2
-
-            # Name of the widget
-            # text = "Widget : " + str(i)
-            # self.labels_sections[i] = tk.Label(s.frame, text=text, bg="#42526C", fg="white")
-            # self.labels_sections[i].grid(row=0, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
-
-            # Button to add a widget in the section
-            self.buttons_widget[i] = tk.Label(self.frame_edit_mode[i])
-            self.buttons_widget[i]["command"] = None
-            self.buttons_widget[i].grid(row=0, rowspan=1, columnspan=2, sticky='news', padx=(padx, padx), pady=(pady, pady))
-            if s.widget_index == -1:
-                # self.buttons_widget[i]["image"] = self.list_buttons_widget[2]
-                self.buttons_widget[i]["text"] = "No widget"
-                self.buttons_widget[i].config(font=("Calibri bold", 10))
-            else :
-                self.buttons_widget[i]["image"] = self.list_img_widgets2[s.widget_index]
-
-            # Button to add a widget in the section
-            self.buttons_sections_add[i] = tk.Button(self.frame_edit_mode[i], image=self.list_buttons_widget[0])
-            self.buttons_sections_add[i]["command"] = partial(self.add_widget, s)
-            self.buttons_sections_add[i].grid(row=1, column=0, sticky='news', padx=(padx,padx), pady=(pady, pady))
-            self.message.bind(self.buttons_sections_add[i], 'Ajouter un widget')
-
-            # Button to delete a widget in the section
-            self.buttons_sections_delete[i] = tk.Button(self.frame_edit_mode[i], image=self.list_buttons_widget[1])
-            self.buttons_sections_delete[i]["command"] = None
-            self.buttons_sections_delete[i].grid(row=1, column=1, sticky='news', padx=(padx, padx), pady=(pady, pady))
-            self.message.bind(self.buttons_sections_delete[i], 'Supprimer le widget')
-
-    def hide_edit_widgets_mode(self):
-        """ Hide the edit widget mode """
-
-        # For each section of the page (= FrameContent)
-        for i in range(len(self.displayed_sections)):
-            self.frame_edit_mode[i].grid_forget()
-            self.displayed_sections[i].frame["bg"] = "white"
-
-    def add_widget(self, p_section):
-        """ Function called the user click on add a widget during the edit_widget_mode """
-
-        # Creation of the window where the user can choose the widget
-        window_widget_choice = tk.Toplevel(self.right_frame.frame)
-        window_widget_choice.resizable(False, False)
-        window_widget_choice.title("Choix du widget")
-        window_widget_choice_icon = tk.PhotoImage(file="img/grid.png")
-        window_widget_choice.iconphoto(False, window_widget_choice_icon)
-        window_widget_choice_width = 560
-        window_widget_choice_height = 400
-        screen_width = self.right_frame.frame.winfo_screenwidth()
-        screen_height = self.right_frame.frame.winfo_screenheight()
-        x_cord = int((screen_width / 2) - (window_widget_choice_width / 2))
-        y_cord = int((screen_height / 2) - (window_widget_choice_height / 2))
-        window_widget_choice.geometry("{}x{}+{}+{}".format(window_widget_choice_width, window_widget_choice_height, x_cord, y_cord))
-        window_widget_choice.columnconfigure((0, 1, 2, 3), weight=1)
-        window_widget_choice.rowconfigure((0, 1, 3), weight=1)
-        window_widget_choice.rowconfigure((2,4), weight=2)
-        window_widget_choice.grid_propagate(False)
-
-        # Title of the login window
-        bg_identification = settings['colors']['bg_identification']
-        label_login_title = tk.Label(window_widget_choice, text="Choix du widget", bg=bg_identification, fg="white")
-        label_login_title.grid(row=0, sticky='new', pady=(0, 0), columnspan=4)
-        font_login_title = settings['font']['font_login_title']
-        font_size_login_title = settings['font_size']['font_size_login_title']
-        label_login_title.config(font=(font_login_title, font_size_login_title))
-
-        # Grid of widgets
-        nb_widgets = len(self.list_img_widgets)
-        buttons_widgets = [tk.Button() for i in range(nb_widgets)]
-        labels_widgets = [tk.Label() for i in range(nb_widgets)]
-        j = 0
-        for i in range(4):
-            labels_widgets[i] = tk.Label(window_widget_choice, text=self.list_title_widgets[i])
-            labels_widgets[i].grid(row=1, column=i, padx=(5, 5), pady=(0, 0))
-            labels_widgets[i].config(font=("Calibri bold", 12))
-
-            buttons_widgets[i] = tk.Button(window_widget_choice, image=self.list_img_widgets[i], width=100, height=100, borderwidth=2)
-            buttons_widgets[i]["command"] = partial(self.apply_widget, i, p_section)
-            buttons_widgets[i].grid(row=2, column=i, padx=(5, 5), pady=(0, 0))
-
-        for i in range(nb_widgets - 4):
-            labels_widgets[i] = tk.Label(window_widget_choice, text=self.list_title_widgets[i+4])
-            labels_widgets[i].grid(row=3, column=i, padx=(5, 5), pady=(0, 0))
-            labels_widgets[i].config(font=("Calibri bold", 12))
-
-            buttons_widgets[i] = tk.Button(window_widget_choice, image=self.list_img_widgets[i+4], width=100, height=100, borderwidth=2)
-            buttons_widgets[i]["command"] = partial(self.apply_widget, i+4, p_section)
-            buttons_widgets[i].grid(row=4, column=i, padx=(5, 5), pady=(0, 0))
-
-    def apply_widget(self, p_id_widget, p_section):
-        """ Function called the user validates the widget choice """
-
-        # Get the properties of the current section
-        s_width = p_section.frame.winfo_width()
-        s_height = p_section.frame.winfo_height()
-        widget_group_1 = WidgetGroup(1)
-        widget_configuration = self.configuration_widgets[p_section.id]
-
-        # If the selected widget is Summary, create a summary widget in the current section
-        if p_id_widget == 0:
-            widget = WidgetImage(p_section, widget_configuration, widget_group_1)
-
-        if p_id_widget == 1:
-            widget = WidgetSummary(p_section, widget_configuration, widget_group_1)
-
-        if p_id_widget == 2:
-            widget = WidgetTable(p_section, widget_configuration, widget_group_1)
-
-        self.widgets.append(widget)
-
-        # Bind the index of the widget to the FrameSection
-        p_section.widget_index = p_id_widget
-
-        # Change the image of the FrameSection in the configuration mode
-        self.buttons_widget[p_section.id]["image"] = self.list_img_widgets2[p_id_widget]
-
-        # Hide the widget to continue in the edit widget mode
-        self.hide_widgets()
-
-    def hide_widgets(self):
-        """ Hide the existing widgets to show the edit_widget mode """
-
-        for w in self.widgets:
-            w.hide()
-
-    def show_widgets(self):
-        """ Show the existing widgets after the edit_widget mode """
-
-        for w in self.widgets:
-            w.show()
-
-
-class WidgetFrameConfiguration:
-    def __init__(self, p_parent, p_id):
-
-        # Creation of a widget frame configuration for each section
-        self.frame = tk.Frame(p_parent, bg="#333333",
-                                        height=initial_configuration_widget_height,
-                                        width=180)
-        self.frame.grid(row=1, column=0, pady=(10, 10), padx=(10, 10))
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.grid_propagate(False)
-
-        # Creation of a title in the widget frame configuration
-        text = "Widget : " + str(p_id)
-        self.label_title = tk.Label(self.frame, text=text, bg="white", fg="#333333")
-        self.label_title.grid(row=0, sticky='nwe')
-        self.label_title.config(font=("Calibri bold", 12))
 
 
 class ButtonLeftText:
@@ -862,69 +511,16 @@ class ButtonTopText:
         self.button['fg'] = 'white'
 
 
-class FrameSection:
-    """ Section frame (mono or poly) located in a page (= FrameContent)"""
-
-    def __init__(self, p_parent, p_row, p_column, p_rowspan, p_columnspan, p_w, p_h, p_id, p_frame_left):
-        """ Initialization of these sections buttons """
-
-        # Transform parameters to class variables
-        self.parent = p_parent
-        self.row = p_row
-        self.column = p_column
-        self.rowspan = p_rowspan
-        self.columnspan = p_columnspan
-        self.width = p_w - 10 # 10 is the padx
-        self.height = p_h - 10 # 10 is the pady
-        self.id = p_id
-        self.frame_left = p_frame_left
-
-        # Creation of the frame
-        self.frame = tk.Frame(p_parent.frame, width=self.width, height=self.height, bg="white")
-        self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
-        # self.frame.config(highlightbackground="black", highlightthickness=1)
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
-        self.frame.grid_propagate(False)
-
-        # Widget index contained in the section
-        self.widget_index = -1      # - 1 when there is no widget in the FrameSection
-
-        # User interaction with the button
-        self.frame.bind("<Button-1>", self.on_click)
-
-    def on_click(self, e):
-        """ Function called when the user click on this section """
-
-        self.frame_left.current_widget = self.id
-        self.frame_left.change_config_widget_frame()
-
-
-class WidgetGroup:
-    """ Group containing some widgets to update these widget in a same time """
-
-    def __init__(self, p_id):
-        """ Group containing some widgets to update these widget in a same time """
-
-        self.id = p_id
-        self.widgets = []
-
-    def update_widgets(self):
-        """ Function that updates all widgets containing in this group """
-
-        for w in self.widgets:
-            w.update()
-
-
 class PageInitial:
     def __init__(self, p_right_frame):
 
         # Transform parameters into class variables
         self.right_frame = p_right_frame
 
+        # Indicates to the RightFrame class that is it an initial page
         self.right_frame.frames_initial.append(self)
 
-        # Create a previsualisation window
+        # Creation of the frame
         frame_width = self.right_frame.frame["width"]
         frame_height = self.right_frame.frame["height"]
         self.frame = tk.Frame(self.right_frame.frame, width=frame_width, height=frame_height)
@@ -934,7 +530,8 @@ class PageInitial:
         self.frame.rowconfigure(0, weight=1)
         self.frame.lift()
 
-        presentation_text = "Bienvenue sur ce logiciel \n \n Pour commencer, rendez-vous dans le premier onglet \n et appuyer sur '+' pour créer une nouvelle page "
+        # Content of this initial page
+        presentation_text = "Bienvenue à vous ! \n \n Pour commencer, rendez-vous dans le premier onglet \n et appuyer sur '+' pour créer une nouvelle page "
         self.label_title = tk.Label(self.frame, text=presentation_text, fg="black", bg="#e8e8e8")
         self.label_title.grid(row=0, column=0, sticky="news")
         init_font = font.Font(size=13, weight="bold")

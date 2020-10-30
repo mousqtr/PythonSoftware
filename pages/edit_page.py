@@ -1,6 +1,7 @@
 import tkinter as tk
 import json
-from gui import FrameContent, ButtonLeftText
+from gui import ButtonLeftText
+from pages.page_content import PageContent
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -171,8 +172,6 @@ class EditPage:
 
         self.button_apply = tk.Button(self.part_right, text="Appliquer les \nmodifications", width=15, command=self.apply)
         self.button_apply.grid(row=1, padx=30)
-
-
 
     def apply(self):
         """ Runs the creation of a page """

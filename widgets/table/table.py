@@ -16,7 +16,7 @@ with open('widgets/table/table_data.json') as json_file:
 class WidgetTable:
     """ Widget that displays a table """
 
-    def __init__(self, p_section, p_widget_configuration, p_widget_group):
+    def __init__(self, p_section, p_widget_configuration):
         """
         Initialization of the table widget that shows a table
 
@@ -26,7 +26,6 @@ class WidgetTable:
         """
         # Saving the parameters to use them in each class function
         self.section = p_section
-        self.widget_group = p_widget_group
         self.widget_configuration = p_widget_configuration
         self.frame_widget_configuration = p_widget_configuration.frame
 
@@ -48,8 +47,7 @@ class WidgetTable:
         # Row selected by the user
         self.selected_row = -1
 
-        # Add this widget to p_parent widgets
-        self.widget_group.widgets.append(self)
+        # Indicate the widget type
         self.type = "Table"
 
         # Properties of the widget
@@ -64,8 +62,8 @@ class WidgetTable:
         self.title.grid(row=0, sticky="nwes")
         self.title.config(font=("Calibri bold", 12))
 
-        # Update these previous values with saving ones
-        self.load()
+        # # Update these previous values with saving ones
+        # self.load()
 
         # Frame that contains headers of the table
         self.frame.update_idletasks()
@@ -225,7 +223,7 @@ class WidgetTable:
         label_table.config(font=("Calibri bold", 9))
 
         self.list_tables = []
-        self.combo_tables = ttk.Combobox(self.frame_widget_configuration, values=list_tables, state="readonly")
+        self.combo_tables = ttk.Combobox(self.frame_widget_configuration, values=self.list_tables, state="readonly")
         self.combo_tables.grid(row=2, column=1, sticky='nw', padx=10, pady=1)
         self.combo_tables.config(font=("Calibri bold", 9))
         self.combo_tables.current(0)
@@ -472,27 +470,27 @@ class WidgetTable:
         # Recreate the table
         self.create_table(self.list_columns, rows)
 
-    def save(self, p_combo):
-        """
-        Functions that saves the filters properties
-
-        :param p_combo: Combobox with column choices
-        """
-        num_id = self.widget_group.id
-        table_name = "table_" + str(num_id)
-        table_data[table_name].update({"list_columns": self.list_columns})
-
-        with open('widgets/table/table_data.json', 'w') as outfile:
-            json.dump(table_data, outfile, indent=4)
-
-    def load(self):
-        """
-        Function that loads the content of each filter
-        """
-
-        # Get all the data contain in the the saving file
-        num_id = self.widget_group.id
-        table_name = "table_" + str(num_id)
-        self.list_columns = table_data[table_name]['list_columns']
+    # def save(self, p_combo):
+    #     """
+    #     Functions that saves the filters properties
+    #
+    #     :param p_combo: Combobox with column choices
+    #     """
+    #     num_id = self.widget_group.id
+    #     table_name = "table_" + str(num_id)
+    #     table_data[table_name].update({"list_columns": self.list_columns})
+    #
+    #     with open('widgets/table/table_data.json', 'w') as outfile:
+    #         json.dump(table_data, outfile, indent=4)
+    #
+    # def load(self):
+    #     """
+    #     Function that loads the content of each filter
+    #     """
+    #
+    #     # Get all the data contain in the the saving file
+    #     num_id = self.widget_group.id
+    #     table_name = "table_" + str(num_id)
+    #     self.list_columns = table_data[table_name]['list_columns']
 
 
