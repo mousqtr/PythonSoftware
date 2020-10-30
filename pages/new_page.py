@@ -179,7 +179,7 @@ class NewPage:
         """ Runs the creation of a page """
 
         # Create a widget frame for each frame content
-        moving_part_widgets = tk.Frame(self.left_frame.frame, bg="#42526C", height=left_menu_height_initial, width=200)
+        moving_part_widgets = tk.Frame(self.left_frame.frame, bg="#005dac", height=left_menu_height_initial, width=200)
         moving_part_widgets.columnconfigure(0, weight=1)
         moving_part_widgets.grid_propagate(False)
         self.left_frame.moving_widgets_page.append(moving_part_widgets)

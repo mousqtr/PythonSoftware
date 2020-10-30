@@ -15,9 +15,8 @@ window_height_initial = settings['dimensions']['window_height']
 left_menu_width_initial = 50
 left_menu_height_initial = window_height_initial
 
-frame_right_height_initial = left_menu_height_initial
 
-initial_configuration_widget_height = 500
+initial_configuration_widget_height = 550
 
 bg_left_menu = settings['colors']['bg_left_menu']
 bg_top_menu = settings['colors']['bg_top_menu']
@@ -61,36 +60,68 @@ class MainWindow:
         # Boolean that indicates if the window has to be resized or not
         self.resized = True
 
+        self.left_menu_changed = False
+
+        self.childrens = []
+
+        # Bind the resize function to the main_window
+        self.frame.bind("<Configure>", self.window_resize)
+
+    # Detect the window resize
+    def window_resize(self, event):
+        """ Function called for each iteration of the loop """
+
+        # If the main window is opened and resized is allowed
+        if self.resized:
+            width = self.frame.winfo_width()
+            height = self.frame.winfo_height()
+
+            # Resize the dimensions have changed
+            if width != self.width or height != self.height or self.left_menu_changed:
+                self.width = width
+                self.height = height
+                self.left_menu_changed = False
+
+                # Resize the window and internal elements
+                for child in self.childrens:
+                    child.resize()
+
 
 class Menu:
     """ Top menu """
 
-    def __init__(self, p_main_window):
+    def __init__(self, p_main_window, p_right_frame, p_widget_images):
 
         menu_bar = tk.Menu(p_main_window.frame)
 
         menu_file = tk.Menu(menu_bar, tearoff=0)
-        menu_file.add_command(label="New", command=None)
-        menu_file.add_command(label="Open", command=None)
-        menu_file.add_command(label="Save", command=None)
+        menu_file.add_command(label="Nouveau fichier", command=None)
+        menu_file.add_command(label="Ouvrir un fichier", command=None)
+        menu_file.add_command(label="Enregistrer", command=None)
+        menu_file.add_command(label="Enregistrer sous", command=None)
         menu_file.add_separator()
         menu_file.add_command(label="Exit", command=None)
 
-        menu_bar.add_cascade(label="File", menu=menu_file)
+        menu_bar.add_cascade(label="Fichier", menu=menu_file)
 
         menu_edit = tk.Menu(menu_bar, tearoff=0)
-        menu_edit.add_command(label="Undo", command=None)
+        menu_edit.add_command(label="Ouvrir la configuration des widgets", command=partial(self.edit_widgets_mode, p_right_frame, p_widget_images))
+        menu_edit.add_command(label="Quitter la configuration des widgets", command=None)
         menu_edit.add_separator()
-        menu_edit.add_command(label="Copy", command=None)
-        menu_edit.add_command(label="Cut", command=None)
-        menu_edit.add_command(label="Paste", command=None)
+        menu_edit.add_command(label="Réinitialiser la page", command=None)
 
-        menu_bar.add_cascade(label="Edit", menu=menu_edit)
+        menu_bar.add_cascade(label="Edition", menu=menu_edit)
+
+        menu_preferences = tk.Menu(menu_bar, tearoff=0)
+        menu_preferences.add_command(label="Paramètres", command=None)
+        menu_preferences.add_command(label="Thèmes", command=None)
+
+        menu_bar.add_cascade(label="Préférences", menu=menu_preferences)
 
         menu_help = tk.Menu(menu_bar, tearoff=0)
-        menu_help.add_command(label="About", command=None)
+        menu_help.add_command(label="À propos", command=None)
 
-        menu_bar.add_cascade(label="Help", menu=menu_help)
+        menu_bar.add_cascade(label="Aide", menu=menu_help)
 
         p_main_window.frame.config(menu=menu_bar)
 
@@ -100,6 +131,16 @@ class Menu:
         x_cordinate = int((screen_width / 2) - (window_width_initial / 2))
         y_cordinate = int((screen_height / 2) - (window_height_initial / 2))
         p_main_window.frame.geometry("{}x{}+{}+{}".format(window_width_initial, window_height_initial, x_cordinate, y_cordinate))
+
+    # Initialization of the widget button
+    def edit_widgets_mode(self, p_right_frame, p_list_widget):
+        if len(p_right_frame.frames_content) > 0:
+            frame_content_id = p_right_frame.current_frame
+            frame_content = p_right_frame.frames_content[frame_content_id]
+
+            frame_content.send_img_lists(p_list_widget[0], p_list_widget[1], p_list_widget[2], p_list_widget[3])
+
+            frame_content.edit_widgets()
 
 
 class RightFrame:
@@ -112,10 +153,15 @@ class RightFrame:
         self.frame_main = p_main_frame
         self.frame_left = p_left
 
+        self.frame_main.childrens.append(self)
+
         # Creation of the frame
         self.frame_right_width_initial = 800 - self.frame_left.frame_initial_width
-        self.frame = tk.Frame(self.frame_main.frame, width=self.frame_right_width_initial, height=frame_right_height_initial, bg="yellow")
-        self.frame.grid(row=1, column=1, sticky='n')
+        self.frame = tk.Frame(self.frame_main.frame, width=self.frame_right_width_initial, height=window_height_initial, bg="#e8e8e8")
+        self.frame.grid(row=0, column=1, sticky='n')
+        self.frame.grid_propagate(False)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
 
         #
         self.frames_initial = []
@@ -169,18 +215,32 @@ class RightFrame:
                 page.frame["width"] = self.frame_right_width_initial + offset_width
                 page.frame["height"] = self.frame_main.frame.winfo_height()
 
+                # # Resize mono sections
+                # for section in page.mono_sections:
+                #     section.frame["width"] = int(page.frame["width"]/page.nb_column)
+                #     section.frame["height"] = int(page.frame["height"] / page.nb_row)
+                #
+                # # Resize poly sections
+                # for section in page.poly_sections:
+                #     section.frame["width"] = int(page.frame["width"]/page.nb_column)*section.columspan
+                #     section.frame["height"] = int(page.frame["height"]/page.nb_row)*section.rowspan
+                #
+                # for widget_config_frame in page.frames_configuration_widgets:
+                #     widget_config_frame["height"] = initial_configuration_widget_height + offset_height
+
                 # Resize mono sections
                 for section in page.mono_sections:
-                    section.frame["width"] = int(page.frame["width"]/page.nb_column)
-                    section.frame["height"] = int(page.frame["height"] / page.nb_row)
+                    section.frame["width"] = (page.frame["width"] / page.nb_column) * section.columnspan - 10
+                    section.frame["height"] = (page.frame["height"] / page.nb_row) * section.rowspan - 10
 
                 # Resize poly sections
                 for section in page.poly_sections:
-                    section.frame["width"] = int(page.frame["width"]/page.nb_column)*section.columspan
-                    section.frame["height"] = int(page.frame["height"]/page.nb_row)*section.rowspan
+                    section.frame["width"] = int(page.frame["width"]/page.nb_column)* section.columnspan - 10
+                    section.frame["height"] = int(page.frame["height"]/page.nb_row)* section.rowspan - 10
 
                 for widget_config_frame in page.frames_configuration_widgets:
                     widget_config_frame["height"] = initial_configuration_widget_height + offset_height
+
 
         # Resize the PageTable part
         if self.mode == 1:
@@ -196,6 +256,7 @@ class RightFrame:
 
                 page.frame_table["width"] = page.frame["width"] - 10
                 page.frame_table["height"] = page.frame["height"] - 10
+
 
     def update_values(self):
         """ Function to send values to other classes """
@@ -216,6 +277,8 @@ class LeftFrame:
         self.list_img_1 = p_list_img_1
         self.list_img_2 = p_list_img_2
 
+        self.frame_main.childrens.append(self)
+
         # Current page in the screen
         self.current_frame = 0
 
@@ -233,13 +296,13 @@ class LeftFrame:
             self.list_img_2[i] = self.list_img_2[i].subsample(32)
 
         # Color of the left menu
-        bg_left = "#42526C"
+        bg_left = "#005dac"
 
         # Creation of the left frame
         self.frame_initial_width = 50
         self.frame = tk.Frame(self.frame_main.frame, bg=bg_left, width=left_menu_width_initial, height=left_menu_height_initial)
         self.frame.grid_propagate(False)
-        self.frame.grid(row=1, column=0)
+        self.frame.grid(row=0, column=0)
 
         # Creation of the left static frame
         self.static_part = tk.Frame(self.frame, bg=bg_left, height=left_menu_height_initial, width=50)
@@ -348,6 +411,8 @@ class LeftFrame:
             if p_id == 1 and self.frames_content != []:
                 self.moving_widgets_page[self.current_frame].grid_forget()
 
+        self.frame_main.left_menu_changed = True
+
     def change_config_widget_frame(self):
         """ Function called when we click on a widget """
 
@@ -376,12 +441,11 @@ class FrameContent:
         self.right_frame.current_frame = self.id
 
         # Creation of the main frame
-        window_height = settings['dimensions']['window_height']
-        top_menu_height = settings['dimensions']['top_menu_height']
+        # window_height = settings['dimensions']['window_height']
         self.frame_width = self.right_frame.frame["width"]
-        self.frame_height = window_height - top_menu_height
+        self.frame_height = self.right_frame.frame["height"]
         self.frame = tk.Frame(self.right_frame.frame, bg=p_background, width=self.frame_width, height=self.frame_height)
-        self.frame.grid(row=1)
+        self.frame.grid(row=0, column=0)
         self.frame.grid_propagate(False)
 
         # Lists which will contain sections
@@ -442,6 +506,7 @@ class FrameContent:
         # Calculate the dimensions of a mono section
         section_width = int(self.frame["width"] / self.nb_column)
         section_height = int(self.frame["height"] / self.nb_row)
+        print(section_height)
 
         # Convert "list of list" to list
         disappeared_sections = []
@@ -556,7 +621,7 @@ class FrameContent:
 
         # If the edit_widgets_mode is enable
         if not self.edit_widget_mode_is_activate:
-            self.frame["bg"] = "#333333"
+            self.frame["bg"] = "#e8e8e8"
             self.hide_widgets()
             self.show_edit_widgets_mode()
             self.edit_widget_mode_is_activate = True
@@ -584,7 +649,7 @@ class FrameContent:
             self.frame_edit_mode[i].grid_propagate(False)
 
             # Change the background color
-            s.frame["bg"] = "#42526C"
+            s.frame["bg"] = "#005dac"
 
             # Fix the dimensions of paddings
             padx = 2
@@ -734,7 +799,7 @@ class WidgetFrameConfiguration:
 
         # Creation of a title in the widget frame configuration
         text = "Widget : " + str(p_id)
-        self.label_title = tk.Label(self.frame, text=text, bg="#8989ff", fg="white")
+        self.label_title = tk.Label(self.frame, text=text, bg="white", fg="#333333")
         self.label_title.grid(row=0, sticky='nwe')
         self.label_title.config(font=("Calibri bold", 12))
 
@@ -756,7 +821,7 @@ class ButtonLeftText:
     def on_enter(self, e):
         """ Function called when the mouse is over the button """
 
-        self.button['bg'] = '#8989ff'
+        self.button['bg'] = '#00aeef'
         self.button['fg'] = 'white'
 
     def on_leave(self, e):
@@ -808,14 +873,14 @@ class FrameSection:
         self.row = p_row
         self.column = p_column
         self.rowspan = p_rowspan
-        self.columspan = p_columnspan
-        self.width = p_w
-        self.height = p_h
+        self.columnspan = p_columnspan
+        self.width = p_w - 10 # 10 is the padx
+        self.height = p_h - 10 # 10 is the pady
         self.id = p_id
         self.frame_left = p_frame_left
 
         # Creation of the frame
-        self.frame = tk.Frame(p_parent.frame, width=p_w, height=p_h, bg="white")
+        self.frame = tk.Frame(p_parent.frame, width=self.width, height=self.height, bg="white")
         self.frame.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
         # self.frame.config(highlightbackground="black", highlightthickness=1)
         self.frame.columnconfigure(0, weight=1)
@@ -860,19 +925,17 @@ class PageInitial:
         self.right_frame.frames_initial.append(self)
 
         # Create a previsualisation window
-        window_height = settings['dimensions']['window_height']
-        top_menu_height = settings['dimensions']['top_menu_height']
         frame_width = self.right_frame.frame["width"]
-        frame_height = window_height - top_menu_height
-        self.frame = tk.Frame(self.right_frame.frame, bg="white", width=frame_width, height=frame_height)
-        self.frame.grid(row=1)
+        frame_height = self.right_frame.frame["height"]
+        self.frame = tk.Frame(self.right_frame.frame, width=frame_width, height=frame_height)
+        self.frame.grid(row=0, column=0)
         self.frame.grid_propagate(False)
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
         self.frame.lift()
 
         presentation_text = "Bienvenue sur ce logiciel \n \n Pour commencer, rendez-vous dans le premier onglet \n et appuyer sur '+' pour créer une nouvelle page "
-        self.label_title = tk.Label(self.frame, text=presentation_text, fg="black")
+        self.label_title = tk.Label(self.frame, text=presentation_text, fg="black", bg="#e8e8e8")
         self.label_title.grid(row=0, column=0, sticky="news")
-        init_font = font.Font(size=13)
+        init_font = font.Font(size=13, weight="bold")
         self.label_title.config(font=init_font)

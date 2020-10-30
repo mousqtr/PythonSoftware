@@ -11,20 +11,22 @@ from login import Login
 # Main window initialization
 main_window = MainWindow()
 
-menu = Menu(main_window)
+
 
 
 # Images used in the left static frame (color 1/2)
-img_pages = tk.PhotoImage(file="img/pages2.png")
-img_widgets = tk.PhotoImage(file="img/widgets2.png")
-img_settings = tk.PhotoImage(file="img/setting2.png")
-img_tables = tk.PhotoImage(file="img/table2.png")
+img_pages = tk.PhotoImage(file="img/pages4.png")
+img_widgets = tk.PhotoImage(file="img/widgets4.png")
+img_settings = tk.PhotoImage(file="img/setting4.png")
+img_tables = tk.PhotoImage(file="img/table4.png")
+list_img_1 = [img_pages, img_widgets, img_settings, img_tables]
 
 # Images used in the left static frame (color 2/2)
-img_pages2 = tk.PhotoImage(file="img/pages3.png")
-img_widgets2 = tk.PhotoImage(file="img/widgets3.png")
-img_settings2 = tk.PhotoImage(file="img/setting3.png")
-img_tables2 = tk.PhotoImage(file="img/table3.png")
+img_pages2 = tk.PhotoImage(file="img/pages5.png")
+img_widgets2 = tk.PhotoImage(file="img/widgets5.png")
+img_settings2 = tk.PhotoImage(file="img/setting5.png")
+img_tables2 = tk.PhotoImage(file="img/table5.png")
+list_img_2 = [img_pages2, img_widgets2, img_settings2, img_tables2]
 
 # Images used as widgets icons
 img_image = tk.PhotoImage(file="img/widgets/image.png")
@@ -35,11 +37,22 @@ img_histogram = tk.PhotoImage(file="img/widgets/histogram.png")
 img_table = tk.PhotoImage(file="img/widgets/table.png")
 img_histogram_graph = tk.PhotoImage(file="img/widgets/histogram_graph.png")
 img_map = tk.PhotoImage(file="img/widgets/map.png")
+list_title_widgets = ["Image", "Sommaire", "Table", "Graphique\nen anneau", "Carte", "Graphique", "Histogramme", "Graphe\nHistogramme"]
+list_img_widgets = [img_image, img_summary, img_table, img_donut_chart,  img_map, img_graph, img_histogram, img_histogram_graph]
+list_img_widgets2 = []
+for img in list_img_widgets:
+    img = img.zoom(15)
+    img = img.subsample(30)
+    list_img_widgets2.append(img)
 
 # Images used in configuration mode
 img_add = tk.PhotoImage(file="img/add.png")
 img_delete = tk.PhotoImage(file="img/minus.png")
 img_empty = tk.PhotoImage(file="img/empty.png")
+list_buttons_widget = [img_add, img_delete, img_empty]
+
+# List containing all widget images
+list_widgets = [list_img_widgets, list_title_widgets, list_buttons_widget, list_img_widgets2]
 
 # Images used during the addition of a table
 img_csv = tk.PhotoImage(file="img/extensions/csv.png")
@@ -47,7 +60,6 @@ img_xls = tk.PhotoImage(file="img/extensions/xls.png")
 img_sql = tk.PhotoImage(file="img/extensions/sql.png")
 img_txt = tk.PhotoImage(file="img/extensions/txt.png")
 img_docx = tk.PhotoImage(file="img/extensions/docx.png")
-
 list_extensions_icon = [img_csv, img_xls, img_sql, img_txt, img_docx]
 list_extensions_icon2 = []
 for img in list_extensions_icon:
@@ -55,19 +67,10 @@ for img in list_extensions_icon:
     img = img.subsample(30)
     list_extensions_icon2.append(img)
 
-# List containing theses images
-list_img_1 = [img_pages, img_widgets, img_settings, img_tables]
-list_img_2 = [img_pages2, img_widgets2, img_settings2, img_tables2]
-list_img_widgets = [img_image, img_summary, img_table, img_donut_chart,  img_map, img_graph, img_histogram, img_histogram_graph]
-list_buttons_widget = [img_add, img_delete, img_empty]
-list_img_widgets2 = []
-for img in list_img_widgets:
-    img = img.zoom(15)
-    img = img.subsample(30)
-    list_img_widgets2.append(img)
 
-# List containing the names of each widget
-list_title_widgets = ["Image", "Sommaire", "Table", "Graphique\nen anneau", "Carte", "Graphique", "Histogramme", "Graphe\nHistogramme"]
+
+
+
 
 # Logo of the company
 img_logo = tk.PhotoImage(file="img/logo.png")
@@ -78,19 +81,9 @@ frame_right = RightFrame(main_window, frame_left)
 
 page_initial = PageInitial(frame_right)
 
-# Initialization of the widget button
-def edit_widgets_mode(p_right_frame, p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget, p_list_buttons_widget2):
-    if len(frame_right.frames_content) > 0:
-        frame_content_id = p_right_frame.current_frame
-        frame_content = p_right_frame.frames_content[frame_content_id]
-
-        frame_content.send_img_lists(p_list_img_widgets, p_list_title_widgets, p_list_buttons_widget, p_list_buttons_widget2)
-
-        frame_content.edit_widgets()
 
 
-# button_configure_widgets = ButtonTopText("Configurer les widgets", 1, frame_top.third_top_frame,
-#                                          partial(edit_widgets_mode, frame_right, list_img_widgets, list_title_widgets, list_buttons_widget, list_img_widgets2))
+menu = Menu(main_window, frame_right, list_widgets)
 
 # Initialization of the login button
 window_login = Login(main_window.frame)
@@ -131,34 +124,11 @@ def add_table():
 button_add_table = ButtonLeftText(" + ", 20, frame_left.moving_frames[3], "white", add_table)
 
 
-# Detect the window resize
-def window_resize(event):
-    """ Function called for each iteration of the loop """
-
-    # If the main window is opened and resized is allowed
-    if main_window.resized:
-        width = main_window.frame.winfo_width()
-        height = main_window.frame.winfo_height()
-
-        # Resize the dimensions have changed
-        if width != main_window.width or height != main_window.height:
-            main_window.width = width
-            main_window.height = height
-
-        # Resize the window and internal elements
-        frame_left.resize()
-        frame_right.resize()
-
-
 # Stop the window resize
 def stop_window_resize():
     """ Function called to stop the resized of the window """
 
     main_window.resized = False
-
-
-# Bind the resize function to the main_window
-main_window.frame.bind("<Configure>", window_resize)
 
 
 # When the user closes the window
