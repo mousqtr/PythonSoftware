@@ -68,7 +68,6 @@ for img in list_extensions_icon:
     list_extensions_icon2.append(img)
 
 
-
 # Logo of the company
 img_logo = tk.PhotoImage(file="img/logo.png")
 

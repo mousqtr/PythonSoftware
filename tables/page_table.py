@@ -24,7 +24,7 @@ class PageTable:
         self.frame = tk.Frame(self.right_frame.frame, bg="white", width=frame_width, height=frame_height)
         self.frame.grid(row=1)
         self.frame.grid_propagate(False)
-        self.frame.lift()
+        # self.frame.lift()
 
         # Frame_Table
         frame_table_width = frame_width - 10
@@ -42,8 +42,6 @@ class PageTable:
         self.right_frame.pages_table.append(self)
         self.id = len(self.right_frame.pages_table) - 1
         self.right_frame.current_table = self.id
-
-        print("table", self.right_frame.pages_table)
 
     def change_page(self):
         """ Change the page (= FrameContent) """

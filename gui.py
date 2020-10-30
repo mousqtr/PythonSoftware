@@ -3,6 +3,9 @@ import tkinter.font as font
 import json
 import Pmw
 from functools import partial
+from tkinter import filedialog
+
+from tables.page_table import PageTable
 
 
 with open('settings.json') as json_file:
@@ -105,7 +108,7 @@ class Menu:
         # File button
         menu_file = tk.Menu(menu_bar, tearoff=0)
         menu_file.add_command(label="Nouveau fichier", command=None)
-        menu_file.add_command(label="Ouvrir un fichier", command=None)
+        menu_file.add_command(label="Ouvrir un fichier", command=self.open_file)
         menu_file.add_command(label="Enregistrer", command=self.save)
         menu_file.add_command(label="Enregistrer sous", command=None)
         menu_file.add_separator()
@@ -189,7 +192,8 @@ class Menu:
         with open('save/save1.json') as json_file:
             save_json = json.load(json_file)
 
-        for table in self.frame_left.pages_table:
+        # Save the tables
+        for table in self.frame_right.pages_table:
             # Build the data that will be add to the saving file
             table_data = {str(table.name): str(table.filename)}
 
@@ -198,6 +202,24 @@ class Menu:
 
         with open('save/save1.json', 'w') as outfile:
             json.dump(save_json, outfile, indent=4)
+
+    def open_file(self):
+        """ Function call when we click on 'Open' button """
+
+        filename = filedialog.askopenfilename(title='Ouvrir un fichier')
+
+        with open(filename) as json_file:
+            save_json = json.load(json_file)
+
+        for table_name in save_json['tables']:
+            filename = save_json['tables'][table_name]
+            page_table = PageTable(self.frame_right, filename, table_name)
+
+            # Create a left button
+            row = len(self.frame_left.buttons_table) + 1
+            new_button_left = ButtonLeftText(table_name, row, self.frame_left.moving_frames[3], "white",
+                                             page_table.change_page)
+            self.frame_left.buttons_table.append(new_button_left)
 
 
 class RightFrame:
@@ -465,12 +487,6 @@ class LeftFrame:
         """ Function called when we click on a widget """
 
         self.pages_content[self.current_frame].frames_configuration_widgets[self.current_widget].lift()
-
-
-
-
-
-
 
 
 class ButtonLeftText:

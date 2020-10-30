@@ -5,7 +5,9 @@ from tkinter import filedialog
 import pandas as pd
 
 from gui import ButtonLeftText
+
 from tables.page_table import PageTable
+
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -173,19 +175,16 @@ class NewTable:
 
         # Create a left button
         row = len(self.left_frame.buttons_table) + 1
-        new_button_left = ButtonLeftText(str(table_name), row, self.left_frame.moving_frames[3], "white", page_table.change_page)
+        new_button_left = ButtonLeftText(table_name, row, self.left_frame.moving_frames[3], "white", page_table.change_page)
         self.left_frame.buttons_table.append(new_button_left)
 
-        # Add to list of tables
-        self.left_frame.pages_table.append(page_table)
-
-    def change_page(self, p_frame):
-        p_frame.lift()
-
-        self.right_frame.mode = 0
-
-        # Set this frame as current_frame
-        self.right_frame.current_table = self.id
+    # def change_page(self, p_frame):
+    #     p_frame.lift()
+    #
+    #     self.right_frame.mode = 0
+    #
+    #     # Set this frame as current_frame
+    #     self.right_frame.current_table = self.id
 
 
 
