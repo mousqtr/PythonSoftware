@@ -271,9 +271,9 @@ class EditPage:
         section_height = int(self.frame_sections["width"] / self.nb_row)
 
         # List of sections
-        self.mono_sections = []              # Initial sections (rowspan = 1 and columnspan = 1)
-        self.poly_sections = []          # Sections created after a merge of initial sections
-        self.selected_sections = []     # Sections selected by a click (green ones)
+        self.mono_sections = []             # Initial sections (rowspan = 1 and columnspan = 1)
+        self.poly_sections = []             # Sections created after a merge of initial sections
+        self.selected_sections = []         # Sections selected by a click (green ones)
 
         # Creation of initial sections
         section_id = 0

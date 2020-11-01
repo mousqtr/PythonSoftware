@@ -115,29 +115,52 @@ class Menu:
         with open('save/save1.json') as json_file:
             save_json = json.load(json_file)
 
-        # Save the tables
+        # List which will contains all tables
+        tables = []
+
         for table in self.frame_right.pages_table:
+
             # Build the data that will be add to the saving file
             table_data = {str(table.name): str(table.filename)}
 
-            # Update the saving file (.json) with these data
-            save_json['tables'].update(table_data)
+            # Add this table to list of tables
+            tables.append(table_data)
 
-        # Save the pages
+        # Replace the Tables or the file with new Tables
+        save_json['tables'] = tables
+
+        # List which will contains all pages
+        pages = []
+
         for page in self.frame_right.pages_content:
 
-            # Save the dimensions
+            # Save the number of row
             nb_row = {"nb_row": page.nb_row}
+
+            # Save the number of column
             nb_column = {"nb_column": page.nb_column}
 
-            # Save the polysections
-            # print(page.disappeared_sections_group)
+            # Save the sections
+            list_sections = []
+            for section in page.displayed_sections:
+                row = {"row": section.row}
+                column = {"column": section.column}
+                rowspan = {"rowspan": section.rowspan}
+                columnspan = {"columnspan": section.columnspan}
+                section_data = [row, column, rowspan, columnspan]
+                list_sections.append(section_data)
+            sections = {"sections": list_sections}
 
-            page_data = {page.name: [nb_row, nb_column]}
+            # All data containing in a page
+            page_data = {page.name: [nb_row, nb_column, sections]}
 
-            # Update the saving file (.json) with these data
-            save_json['pages'].update(page_data)
+            # Add this page to list of pages
+            pages.append(page_data)
 
+        # Replace the Pages or the file with new Pages
+        save_json['pages'] = pages
+
+        # Apply modification to the file
         with open('save/save1.json', 'w') as outfile:
             json.dump(save_json, outfile, indent=4)
 

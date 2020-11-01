@@ -191,12 +191,11 @@ class NewPage:
                 new_mono_sections.append(section)
 
         self.mono_sections = new_mono_sections
-        # print(self.mono_sections)
 
         # Get the name of the page
         name = self.entry_page_name.get()
         new_frame_content = PageContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column,
-                                        self.mono_sections, self.poly_sections, self.disappeared_sections_group)
+                                        self.mono_sections, self.poly_sections)
         new_frame_content.change_page()
 
         # Destroy the new page window

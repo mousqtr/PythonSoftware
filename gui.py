@@ -359,7 +359,7 @@ class ButtonLeftText:
     def __init__(self, p_text, p_row, p_parent, p_bg, p_command):
 
         # Creation of the button
-        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="black", width=18, activebackground="#8989ff", borderwidth=1, command=p_command)
+        self.button = tk.Button(p_parent, text=p_text, bg=p_bg, fg="black", width=22, activebackground="#8989ff", borderwidth=1, command=p_command)
         self.button.grid(row=p_row, sticky='n', pady=(10, 0), padx=(5, 5))
         self.button.config(font=("Calibri bold", 12))
 

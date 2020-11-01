@@ -4,8 +4,6 @@ from functools import partial
 from tkinter import filedialog
 import pandas as pd
 
-from gui import ButtonLeftText
-
 from tables.page_table import PageTable
 
 
@@ -173,10 +171,6 @@ class NewTable:
         page_table = PageTable(self.left_frame, self.right_frame, self.filename, table_name)
         page_table.change_page()
 
-        # Create a left button
-        row = len(self.left_frame.buttons_table) + 1
-        new_button_left = ButtonLeftText(table_name, row, self.left_frame.moving_frames[3], "white", page_table.change_page)
-        self.left_frame.buttons_table.append(new_button_left)
 
     # def change_page(self, p_frame):
     #     p_frame.lift()

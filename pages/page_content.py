@@ -20,7 +20,7 @@ class PageContent:
     """ Page /or Frame content of the window, included in the RightFrame """
 
     def __init__(self, p_frame_right, p_name, p_background, p_nb_row, p_nb_column, p_mono_buttons_sections,
-                 p_poly_buttons_sections, p_disappeared_buttons_sections_group ):
+                 p_poly_buttons_sections):
         """ Page /or Frame content of the window, included in the RightFrame """
 
         # Transform parameters to class variables
@@ -31,7 +31,6 @@ class PageContent:
         # self.source_window = p_source_window
         self.mono_buttons_sections = p_mono_buttons_sections
         self.poly_buttons_sections = p_poly_buttons_sections
-        self.disappeared_buttons_sections_group = p_disappeared_buttons_sections_group
         self.frame_left = p_frame_right.frame_left
         self.bg = p_background
 
@@ -42,7 +41,7 @@ class PageContent:
         self.frame_left.moving_widgets_page.append(moving_part_widgets)
 
         # Add the page name in the widget page
-        text = "Page : " + self.name
+        text = self.name
         label_page = tk.Label(moving_part_widgets, text=text, bg="#333333", fg="white")
         label_page.grid(row=0, sticky='nwe')
         label_page.config(font=("Calibri bold", 12))
@@ -129,20 +128,18 @@ class PageContent:
         for s in self.mono_buttons_sections:
             section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id, self.frame_left)
             section_id += 1
-            self.mono_sections.append(section)
+            # self.mono_sections.append(section)
 
         # Create all poly FrameSection (size nxp)
         for s in self.poly_buttons_sections:
             width = section_width * s.columnspan
             height = section_height * s.rowspan
             section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id, self.frame_left)
-            self.poly_sections.append(section)
+            # self.poly_sections.append(section)
             section_id += 1
 
         # List containing all FrameSection
         self.displayed_sections = self.mono_sections + self.poly_sections
-
-        # print(self.displayed_sections)
 
         # Create Frame setting widget for each section
         section_id = 0
@@ -157,7 +154,6 @@ class PageContent:
         self.buttons_widget = [tk.Button() for i in range(len(self.displayed_sections))]
         self.buttons_sections_add = [tk.Button() for i in range(len(self.displayed_sections))]
         self.buttons_sections_delete = [tk.Button() for i in range(len(self.displayed_sections))]
-
 
     def change_page(self):
         """ Change the page (= PageContent) """
@@ -416,6 +412,11 @@ class FrameSection:
 
         # User interaction with the button
         self.frame.bind("<Button-1>", self.on_click)
+
+        if self.rowspan == 1 and self.columnspan == 1:
+            self.parent.mono_sections.append(self)
+        else:
+            self.parent.poly_sections.append(self)
 
     def on_click(self, e):
         """ Function called when the user click on this section """
