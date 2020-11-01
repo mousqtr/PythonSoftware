@@ -7,17 +7,20 @@ from widgets.summary.summary import WidgetSummary
 from widgets.image.image import WidgetImage
 from widgets.table.table import WidgetTable
 
+from gui import ButtonLeftText
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
 initial_configuration_widget_height = 550
+window_height_initial = settings['dimensions']['window_height']
 
 
 class PageContent:
     """ Page /or Frame content of the window, included in the RightFrame """
 
-    def __init__(self, p_frame_right, p_name, p_background, p_nb_row, p_nb_column, p_source_window):
+    def __init__(self, p_frame_right, p_name, p_background, p_nb_row, p_nb_column, p_mono_buttons_sections,
+                 p_poly_buttons_sections, p_disappeared_buttons_sections_group ):
         """ Page /or Frame content of the window, included in the RightFrame """
 
         # Transform parameters to class variables
@@ -25,9 +28,24 @@ class PageContent:
         self.nb_column = p_nb_column
         self.right_frame = p_frame_right
         self.name = p_name
-        self.source_window = p_source_window
+        # self.source_window = p_source_window
+        self.mono_buttons_sections = p_mono_buttons_sections
+        self.poly_buttons_sections = p_poly_buttons_sections
+        self.disappeared_buttons_sections_group = p_disappeared_buttons_sections_group
         self.frame_left = p_frame_right.frame_left
         self.bg = p_background
+
+        # Create a widget frame for each frame content
+        moving_part_widgets = tk.Frame(self.frame_left.frame, bg="#005dac", height=window_height_initial, width=200)
+        moving_part_widgets.columnconfigure(0, weight=1)
+        moving_part_widgets.grid_propagate(False)
+        self.frame_left.moving_widgets_page.append(moving_part_widgets)
+
+        # Add the page name in the widget page
+        text = "Page : " + self.name
+        label_page = tk.Label(moving_part_widgets, text=text, bg="#333333", fg="white")
+        label_page.grid(row=0, sticky='nwe')
+        label_page.config(font=("Calibri bold", 12))
 
         # Set parameters to the RightFrame class (add the frame in frame_content list/ set current_frame)
         self.right_frame.pages_content.append(self)
@@ -78,14 +96,19 @@ class PageContent:
         # Text which appear when a mouse over something
         self.message = Pmw.Balloon(self.frame)  # Calling the tooltip
 
+        # Create the left button
+        row = len(self.frame_left.buttons_page) + 1
+        new_button_left = ButtonLeftText(self.name, row, self.frame_left.moving_frames[0], "white", self.change_page)
+        self.frame_left.buttons_page.append(new_button_left)
+
     def create_sections(self):
         """ Creation of the sections included in the PageContent page """
 
-        # Lists which will contain sections
         self.mono_sections = []
         self.poly_sections = []
         self.displayed_sections = []
-        self.disappeared_sections_group = self.source_window.disappeared_sections_group
+        self.configuration_widgets = []
+        self.frames_configuration_widgets = []
 
         # Adapt the configuration of the frame to number of row/col of sections
         t_row = []
@@ -100,24 +123,16 @@ class PageContent:
         # Calculate the dimensions of a mono section
         section_width = int(self.frame["width"] / self.nb_column)
         section_height = int(self.frame["height"] / self.nb_row)
-        print(section_height)
-
-        # Convert "list of list" to list
-        disappeared_sections = []
-        for x in self.source_window.disappeared_sections_group:
-            for y in x:
-                disappeared_sections.append(y)
 
         # Create all mono FrameSection (size 1x1)
         section_id = 0
-        for s in self.source_window.mono_sections:
-            if s not in disappeared_sections:
-                section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id, self.frame_left)
-                section_id += 1
-                self.mono_sections.append(section)
+        for s in self.mono_buttons_sections:
+            section = FrameSection(self, s.row, s.column, 1, 1, section_width, section_height, section_id, self.frame_left)
+            section_id += 1
+            self.mono_sections.append(section)
 
         # Create all poly FrameSection (size nxp)
-        for s in self.source_window.poly_sections:
+        for s in self.poly_buttons_sections:
             width = section_width * s.columnspan
             height = section_height * s.rowspan
             section = FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, width, height, section_id, self.frame_left)
@@ -130,11 +145,9 @@ class PageContent:
         # Create Frame setting widget for each section
         section_id = 0
         for ds in self.displayed_sections:
-
             widget_setting = WidgetFrameConfiguration(self.frame_left.moving_widgets_page[self.id], section_id)
             self.configuration_widgets.append(widget_setting)
             self.frames_configuration_widgets.append(widget_setting.frame)
-
             section_id += 1
 
         # Lists containing the labels & buttons used for "widgets configuration mode"
@@ -142,6 +155,7 @@ class PageContent:
         self.buttons_widget = [tk.Button() for i in range(len(self.displayed_sections))]
         self.buttons_sections_add = [tk.Button() for i in range(len(self.displayed_sections))]
         self.buttons_sections_delete = [tk.Button() for i in range(len(self.displayed_sections))]
+
 
     def change_page(self):
         """ Change the page (= PageContent) """
@@ -424,3 +438,5 @@ class WidgetFrameConfiguration:
         self.label_title = tk.Label(self.frame, text=text, bg="white", fg="#333333")
         self.label_title.grid(row=0, sticky='nwe')
         self.label_title.config(font=("Calibri bold", 12))
+
+        print(text)

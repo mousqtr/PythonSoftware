@@ -170,7 +170,7 @@ class NewTable:
                 df = pd.read_excel(self.filename)
                 # print(df)
 
-        page_table = PageTable(self.right_frame, self.filename, table_name)
+        page_table = PageTable(self.left_frame, self.right_frame, self.filename, table_name)
         page_table.change_page()
 
         # Create a left button

@@ -139,7 +139,7 @@ class EditPage:
                 ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
-        for l in self.page_content.disappeared_sections_group:
+        for l in self.page_content.disappeared_buttons_sections_group:
             x1, y1 = l[0].row, l[0].column
             x2, y2 = l[-1].row, l[-1].column
             id1 = self.get_id_by_pos(x1, y1)
@@ -175,9 +175,22 @@ class EditPage:
     def apply(self):
         """ Runs the creation of a page """
 
-        old_mono_sections = self.page_content.mono_sections
-        old_poly_sections = self.page_content.poly_sections
-        old_name = self.page_content.name
+        # old_mono_sections = self.page_content.mono_sections
+        # old_poly_sections = self.page_content.poly_sections
+        # old_name = self.page_content.name
+
+        # Convert group to list
+        for group in self.disappeared_sections_group:
+            for section in group:
+                self.disappeared_sections.append(section)
+
+        # Complete mono_sections with only displayed mono sections
+        new_mono_sections = []
+        for section in self.mono_sections:
+            if section not in self.disappeared_sections:
+                new_mono_sections.append(section)
+
+        self.mono_sections = new_mono_sections
 
         new_name = self.entry_page_name.get()
         if (new_name != " ") and (new_name != ""):
@@ -190,9 +203,11 @@ class EditPage:
         # Update the frame_content parameters
         self.page_content.nb_row = self.nb_row
         self.page_content.nb_column = self.nb_column
-        self.page_content.source_window = self
 
         # Creation of the sections
+        self.page_content.mono_buttons_sections = self.mono_sections
+        self.page_content.poly_buttons_sections = self.poly_sections
+        self.page_content.disappeared_buttons_sections_group = self.disappeared_sections_group
         self.page_content.create_sections()
 
         # for s1 in self.page_content.mono_sections:

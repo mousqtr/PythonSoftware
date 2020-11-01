@@ -180,30 +180,27 @@ class NewPage:
     def apply(self):
         """ Runs the creation of a page """
 
-        # Create a widget frame for each frame content
-        moving_part_widgets = tk.Frame(self.left_frame.frame, bg="#005dac", height=left_menu_height_initial, width=200)
-        moving_part_widgets.columnconfigure(0, weight=1)
-        moving_part_widgets.grid_propagate(False)
-        self.left_frame.moving_widgets_page.append(moving_part_widgets)
+        # Convert group to list
+        for group in self.disappeared_sections_group:
+            for section in group:
+                self.disappeared_sections.append(section)
+
+        new_mono_sections = []
+        for section in self.mono_sections:
+            if section not in self.disappeared_sections:
+                new_mono_sections.append(section)
+
+        self.mono_sections = new_mono_sections
+        # print(self.mono_sections)
 
         # Get the name of the page
         name = self.entry_page_name.get()
-        new_frame_content = PageContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self)
+        new_frame_content = PageContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column,
+                                        self.mono_sections, self.poly_sections, self.disappeared_sections_group)
         new_frame_content.change_page()
-
-        # Create the left button
-        row = len(self.left_frame.buttons_page) + 1
-        new_button_left = ButtonLeftText(name, row, self.left_frame.moving_frames[0], "white", new_frame_content.change_page)
-        self.left_frame.buttons_page.append(new_button_left)
 
         # Destroy the new page window
         self.window_new_page.destroy()
-
-        # Add the page name in the widget page
-        text = "Page : " + new_frame_content.name
-        label_page = tk.Label(moving_part_widgets, text=text, bg="#333333", fg="white")
-        label_page.grid(row=0, sticky='nwe')
-        label_page.config(font=("Calibri bold", 12))
 
     def update_grid(self):
         """ Updates the grid when dimensions are changed """

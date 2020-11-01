@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 import json
 
-from gui import ButtonLeftText
+
 from tables.page_table import PageTable
 from pages.edit_page import EditPage
 
@@ -152,13 +152,7 @@ class Menu:
         # Load the tables
         for table_name in save_json['tables']:
             filename = save_json['tables'][table_name]
-            page_table = PageTable(self.frame_right, filename, table_name)
-
-            # Create a left button
-            row = len(self.frame_left.buttons_table) + 1
-            new_button_left = ButtonLeftText(table_name, row, self.frame_left.moving_frames[3], "white",
-                                             page_table.change_page)
-            self.frame_left.buttons_table.append(new_button_left)
+            PageTable(self.frame_left, self.frame_right, filename, table_name)
 
         for page_name in save_json['pages']:
             print(page_name)

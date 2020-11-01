@@ -2,6 +2,8 @@ import tkinter as tk
 import json
 import pandas as pd
 
+from gui import ButtonLeftText
+
 with open('settings.json') as json_file:
     settings = json.load(json_file)
 
@@ -10,9 +12,10 @@ with open('tables/tables.json') as json_file:
 
 
 class PageTable:
-    def __init__(self, p_right_frame, p_filename, p_name):
+    def __init__(self, p_left_frame, p_right_frame, p_filename, p_name):
 
         # Transform parameters into class variables
+        self.left_frame = p_left_frame
         self.right_frame = p_right_frame
         self.filename = p_filename
         self.name = p_name
@@ -42,6 +45,12 @@ class PageTable:
         self.right_frame.pages_table.append(self)
         self.id = len(self.right_frame.pages_table) - 1
         self.right_frame.current_table = self.id
+
+        # Create a left button
+        row = len(self.left_frame.buttons_table) + 1
+        new_button_left = ButtonLeftText(self.name, row, self.left_frame.moving_frames[3], "white",
+                                         self.change_page)
+        self.left_frame.buttons_table.append(new_button_left)
 
     def change_page(self):
         """ Change the page (= FrameContent) """
