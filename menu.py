@@ -4,6 +4,7 @@ import json
 
 
 from tables.page_table import PageTable
+from pages.page_content import PageContent
 from pages.edit_page import EditPage
 
 with open('settings.json') as json_file:
@@ -173,13 +174,65 @@ class Menu:
             save_json = json.load(json_file)
 
         # Load the tables
-        for table_name in save_json['tables']:
-            filename = save_json['tables'][table_name]
-            PageTable(self.frame_left, self.frame_right, filename, table_name)
+        for i in range(len(save_json['tables'])):
+            table_data = list(save_json['tables'][i])
+            table_name = table_data[0]
+            table_filename = save_json['tables'][i][table_name]
+            PageTable(self.frame_left, self.frame_right, table_filename, table_name)
 
-        for page_name in save_json['pages']:
-            print(page_name)
+        # Load the pages
+        for i in range(len(save_json['pages'])):
+            page_dic = save_json['pages'][i]
+            page_key = list(page_dic)[0]
+            page_value = save_json['pages'][i][page_key]
+
+            # Get the number of rows
+            nb_row_dic = page_value[0]
+            nb_row_key = list(nb_row_dic)[0]
+            nb_row_value = nb_row_dic[nb_row_key]
+
+            # Get the number of columns
+            nb_column_dic = page_value[1]
+            nb_column_key = list(nb_column_dic)[0]
+            nb_column_value = nb_column_dic[nb_column_key]
+
+            # Get the sections
+            sections_dic = page_value[2]
+            sections_key = list(sections_dic)[0]
+            sections_value = sections_dic[sections_key]
+
+            for section in sections_value:
+                row_dic = section[0]
+                row_key = list(row_dic)[0]
+                row_value = row_dic[row_key]
+
+                column_dic = section[1]
+                column_key = list(column_dic)[0]
+                column_value = column_dic[column_key]
+
+                rowspan_dic = section[0]
+                rowspan_key = list(rowspan_dic)[0]
+                rowspan_value = rowspan_dic[rowspan_key]
+
+                columnspan_dic = section[1]
+                columnspan_key = list(columnspan_dic)[0]
+                columnspan_value = columnspan_dic[columnspan_key]
+
+                Section(row_value, column_value, rowspan_value, columnspan_value)
+
+
+
+            # mono_sections = []
+            # poly_sections = []
+            #
+            # PageContent(self.frame_right, page_key, "#e8e8e8", nb_row_value, nb_column_value,
+            #             self.mono_sections, self.poly_sections)
+
+
+            # print("sections", sections_value)
 
     def edit_page(self):
         if len(self.frame_right.pages_content) > 0:
             EditPage(self.main_window.frame, self.frame_left, self.frame_right)
+
+

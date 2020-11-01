@@ -132,6 +132,7 @@ class EditPage:
         self.selected_sections = []
         self.disappeared_sections = []  # Sections that will disappear
         self.disappeared_sections_group = []
+        self.sections = []
 
         section_id = 0
         for i in range(self.nb_row):
@@ -157,16 +158,28 @@ class EditPage:
         #     s2 = self.mono_sections[id2]
         #     self.merge_sections(s1, s2)
 
-        for section in self.page_content.poly_buttons_sections:
-            x1 = section.row
-            y1 = section.column
-            x2 = section.row + section.rowspan - 1
-            y2 = section.column + section.columnspan - 1
-            id1 = self.get_id_by_pos(x1, y1)
-            id2 = self.get_id_by_pos(x2, y2)
-            s1 = self.mono_sections[id1]
-            s2 = self.mono_sections[id2]
-            self.merge_sections(s1, s2)
+        # for section in self.page_content.poly_buttons_sections:
+        #     x1 = section.row
+        #     y1 = section.column
+        #     x2 = section.row + section.rowspan - 1
+        #     y2 = section.column + section.columnspan - 1
+        #     id1 = self.get_id_by_pos(x1, y1)
+        #     id2 = self.get_id_by_pos(x2, y2)
+        #     s1 = self.mono_sections[id1]
+        #     s2 = self.mono_sections[id2]
+        #     self.merge_sections(s1, s2)
+
+        for section in self.page_content.sections:
+            if section.rowspan != 1 or section.columnspan != 1:
+                x1 = section.row
+                y1 = section.column
+                x2 = section.row + section.rowspan - 1
+                y2 = section.column + section.columnspan - 1
+                id1 = self.get_id_by_pos(x1, y1)
+                id2 = self.get_id_by_pos(x2, y2)
+                s1 = self.mono_sections[id1]
+                s2 = self.mono_sections[id2]
+                self.merge_sections(s1, s2)
 
         self.label = tk.Label(self.part_center, text="Clique gauche sur deux cases pour construire \n une zone plus large", bg="#DCDCDC", fg="black")
         self.label.grid(row=2, sticky='new')
@@ -198,7 +211,6 @@ class EditPage:
         # old_mono_sections = self.page_content.mono_sections
         # old_poly_sections = self.page_content.poly_sections
         # old_name = self.page_content.name
-        print(self.disappeared_sections_group)
 
         # Convert group to list
         for group in self.disappeared_sections_group:
@@ -225,9 +237,20 @@ class EditPage:
         self.page_content.nb_row = self.nb_row
         self.page_content.nb_column = self.nb_column
 
-        # Creation of the sections
-        self.page_content.mono_buttons_sections = self.mono_sections
-        self.page_content.poly_buttons_sections = self.poly_sections
+        # # Creation of the sections
+        # self.page_content.mono_buttons_sections = self.mono_sections
+        # self.page_content.poly_buttons_sections = self.poly_sections
+        # self.page_content.displayed_buttons_sections = self.mono_sections + self.poly_sections
+
+        # Creation of Section list
+        for ms in self.mono_sections:
+            self.sections.append(ms.section)
+        for ps in self.poly_sections:
+            self.sections.append(ps.section)
+
+        self.page_content.sections = self.sections
+        print(self.sections)
+
         self.page_content.create_sections()
 
         # for s1 in self.page_content.mono_sections:
@@ -359,6 +382,8 @@ class ButtonSection:
         self.height = p_h
         self.id = p_id
 
+        self.section = Section(self.row, self.column, self.rowspan, self.columnspan)
+
         bg_identification = settings['colors']['bg_identification']
         self.button = tk.Button(p_parent.frame_sections, bg=bg_identification, width=p_w, height=p_h)
         self.button.grid(row=p_row, column=p_column, rowspan=p_rowspan, columnspan=p_columnspan, padx=(5, 5), pady=(5, 5))
@@ -387,3 +412,11 @@ class ButtonSection:
     def destroy(self):
         if self.rowspan != 1 or self.columnspan != 1:
             self.button.grid_forget()
+
+
+class Section:
+    def __init__(self, p_row, p_column, p_rowspan, p_columnspan):
+        self.row = p_row
+        self.column = p_column
+        self.rowspan = p_rowspan
+        self.columnspan = p_columnspan

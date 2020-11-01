@@ -160,15 +160,10 @@ class RightFrame:
                 page.frame["width"] = self.frame_right_width_initial + offset_width
                 page.frame["height"] = self.frame_main.frame.winfo_height()
 
-                # Resize mono sections
-                for section in page.mono_sections:
-                    section.frame["width"] = (page.frame["width"] / page.nb_column) * section.columnspan - 10
-                    section.frame["height"] = (page.frame["height"] / page.nb_row) * section.rowspan - 10
-
-                # Resize poly sections
-                for section in page.poly_sections:
-                    section.frame["width"] = int(page.frame["width"]/page.nb_column)* section.columnspan - 10
-                    section.frame["height"] = int(page.frame["height"]/page.nb_row)* section.rowspan - 10
+                # Resize each FrameSection
+                for section in page.frame_sections:
+                    section.frame["width"] = int(page.frame["width"]/page.nb_column) * section.columnspan - 10
+                    section.frame["height"] = int(page.frame["height"]/page.nb_row) * section.rowspan - 10
 
                 for widget_config_frame in page.frames_configuration_widgets:
                     widget_config_frame["height"] = initial_configuration_widget_height + offset_height

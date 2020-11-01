@@ -144,6 +144,7 @@ class NewPage:
         self.selected_sections = []
         self.disappeared_sections = []  # Sections that will disappear
         self.disappeared_sections_group = []
+        self.sections = []
 
         # Create all ButtonSections
         section_id = 0
@@ -192,10 +193,18 @@ class NewPage:
 
         self.mono_sections = new_mono_sections
 
+        # Creation of Section list
+        for ms in self.mono_sections:
+            self.sections.append(ms.section)
+        for ps in self.poly_sections:
+            self.sections.append(ps.section)
+
         # Get the name of the page
         name = self.entry_page_name.get()
-        new_frame_content = PageContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column,
-                                        self.mono_sections, self.poly_sections)
+        new_frame_content = PageContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self.sections)
+        # new_frame_content.mono_buttons_sections = self.mono_sections
+        # new_frame_content.poly_buttons_sections = self.poly_sections
+
         new_frame_content.change_page()
 
         # Destroy the new page window
@@ -318,6 +327,10 @@ class ButtonSection:
         self.height = p_h
         self.id = p_id
 
+        self.section = Section(self.row, self.column, self.rowspan, self.columnspan)
+
+
+
         # Creation of a button
         bg_identification = settings['colors']['bg_identification']
         self.button = tk.Button(p_parent.frame_sections, bg=bg_identification, width=p_w, height=p_h)
@@ -354,3 +367,11 @@ class ButtonSection:
 
         if self.rowspan != 1 or self.columnspan != 1:
             self.button.grid_forget()
+
+
+class Section:
+    def __init__(self, p_row, p_column, p_rowspan, p_columnspan):
+        self.row = p_row
+        self.column = p_column
+        self.rowspan = p_rowspan
+        self.columnspan = p_columnspan
