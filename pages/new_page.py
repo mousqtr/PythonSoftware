@@ -202,9 +202,8 @@ class NewPage:
         # Get the name of the page
         name = self.entry_page_name.get()
         new_frame_content = PageContent(self.right_frame, name, "#e8e8e8", self.nb_row, self.nb_column, self.sections)
-        # new_frame_content.mono_buttons_sections = self.mono_sections
-        # new_frame_content.poly_buttons_sections = self.poly_sections
 
+        # Change page
         new_frame_content.change_page()
 
         # Destroy the new page window
@@ -328,8 +327,6 @@ class ButtonSection:
         self.id = p_id
 
         self.section = Section(self.row, self.column, self.rowspan, self.columnspan)
-
-
 
         # Creation of a button
         bg_identification = settings['colors']['bg_identification']

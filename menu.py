@@ -5,7 +5,7 @@ import json
 
 from tables.page_table import PageTable
 from pages.page_content import PageContent
-from pages.edit_page import EditPage
+from pages.edit_page import EditPage, Section
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -143,7 +143,7 @@ class Menu:
 
             # Save the sections
             list_sections = []
-            for section in page.displayed_sections:
+            for section in page.sections:
                 row = {"row": section.row}
                 column = {"column": section.column}
                 rowspan = {"rowspan": section.rowspan}
@@ -201,6 +201,7 @@ class Menu:
             sections_key = list(sections_dic)[0]
             sections_value = sections_dic[sections_key]
 
+            sections = []
             for section in sections_value:
                 row_dic = section[0]
                 row_key = list(row_dic)[0]
@@ -210,26 +211,23 @@ class Menu:
                 column_key = list(column_dic)[0]
                 column_value = column_dic[column_key]
 
-                rowspan_dic = section[0]
+                rowspan_dic = section[2]
                 rowspan_key = list(rowspan_dic)[0]
                 rowspan_value = rowspan_dic[rowspan_key]
 
-                columnspan_dic = section[1]
+                columnspan_dic = section[3]
                 columnspan_key = list(columnspan_dic)[0]
                 columnspan_value = columnspan_dic[columnspan_key]
 
-                Section(row_value, column_value, rowspan_value, columnspan_value)
+                s = Section(row_value, column_value, rowspan_value, columnspan_value)
 
+                sections.append(s)
 
+            PageContent(self.frame_right, page_key, "#e8e8e8", nb_row_value, nb_column_value, sections)
 
-            # mono_sections = []
-            # poly_sections = []
-            #
-            # PageContent(self.frame_right, page_key, "#e8e8e8", nb_row_value, nb_column_value,
-            #             self.mono_sections, self.poly_sections)
-
-
-            # print("sections", sections_value)
+        # Change page to show the first PageContent
+        if self.frame_right.pages_content != []:
+            self.frame_right.pages_content[0].change_page()
 
     def edit_page(self):
         if len(self.frame_right.pages_content) > 0:
