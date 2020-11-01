@@ -142,6 +142,8 @@ class PageContent:
         # List containing all FrameSection
         self.displayed_sections = self.mono_sections + self.poly_sections
 
+        # print(self.displayed_sections)
+
         # Create Frame setting widget for each section
         section_id = 0
         for ds in self.displayed_sections:

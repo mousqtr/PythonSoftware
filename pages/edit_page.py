@@ -139,9 +139,29 @@ class EditPage:
                 ButtonSection(self, i, j, 1, 1, section_width, section_height, section_id)
                 section_id += 1
 
-        for l in self.page_content.disappeared_buttons_sections_group:
-            x1, y1 = l[0].row, l[0].column
-            x2, y2 = l[-1].row, l[-1].column
+
+        # for ps in self.page_content.poly_buttons_sections:
+        #     gp = []
+        #     for ms in self.mono_sections:
+        #         ps_width = ps.column + ps.columnspan
+        #         ps_height = ps.row + ps.towspan
+        #         if (ms.column >= ps.column) and (ms.column <= ps_width) and (ms.row >= ps.row) and (ms.row <= ps_height):
+        #             ls
+
+        # for l in self.page_content.disappeared_buttons_sections_group:
+        #     x1, y1 = l[0].row, l[0].column
+        #     x2, y2 = l[-1].row, l[-1].column
+        #     id1 = self.get_id_by_pos(x1, y1)
+        #     id2 = self.get_id_by_pos(x2, y2)
+        #     s1 = self.mono_sections[id1]
+        #     s2 = self.mono_sections[id2]
+        #     self.merge_sections(s1, s2)
+
+        for section in self.page_content.poly_buttons_sections:
+            x1 = section.row
+            y1 = section.column
+            x2 = section.row + section.rowspan - 1
+            y2 = section.column + section.columnspan - 1
             id1 = self.get_id_by_pos(x1, y1)
             id2 = self.get_id_by_pos(x2, y2)
             s1 = self.mono_sections[id1]
@@ -178,6 +198,7 @@ class EditPage:
         # old_mono_sections = self.page_content.mono_sections
         # old_poly_sections = self.page_content.poly_sections
         # old_name = self.page_content.name
+        print(self.disappeared_sections_group)
 
         # Convert group to list
         for group in self.disappeared_sections_group:
@@ -207,7 +228,6 @@ class EditPage:
         # Creation of the sections
         self.page_content.mono_buttons_sections = self.mono_sections
         self.page_content.poly_buttons_sections = self.poly_sections
-        self.page_content.disappeared_buttons_sections_group = self.disappeared_sections_group
         self.page_content.create_sections()
 
         # for s1 in self.page_content.mono_sections:
