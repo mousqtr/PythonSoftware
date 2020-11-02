@@ -1,642 +1,230 @@
 {
-    "pages": [
-        {
-            "page1": [
-                {
-                    "nb_row": 5
+    "pages": {
+        "page1": {
+            "nb_row": 5,
+            "nb_column": 5,
+            "sections": {
+                "section_0": {
+                    "row": 0,
+                    "column": 2,
+                    "rowspan": 1,
+                    "columnspan": 1
                 },
-                {
-                    "nb_column": 5
+                "section_1": {
+                    "row": 0,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
                 },
-                {
-                    "sections": [
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 2
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 4
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 2
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 4
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 2
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 2
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 2
-                            },
-                            {
-                                "column": 4
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 3
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 3
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 3
-                            },
-                            {
-                                "column": 4
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 4
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 4
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 4
-                            },
-                            {
-                                "column": 2
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 4
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 4
-                            },
-                            {
-                                "column": 4
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 2
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 2
-                            },
-                            {
-                                "columnspan": 2
-                            }
-                        ]
-                    ]
+                "section_2": {
+                    "row": 0,
+                    "column": 4,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_3": {
+                    "row": 1,
+                    "column": 2,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_4": {
+                    "row": 1,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_5": {
+                    "row": 1,
+                    "column": 4,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_6": {
+                    "row": 2,
+                    "column": 0,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_7": {
+                    "row": 2,
+                    "column": 1,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_8": {
+                    "row": 2,
+                    "column": 2,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_9": {
+                    "row": 2,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_10": {
+                    "row": 2,
+                    "column": 4,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_11": {
+                    "row": 3,
+                    "column": 0,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_12": {
+                    "row": 3,
+                    "column": 1,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_13": {
+                    "row": 3,
+                    "column": 2,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_14": {
+                    "row": 3,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_15": {
+                    "row": 3,
+                    "column": 4,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_16": {
+                    "row": 4,
+                    "column": 0,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_17": {
+                    "row": 4,
+                    "column": 1,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_18": {
+                    "row": 4,
+                    "column": 2,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_19": {
+                    "row": 4,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_20": {
+                    "row": 4,
+                    "column": 4,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_21": {
+                    "row": 0,
+                    "column": 0,
+                    "rowspan": 2,
+                    "columnspan": 2
                 }
-            ]
+            }
         },
-        {
-            "page2": [
-                {
-                    "nb_row": 2
+        "page2": {
+            "nb_row": 4,
+            "nb_column": 4,
+            "sections": {
+                "section_0": {
+                    "row": 0,
+                    "column": 0,
+                    "rowspan": 1,
+                    "columnspan": 1
                 },
-                {
-                    "nb_column": 4
+                "section_1": {
+                    "row": 0,
+                    "column": 1,
+                    "rowspan": 1,
+                    "columnspan": 1
                 },
-                {
-                    "sections": [
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 2
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 2
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 2
-                            }
-                        ]
-                    ]
+                "section_2": {
+                    "row": 0,
+                    "column": 2,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_3": {
+                    "row": 0,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_4": {
+                    "row": 1,
+                    "column": 0,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_5": {
+                    "row": 1,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_6": {
+                    "row": 2,
+                    "column": 0,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_7": {
+                    "row": 2,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_8": {
+                    "row": 3,
+                    "column": 0,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_9": {
+                    "row": 3,
+                    "column": 1,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_10": {
+                    "row": 3,
+                    "column": 2,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_11": {
+                    "row": 3,
+                    "column": 3,
+                    "rowspan": 1,
+                    "columnspan": 1
+                },
+                "section_12": {
+                    "row": 1,
+                    "column": 1,
+                    "rowspan": 2,
+                    "columnspan": 2
                 }
-            ]
-        },
-        {
-            "page3": [
-                {
-                    "nb_row": 4
-                },
-                {
-                    "nb_column": 4
-                },
-                {
-                    "sections": [
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 2
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 0
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 2
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 2
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 3
-                            },
-                            {
-                                "column": 0
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 3
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 3
-                            },
-                            {
-                                "column": 2
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 3
-                            },
-                            {
-                                "column": 3
-                            },
-                            {
-                                "rowspan": 1
-                            },
-                            {
-                                "columnspan": 1
-                            }
-                        ],
-                        [
-                            {
-                                "row": 1
-                            },
-                            {
-                                "column": 1
-                            },
-                            {
-                                "rowspan": 2
-                            },
-                            {
-                                "columnspan": 2
-                            }
-                        ]
-                    ]
-                }
-            ]
+            }
         }
-    ],
-    "tables": [
-        {
-            "table1": "C:/Users/mbenb/Desktop/Inventory_software/csv/csv_test.csv"
-        },
-        {
-            "table2": "C:/Users/mbenb/Desktop/Inventory_software/csv/csv_test.csv"
-        }
-    ]
+    },
+    "tables": {
+        "table1": "C:/Users/mbenb/Desktop/Inventory_software/csv/csv_test.csv",
+        "table2": "C:/Users/mbenb/Desktop/Inventory_software/csv/laptop.csv"
+    }
 }

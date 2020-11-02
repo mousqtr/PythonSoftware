@@ -117,46 +117,31 @@ class Menu:
             save_json = json.load(json_file)
 
         # List which will contains all tables
-        tables = []
+        tables = {}
 
         for table in self.frame_right.pages_table:
 
             # Build the data that will be add to the saving file
-            table_data = {str(table.name): str(table.filename)}
-
-            # Add this table to list of tables
-            tables.append(table_data)
+            tables[str(table.name)] = str(table.filename)
 
         # Replace the Tables or the file with new Tables
         save_json['tables'] = tables
 
         # List which will contains all pages
-        pages = []
+        pages = {}
 
         for page in self.frame_right.pages_content:
 
-            # Save the number of row
-            nb_row = {"nb_row": page.nb_row}
-
-            # Save the number of column
-            nb_column = {"nb_column": page.nb_column}
-
             # Save the sections
-            list_sections = []
+            list_sections = {}
+            cpt = 0
             for section in page.sections:
-                row = {"row": section.row}
-                column = {"column": section.column}
-                rowspan = {"rowspan": section.rowspan}
-                columnspan = {"columnspan": section.columnspan}
-                section_data = [row, column, rowspan, columnspan]
-                list_sections.append(section_data)
-            sections = {"sections": list_sections}
-
-            # All data containing in a page
-            page_data = {page.name: [nb_row, nb_column, sections]}
+                section_name = "section_" + str(cpt)
+                list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan}
+                cpt += 1
 
             # Add this page to list of pages
-            pages.append(page_data)
+            pages[str(page.name)] = {"nb_row": page.nb_row, "nb_column": page.nb_column, "sections": list_sections}
 
         # Replace the Pages or the file with new Pages
         save_json['pages'] = pages
@@ -174,56 +159,33 @@ class Menu:
             save_json = json.load(json_file)
 
         # Load the tables
-        for i in range(len(save_json['tables'])):
-            table_data = list(save_json['tables'][i])
-            table_name = table_data[0]
-            table_filename = save_json['tables'][i][table_name]
+        for key, value in save_json['tables'].items():
+            table_name = key
+            table_filename = value
             PageTable(self.frame_left, self.frame_right, table_filename, table_name)
 
         # Load the pages
-        for i in range(len(save_json['pages'])):
-            page_dic = save_json['pages'][i]
-            page_key = list(page_dic)[0]
-            page_value = save_json['pages'][i][page_key]
+        for key_0, value_0 in save_json['pages'].items():
+            page_name = key_0
+            page_data = value_0
 
-            # Get the number of rows
-            nb_row_dic = page_value[0]
-            nb_row_key = list(nb_row_dic)[0]
-            nb_row_value = nb_row_dic[nb_row_key]
-
-            # Get the number of columns
-            nb_column_dic = page_value[1]
-            nb_column_key = list(nb_column_dic)[0]
-            nb_column_value = nb_column_dic[nb_column_key]
-
-            # Get the sections
-            sections_dic = page_value[2]
-            sections_key = list(sections_dic)[0]
-            sections_value = sections_dic[sections_key]
+            nb_row = page_data['nb_row']
+            nb_column = page_data['nb_column']
 
             sections = []
-            for section in sections_value:
-                row_dic = section[0]
-                row_key = list(row_dic)[0]
-                row_value = row_dic[row_key]
+            for key_1, value_1 in page_data['sections'].items():
+                section_name = key_1
+                section_data = value_1
 
-                column_dic = section[1]
-                column_key = list(column_dic)[0]
-                column_value = column_dic[column_key]
+                row = section_data['row']
+                column = section_data['column']
+                rowspan = section_data['rowspan']
+                columnspan = section_data['columnspan']
 
-                rowspan_dic = section[2]
-                rowspan_key = list(rowspan_dic)[0]
-                rowspan_value = rowspan_dic[rowspan_key]
-
-                columnspan_dic = section[3]
-                columnspan_key = list(columnspan_dic)[0]
-                columnspan_value = columnspan_dic[columnspan_key]
-
-                s = Section(row_value, column_value, rowspan_value, columnspan_value)
-
+                s = Section(row, column, rowspan, columnspan)
                 sections.append(s)
 
-            PageContent(self.frame_right, page_key, "#e8e8e8", nb_row_value, nb_column_value, sections)
+            PageContent(self.frame_right, page_name, "#e8e8e8", nb_row, nb_column, sections)
 
         # Change page to show the first PageContent
         if self.frame_right.pages_content != []:
