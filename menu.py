@@ -126,7 +126,8 @@ class Menu:
             cpt = 0
             for section in page.sections:
                 section_name = "section_" + str(cpt)
-                list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan, "widget": section.widget}
+                list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan}
+                # list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan, "widget": section.widget}
                 cpt += 1
 
             # Add this page to list of pages

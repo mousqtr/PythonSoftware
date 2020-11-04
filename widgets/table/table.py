@@ -40,7 +40,7 @@ class WidgetTable:
         self.nb_row_df = 0
         self.nb_column_df = 0
         self.list_rows = []
-        self.list_headers = []
+        self.list_headers = [" "]
 
         # Initial values
         self.nb_column = 0
@@ -104,8 +104,8 @@ class WidgetTable:
         self.is_table_created = False
 
         # List of table names and filenames
-        self.list_tables_names = []
-        self.list_tables_filenames = []
+        self.list_tables_names = [" "]
+        self.list_tables_filenames = [" "]
         for table in self.frame_right.pages_table:
             self.list_tables_names.append(table.name)
             self.list_tables_filenames.append(table.filename)
@@ -144,6 +144,7 @@ class WidgetTable:
         self.nb_row_df = df.shape[0]
         self.nb_column_df = df.shape[1]
         self.list_headers = list(df.head())
+        self.list_headers.insert(0, " ")
 
         # Update the list of rows
         if p_list_rows:
@@ -157,6 +158,8 @@ class WidgetTable:
         else:
             self.list_columns = [i for i in range(0, self.nb_column_df)]
         nb_column = len(self.list_columns)
+
+        print(self.list_columns)
 
         # Update the column width
         width_column = int(self.frame_containing_headers.winfo_width()/nb_column)
@@ -276,7 +279,7 @@ class WidgetTable:
 
         # Column choice label
         labels_column_choice = [tk.Label() for j in range(self.nb_column_max)]
-        self.list_headers.insert(0, " ")
+        # self.list_headers.insert(0, " ")
         for j in range(self.nb_column_max):
             label_text = "Colonne " + str(j + 1)
             labels_column_choice[j] = tk.Label(self.frame_widget_configuration, text=label_text, width=19, bg="#333333", fg="white")
@@ -286,8 +289,8 @@ class WidgetTable:
             self.combo_column_choice[j] = ttk.Combobox(self.frame_widget_configuration, values=self.list_headers, state="readonly")
             self.combo_column_choice[j].grid(row=j + 6, column=1, sticky='nw', padx=10, pady=1)
             self.combo_column_choice[j].config(font=("Calibri bold", 9))
-            if self.list_headers != [] :
-                self.combo_column_choice[j].current(0)
+            # if self.list_headers != [] :
+            #     self.combo_column_choice[j].current(0)
 
         # Button - Validation
         button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=22, bg="orange", fg="white")
@@ -303,8 +306,10 @@ class WidgetTable:
             filename = self.list_tables_filenames[table_index]
             df = pd.read_csv(filename)
             self.list_headers = list(df.head())
+            self.list_headers.insert(0, " ")
             for j in range(self.nb_column_max):
                 self.combo_column_choice[j]["values"] = self.list_headers
+
 
     def color_line(self, p_row):
         """
@@ -351,8 +356,8 @@ class WidgetTable:
         # Get the list of combobox indexes selected by the user
         list_columns = []
         for j in range(self.nb_column_max):
-            col = self.combo_column_choice[j].current()
-            if (col != 0) and (col not in list_columns):
+            col = self.combo_column_choice[j].current() - 1
+            if (col != -2) and (col not in list_columns):
                 list_columns.append(col)
 
         # # Offset
@@ -453,11 +458,12 @@ class WidgetTable:
         print("Update Table")
 
         # Update list of tables
-        self.list_tables_names = []
-        self.list_tables_filenames = []
+        self.list_tables_names = [" "]
+        self.list_tables_filenames = [" "]
         for table in self.frame_right.pages_table:
             self.list_tables_names.append(table.name)
             self.list_tables_filenames.append(table.filename)
+
 
 
         # # Delete the table
