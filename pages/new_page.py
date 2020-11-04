@@ -372,3 +372,4 @@ class Section:
         self.column = p_column
         self.rowspan = p_rowspan
         self.columnspan = p_columnspan
+        self.widget = {}

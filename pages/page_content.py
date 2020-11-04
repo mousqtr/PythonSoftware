@@ -25,7 +25,7 @@ class PageContent:
         # Transform parameters to class variables
         self.nb_row = p_nb_row
         self.nb_column = p_nb_column
-        self.right_frame = p_frame_right
+        self.frame_right = p_frame_right
         self.frame_left = p_frame_right.frame_left
         self.name = p_name
         self.bg = p_background
@@ -44,15 +44,15 @@ class PageContent:
         label_page.config(font=("Calibri bold", 12))
 
         # Set parameters to the RightFrame class (add the frame in frame_content list/ set current_frame)
-        self.right_frame.pages_content.append(self)
-        self.right_frame.update_values()
-        self.id = len(self.right_frame.pages_content) - 1
-        self.right_frame.current_frame = self.id
+        self.frame_right.pages_content.append(self)
+        self.frame_right.update_values()
+        self.id = len(self.frame_right.pages_content) - 1
+        self.frame_right.current_frame = self.id
 
         # Creation of the main frame
-        self.frame_width = self.right_frame.frame["width"]
-        self.frame_height = self.right_frame.frame["height"]
-        self.frame = tk.Frame(self.right_frame.frame, bg=p_background, width=self.frame_width, height=self.frame_height)
+        self.frame_width = self.frame_right.frame["width"]
+        self.frame_height = self.frame_right.frame["height"]
+        self.frame = tk.Frame(self.frame_right.frame, bg=p_background, width=self.frame_width, height=self.frame_height)
         self.frame.grid(row=0, column=0)
         self.frame.grid_propagate(False)
 
@@ -115,7 +115,7 @@ class PageContent:
         # Creation of all FrameSections
         section_id = 0
         for s in self.sections:
-            FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, section_id)
+            FrameSection(self, s.row, s.column, s.rowspan, s.columnspan, section_id, s)
             section_id += 1
 
         # Lists containing the labels & buttons used for "widgets configuration mode"
@@ -128,23 +128,23 @@ class PageContent:
         """ Change the page (= PageContent) """
 
         # Set this frame as current_frame
-        self.right_frame.current_frame = self.id
+        self.frame_right.current_frame = self.id
 
         # Indicates that we are in the PageContent mode
-        self.right_frame.mode = 1
+        self.frame_right.mode = 1
 
         # Update values in others class (in left_frame for example)
-        self.right_frame.update_values()
+        self.frame_right.update_values()
 
         # Resize the frame
-        self.right_frame.resize()
+        self.frame_right.resize()
 
         # Hide all PageTable pages
-        for page in self.right_frame.pages_table:
+        for page in self.frame_right.pages_table:
             page.frame.grid_forget()
 
         # Hide all PageContent pages
-        for page in self.right_frame.pages_content:
+        for page in self.frame_right.pages_content:
             page.frame.grid_forget()
 
         # Show the page
@@ -252,15 +252,15 @@ class PageContent:
         """ Function called the user click on add a widget during the edit_widget_mode """
 
         # Creation of the window where the user can choose the widget
-        window_widget_choice = tk.Toplevel(self.right_frame.frame)
+        window_widget_choice = tk.Toplevel(self.frame_right.frame)
         window_widget_choice.resizable(False, False)
         window_widget_choice.title("Choix du widget")
         window_widget_choice_icon = tk.PhotoImage(file="img/grid.png")
         window_widget_choice.iconphoto(False, window_widget_choice_icon)
         window_widget_choice_width = 560
         window_widget_choice_height = 400
-        screen_width = self.right_frame.frame.winfo_screenwidth()
-        screen_height = self.right_frame.frame.winfo_screenheight()
+        screen_width = self.frame_right.frame.winfo_screenwidth()
+        screen_height = self.frame_right.frame.winfo_screenheight()
         x_cord = int((screen_width / 2) - (window_widget_choice_width / 2))
         y_cord = int((screen_height / 2) - (window_widget_choice_height / 2))
         window_widget_choice.geometry("{}x{}+{}+{}".format(window_widget_choice_width, window_widget_choice_height, x_cord, y_cord))
@@ -318,8 +318,8 @@ class PageContent:
 
         self.widgets.append(widget)
 
-        # Bind the index of the widget to the FrameSection
-        p_section.widget_index = p_id_widget
+        # Bind the widget to the FrameSection
+        p_section.bind_widget(widget, p_id_widget)
 
         # Change the image of the FrameSection in the configuration mode
         self.buttons_widget[p_section.id]["image"] = self.list_img_widgets2[p_id_widget]
@@ -339,11 +339,17 @@ class PageContent:
         for w in self.widgets:
             w.show()
 
+    def update(self):
+
+        print("Update Page")
+        for widget in self.widgets:
+            widget.update()
+
 
 class FrameSection:
     """ Section frame (mono or poly) located in a page (= PageContent)"""
 
-    def __init__(self, p_page_content, p_row, p_column, p_rowspan, p_columnspan, p_id):
+    def __init__(self, p_page_content, p_row, p_column, p_rowspan, p_columnspan, p_id, p_section):
         """ Initialization of these sections buttons """
 
         # Transform parameters to class variables
@@ -354,6 +360,7 @@ class FrameSection:
         self.columnspan = p_columnspan
         self.id = p_id
         self.frame_left = self.page_content.frame_left
+        self.section = p_section
 
         # Calculate the dimensions of a mono section
         section_width = int(self.page_content.frame["width"] / self.page_content.nb_column)
@@ -390,6 +397,10 @@ class FrameSection:
 
         self.frame_left.current_widget = self.id
         self.frame_left.change_config_widget_frame()
+
+    def bind_widget(self, p_widget, p_widget_id):
+        self.section.widget = {"type": p_widget.type, "parameters": p_widget.widget_parameters}
+        self.widget_index = p_widget_id
 
 
 class WidgetFrameConfiguration:

@@ -183,13 +183,22 @@ class RightFrame:
                 page.frame_table["width"] = page.frame["width"] - 10
                 page.frame_table["height"] = page.frame["height"] - 10
 
-
     def update_values(self):
         """ Function to send values to other classes """
 
         # Send some values to left frame
         self.frame_left.current_frame = self.current_frame
         self.frame_left.pages_content = self.pages_content
+
+    def update(self):
+
+        # Update all pages
+        for page in self.pages_content:
+            page.update()
+
+        # Update all tables
+        for table in self.pages_table:
+            table.update()
 
 
 class LeftFrame:

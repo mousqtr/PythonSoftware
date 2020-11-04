@@ -22,27 +22,30 @@ class WidgetTable:
 
         :param p_section: Section that will contain this table widget
         :param p_widget_configuration: Object in the left menu, specific to each widget and used to configure the widget
-        :param p_widget_group: Group containing this widget
+        :param p_filename: Name of the table file
         """
         # Saving the parameters to use them in each class function
         self.section = p_section
         self.widget_configuration = p_widget_configuration
         self.frame_widget_configuration = p_widget_configuration.frame
+        self.frame_right = p_section.page_content.frame_right
+        self.filename = " "
 
         # Dimension of the section
         self.frame_section_width = self.section.frame.winfo_width()
         self.frame_section_height = self.section.frame.winfo_height()
 
         # Initialization of the dataframe
-        self.df = pd.read_csv('csv/csv_test.csv')
-        self.nb_row_df = self.df.shape[0]
-        self.nb_column_df = self.df.shape[1]
-        self.list_rows = [i for i in range(0, self.nb_row_df)]
+        df = pd.read_csv('csv/csv_test.csv')
+        self.nb_row_df = 0
+        self.nb_column_df = 0
+        self.list_rows = []
+        self.list_headers = []
 
         # Initial values
-        self.nb_column = 6
+        self.nb_column = 0
         self.nb_column_max = 6
-        self.list_columns = [0, 1, 2, 3, 4, 5]
+        self.list_columns = []
 
         # Row selected by the user
         self.selected_row = -1
@@ -58,12 +61,9 @@ class WidgetTable:
         self.frame.columnconfigure(0, weight=1)
 
         # Title - Table
-        self.title = tk.Label(self.frame, text="Titre", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
+        self.title = tk.Label(self.frame, text="", bg="#333333", fg="white", compound="c", borderwidth=1, relief="raised")
         self.title.grid(row=0, sticky="nwes")
         self.title.config(font=("Calibri bold", 12))
-
-        # # Update these previous values with saving ones
-        # self.load()
 
         # Frame that contains headers of the table
         self.frame.update_idletasks()
@@ -103,14 +103,16 @@ class WidgetTable:
         # Boolean that indicates the creation of the table
         self.is_table_created = False
 
-        # Creation of the table
-        self.create_table(self.list_columns, self.list_rows)
+        # List of table names and filenames
+        self.list_tables_names = []
+        self.list_tables_filenames = []
+        for table in self.frame_right.pages_table:
+            self.list_tables_names.append(table.name)
+            self.list_tables_filenames.append(table.filename)
 
-        # Boolean that indicates if the section has a title or not
-        self.bool_title = True
-
-        self.list_tables = []
         self.combo_tables = ttk.Combobox()
+        self.entry_title = tk.Entry()
+        self.combo_column_choice = [ttk.Combobox() for j in range(self.nb_column_max)]
 
         # Call the on_click function when the user left mouse click on these elements
         self.frame.bind("<Button-1>", self.on_click)
@@ -126,18 +128,37 @@ class WidgetTable:
         # Link the resize function to the resize event of the frame
         self.frame.bind('<Configure>', self.resize)
 
-    def create_table(self, p_list_col, p_list_rows):
+        # Widget parameters
+        self.widget_parameters = {"title": self.title["text"], "filename": self.filename, "list_columns": self.list_columns}
+
+    def create_table(self, p_filename, p_list_col, p_list_rows):
         """
         Function that creates of the table
 
+        :param p_filename: Name of the table file
         :param p_list_col: List which contains the column name of the table
         :param p_list_rows: List which contains the rows to draw
         """
 
-        # Update values
-        self.list_rows = p_list_rows
-        self.list_columns = p_list_col
-        nb_column = len(p_list_col)
+        df = pd.read_csv(p_filename)
+        self.nb_row_df = df.shape[0]
+        self.nb_column_df = df.shape[1]
+        self.list_headers = list(df.head())
+
+        # Update the list of rows
+        if p_list_rows:
+            self.list_rows = p_list_rows
+        else:
+            self.list_rows = [i for i in range(0, self.nb_row_df)]
+
+        # Update the list of columns
+        if p_list_col:
+            self.list_columns = p_list_col
+        else:
+            self.list_columns = [i for i in range(0, self.nb_column_df)]
+        nb_column = len(self.list_columns)
+
+        # Update the column width
         width_column = int(self.frame_containing_headers.winfo_width()/nb_column)
 
         # Creation of the header
@@ -151,7 +172,7 @@ class WidgetTable:
             self.frames_header[current_col].grid_columnconfigure(0, weight=1)
             self.frames_header[current_col].grid_rowconfigure(0, weight=1)
 
-            self.buttons_header[current_col] = tk.Button(self.frames_header[current_col], text=list(self.df)[j-1])
+            self.buttons_header[current_col] = tk.Button(self.frames_header[current_col], text=list(df)[j])
             self.buttons_header[current_col].config(bg="green", fg="white")
             self.buttons_header[current_col].grid(row=0,column=0, sticky="news")
             current_col += 1
@@ -169,11 +190,11 @@ class WidgetTable:
                 self.frames_cell[i][current_col].grid_columnconfigure(0, weight=1)
                 self.frames_cell[i][current_col].grid_rowconfigure(0, weight=1)
 
-                self.buttons_cell[i][current_col] = tk.Button(self.frames_cell[i][current_col], text=(self.df.iloc[i][j - 1]))
+                self.buttons_cell[i][current_col] = tk.Button(self.frames_cell[i][current_col], text=(df.iloc[i][j - 1]))
                 self.buttons_cell[i][current_col]['command'] = partial(self.color_line, i)
                 self.buttons_cell[i][current_col].config(borderwidth=2, relief="groove")
 
-                if i in p_list_rows:
+                if i in self.list_rows:
 
                     self.frames_cell[i][current_col].grid(row=0, column=current_col)
                     self.frames_cell[i][current_col].grid(row=self.list_rows.index(i), column=current_col)
@@ -206,6 +227,13 @@ class WidgetTable:
         # Boolean that indicates the creation of the table
         self.is_table_created = True
 
+        # Bind user interaction with new table
+        for i in range(nb_column):
+            self.buttons_header[i].bind("<Button-1>", self.on_click)
+        for j in range(nb_column):
+            for i in range(self.nb_row_df):
+                self.buttons_cell[i][j].bind("<Button-1>", self.on_click)
+
     def on_click(self, e):
         """ Function called when the user click on this section """
 
@@ -222,12 +250,13 @@ class WidgetTable:
         label_table.grid(row=1, columnspan=2, pady=(10, 0))
         label_table.config(font=("Calibri bold", 13))
 
-        self.list_tables = []
-        self.combo_tables = ttk.Combobox(self.frame_widget_configuration, values=self.list_tables, state="readonly")
+        self.combo_tables = ttk.Combobox(self.frame_widget_configuration, values=self.list_tables_names, state="readonly")
         self.combo_tables.grid(row=2, columnspan=2)
         self.combo_tables.config(font=("Calibri bold", 10))
-        if self.list_tables:
+        if self.list_tables_names:
             self.combo_tables.current(0)
+
+        self.combo_tables.bind('<<ComboboxSelected>>', self.change_combo_column_choice)
 
         # Label - Title
         label_title = tk.Label(self.frame_widget_configuration, text="Titre du widget", bg="#333333", fg="white")
@@ -238,6 +267,7 @@ class WidgetTable:
         self.entry_title = tk.Entry(self.frame_widget_configuration, width=22, textvariable=" ")
         self.entry_title.grid(row=4, columnspan=2)
         self.entry_title.config(font=("Calibri bold", 10))
+        self.entry_title["textvariable"] = self.title["text"]
 
         # Label - Choose columns
         label_select_column = tk.Label(self.frame_widget_configuration, text="Choix des colonnes", bg="#333333", fg="white")
@@ -246,25 +276,35 @@ class WidgetTable:
 
         # Column choice label
         labels_column_choice = [tk.Label() for j in range(self.nb_column_max)]
-        combo_column_choice = [ttk.Combobox() for j in range(self.nb_column_max)]
-        list_headers = list(self.df.head())
-        list_headers.insert(0, " ")
+        self.list_headers.insert(0, " ")
         for j in range(self.nb_column_max):
             label_text = "Colonne " + str(j + 1)
             labels_column_choice[j] = tk.Label(self.frame_widget_configuration, text=label_text, width=19, bg="#333333", fg="white")
             labels_column_choice[j].grid(row=j + 6, column=0, sticky='ne', padx=10, pady=1)
             labels_column_choice[j].config(font=("Calibri bold", 9))
 
-            combo_column_choice[j] = ttk.Combobox(self.frame_widget_configuration, values=list_headers, state="readonly")
-            combo_column_choice[j].grid(row=j + 6, column=1, sticky='nw', padx=10, pady=1)
-            combo_column_choice[j].config(font=("Calibri bold", 9))
-            combo_column_choice[j].current(0)
+            self.combo_column_choice[j] = ttk.Combobox(self.frame_widget_configuration, values=self.list_headers, state="readonly")
+            self.combo_column_choice[j].grid(row=j + 6, column=1, sticky='nw', padx=10, pady=1)
+            self.combo_column_choice[j].config(font=("Calibri bold", 9))
+            if self.list_headers != [] :
+                self.combo_column_choice[j].current(0)
 
         # Button - Validation
         button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=22, bg="orange", fg="white")
         button_validate.grid(row=30, columnspan=2, pady=(20, 0))
-        button_validate['command'] = partial(self.validate, combo_column_choice)
+        button_validate['command'] = self.validate
         button_validate.config(font=("Calibri", 10))
+
+    def change_combo_column_choice(self, event):
+
+        # Get the file
+        table_index = self.combo_tables.current()
+        if table_index != -1:
+            filename = self.list_tables_filenames[table_index]
+            df = pd.read_csv(filename)
+            self.list_headers = list(df.head())
+            for j in range(self.nb_column_max):
+                self.combo_column_choice[j]["values"] = self.list_headers
 
     def color_line(self, p_row):
         """
@@ -283,101 +323,65 @@ class WidgetTable:
                 else:
                     self.buttons_cell[i][j].config(bg="SystemButtonFace")
 
-
-    def details_window(self):
-        """
-        Functions called when the user clicks on details button
-        """
-
-        # Window handle
-        window_details = tk.Toplevel(self.frame)
-        window_details.resizable(False, False)
-        window_details.title("Détails")
-        window_icon = tk.PhotoImage(file="img/loupe.png")
-        window_details.iconphoto(False, window_icon)
-        # login_window_width = settings['dimensions']['window_login_width']
-        # login_window_height = settings['dimensions']['window_login_height']
-        window_settings_width = 550
-        window_settings_height = 260
-        screen_width = self.frame.winfo_screenwidth()
-        screen_height = self.frame.winfo_screenheight()
-        x_cord = int((screen_width / 2) - (window_settings_width / 2))
-        y_cord = int((screen_height / 2) - (window_settings_height / 2))
-        window_details.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
-        window_details.columnconfigure((0, 1), weight=1)
-
-        # Title - Details
-        bg_identification = settings['colors']['bg_identification']
-        label_login_title = tk.Label(window_details, text="Détails", bg=bg_identification, fg="white")
-        label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
-        font_login_title = settings['font']['font_login_title']
-        font_size_login_title = settings['font_size']['font_size_login_title']
-        label_login_title.config(font=(font_login_title, font_size_login_title))
-
-        nb_column = len(self.list_columns)
-        row_colored = 0
-        for i in range(0, self.nb_row_df):
-            for j in range(0, nb_column):
-                if self.buttons_cell[i][j]['bg'] == "beige":
-                    row_colored = i
-
-        # Label - Details
-        labels_1 = [tk.Label() for j in range(self.nb_column_max)]
-        labels_2 = [tk.Label() for j in range(self.nb_column_max)]
-        list_headers = list(self.df.head())
-        for j in range(self.nb_column_max):
-            labels_1[j] = tk.Label(window_details, text=list_headers[j])
-            labels_1[j].grid(row=j + 2, column=0, sticky='nw', padx=30, pady=1)
-            labels_1[j].config(font=("Calibri bold", 10))
-            labels_2[j] = tk.Label(window_details, text=self.df.loc[row_colored][j])
-            labels_2[j].grid(row=j + 2, column=1, sticky='nw', padx=30, pady=1)
-            labels_2[j].config(font=("Calibri bold", 10))
-
-    def validate(self, p_combo):
+    def validate(self):
         """
         Functions called when the user clicks on validate button - Change columns
         """
 
-        # List of combobox indexes selected by the user
-        list_columns = []
-        for j in range(self.nb_column_max):
-            col = p_combo[j].current()
-            if (col != 0) and (col not in list_columns):
-                list_columns.append(col)
-
-        # offset
-        for x in list_columns:
-            x -= 1
-
-        # sort columns in order
-        list_columns.sort()
-
-        # Replace columns with new ones
-        number_col = len(list_columns)
-        if number_col != 0:
-            self.delete_buttons()
-            self.create_table(list_columns, self.list_rows)
-            self.list_columns = list_columns
+        # Get the file
+        table_index = self.combo_tables.current()
+        if table_index != -1:
+            filename = self.list_tables_filenames[table_index]
+            if filename != self.filename:
+                self.filename = filename
+            self.list_rows = []
+            self.create_table(self.filename, self.list_columns, self.list_rows)
 
         # Get the title entry
         title = self.entry_title.get()
 
         # If there is no title
-        if title == " " or title == "" and self.bool_title:
+        if title == "":
             self.title.grid_forget()
-            self.bool_title = False
-            self.title["text"] = " "
-            frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height()
-
+            self.title["text"] = ""
         else:
-            self.bool_title = True
             self.title.grid(row=0, column=0, sticky="nwes")
             self.title["text"] = title
-            frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
-        self.frame_containing_cells.config(height=frame_canvas_height)
-        # Save the columns state
 
-        # self.save(p_combo)
+        # Get the list of combobox indexes selected by the user
+        list_columns = []
+        for j in range(self.nb_column_max):
+            col = self.combo_column_choice[j].current()
+            if (col != 0) and (col not in list_columns):
+                list_columns.append(col)
+
+        # # Offset
+        # for x in list_columns:
+        #     x -= 1
+
+
+        # Sort columns in order
+        list_columns.sort()
+
+        # Replace columns with new ones
+        number_col = len(list_columns)
+        if number_col != 0 and self.filename != " ":
+            self.delete_buttons()
+            self.list_rows = []
+            self.create_table(self.filename, list_columns, self.list_rows)
+            self.list_columns = list_columns
+
+
+        # Update the widget parameters
+        self.widget_parameters["title"] = self.title["text"]
+        self.widget_parameters["list_columns"] = self.list_columns
+
+        # Change the frame_containing_cells height
+        if self.title["text"] != "":
+            frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
+        else:
+            frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height()
+        self.frame_containing_cells.config(height=frame_canvas_height)
 
     def delete_buttons(self):
         """
@@ -423,7 +427,7 @@ class WidgetTable:
                 current_col += 1
 
             # Change the frame_containing_cells height
-            if self.bool_title:
+            if self.title["text"] != "":
                 frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
             else:
                 frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height()
@@ -448,50 +452,86 @@ class WidgetTable:
 
         print("Update Table")
 
-        # Delete the table
-        self.delete_buttons()
+        # Update list of tables
+        self.list_tables_names = []
+        self.list_tables_filenames = []
+        for table in self.frame_right.pages_table:
+            self.list_tables_names.append(table.name)
+            self.list_tables_filenames.append(table.filename)
 
-        old_row = self.list_rows
 
-        # Update the database
-        self.df = pd.read_csv('csv/csv_test.csv')
-        self.nb_row_df = self.df.shape[0]
-        self.nb_column_df = self.df.shape[1]
-        self.list_rows = [i for i in range(0, self.nb_row_df)]
+        # # Delete the table
+        # self.delete_buttons()
+        #
+        # old_row = self.list_rows
+        #
+        # # Update the database
+        # self.df = pd.read_csv('csv/csv_test.csv')
+        # self.nb_row_df = self.df.shape[0]
+        # self.nb_column_df = self.df.shape[1]
+        # self.list_rows = [i for i in range(0, self.nb_row_df)]
+        #
+        # # # Update rows to draw
+        # rows = self.list_rows
+        # for w in self.widget_group.widgets:
+        #     if w.type == "Filters":
+        #         if w.row_to_draw == old_row or w.row_to_draw == []:
+        #             rows = self.list_rows
+        #         else :
+        #             rows = w.row_to_draw
+        #
+        # # Recreate the table
+        # self.create_table(self.list_columns, rows)
 
-        # # Update rows to draw
-        rows = self.list_rows
-        for w in self.widget_group.widgets:
-            if w.type == "Filters":
-                if w.row_to_draw == old_row or w.row_to_draw == []:
-                    rows = self.list_rows
-                else :
-                    rows = w.row_to_draw
 
-        # Recreate the table
-        self.create_table(self.list_columns, rows)
 
-    # def save(self, p_combo):
+
+
+    # def details_window(self):
     #     """
-    #     Functions that saves the filters properties
-    #
-    #     :param p_combo: Combobox with column choices
-    #     """
-    #     num_id = self.widget_group.id
-    #     table_name = "table_" + str(num_id)
-    #     table_data[table_name].update({"list_columns": self.list_columns})
-    #
-    #     with open('widgets/table/table_data.json', 'w') as outfile:
-    #         json.dump(table_data, outfile, indent=4)
-    #
-    # def load(self):
-    #     """
-    #     Function that loads the content of each filter
+    #     Functions called when the user clicks on details button
     #     """
     #
-    #     # Get all the data contain in the the saving file
-    #     num_id = self.widget_group.id
-    #     table_name = "table_" + str(num_id)
-    #     self.list_columns = table_data[table_name]['list_columns']
-
-
+    #     # Window handle
+    #     window_details = tk.Toplevel(self.frame)
+    #     window_details.resizable(False, False)
+    #     window_details.title("Détails")
+    #     window_icon = tk.PhotoImage(file="img/loupe.png")
+    #     window_details.iconphoto(False, window_icon)
+    #     # login_window_width = settings['dimensions']['window_login_width']
+    #     # login_window_height = settings['dimensions']['window_login_height']
+    #     window_settings_width = 550
+    #     window_settings_height = 260
+    #     screen_width = self.frame.winfo_screenwidth()
+    #     screen_height = self.frame.winfo_screenheight()
+    #     x_cord = int((screen_width / 2) - (window_settings_width / 2))
+    #     y_cord = int((screen_height / 2) - (window_settings_height / 2))
+    #     window_details.geometry("{}x{}+{}+{}".format(window_settings_width, window_settings_height, x_cord, y_cord))
+    #     window_details.columnconfigure((0, 1), weight=1)
+    #
+    #     # Title - Details
+    #     bg_identification = settings['colors']['bg_identification']
+    #     label_login_title = tk.Label(window_details, text="Détails", bg=bg_identification, fg="white")
+    #     label_login_title.grid(row=0, columnspan=2, sticky='new', pady=(0, 10))
+    #     font_login_title = settings['font']['font_login_title']
+    #     font_size_login_title = settings['font_size']['font_size_login_title']
+    #     label_login_title.config(font=(font_login_title, font_size_login_title))
+    #
+    #     nb_column = len(self.list_columns)
+    #     row_colored = 0
+    #     for i in range(0, self.nb_row_df):
+    #         for j in range(0, nb_column):
+    #             if self.buttons_cell[i][j]['bg'] == "beige":
+    #                 row_colored = i
+    #
+    #     # Label - Details
+    #     labels_1 = [tk.Label() for j in range(self.nb_column_max)]
+    #     labels_2 = [tk.Label() for j in range(self.nb_column_max)]
+    #     list_headers = list(self.df.head())
+    #     for j in range(self.nb_column_max):
+    #         labels_1[j] = tk.Label(window_details, text=list_headers[j])
+    #         labels_1[j].grid(row=j + 2, column=0, sticky='nw', padx=30, pady=1)
+    #         labels_1[j].config(font=("Calibri bold", 10))
+    #         labels_2[j] = tk.Label(window_details, text=self.df.loc[row_colored][j])
+    #         labels_2[j].grid(row=j + 2, column=1, sticky='nw', padx=30, pady=1)
+    #         labels_2[j].config(font=("Calibri bold", 10))

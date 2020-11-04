@@ -116,17 +116,6 @@ class Menu:
         with open('save/save1.json') as json_file:
             save_json = json.load(json_file)
 
-        # List which will contains all tables
-        tables = {}
-
-        for table in self.frame_right.pages_table:
-
-            # Build the data that will be add to the saving file
-            tables[str(table.name)] = str(table.filename)
-
-        # Replace the Tables or the file with new Tables
-        save_json['tables'] = tables
-
         # List which will contains all pages
         pages = {}
 
@@ -137,7 +126,7 @@ class Menu:
             cpt = 0
             for section in page.sections:
                 section_name = "section_" + str(cpt)
-                list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan}
+                list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan, "widget": section.widget}
                 cpt += 1
 
             # Add this page to list of pages
@@ -145,6 +134,17 @@ class Menu:
 
         # Replace the Pages or the file with new Pages
         save_json['pages'] = pages
+
+        # List which will contains all tables
+        tables = {}
+
+        for table in self.frame_right.pages_table:
+
+            # Build the data that will be add to the saving file
+            tables[str(table.name)] = str(table.filename)
+
+        # Replace the Tables or the file with new Tables
+        save_json['tables'] = tables
 
         # Apply modification to the file
         with open('save/save1.json', 'w') as outfile:
@@ -157,12 +157,6 @@ class Menu:
 
         with open(filename) as json_file:
             save_json = json.load(json_file)
-
-        # Load the tables
-        for key, value in save_json['tables'].items():
-            table_name = key
-            table_filename = value
-            PageTable(self.frame_left, self.frame_right, table_filename, table_name)
 
         # Load the pages
         for key_0, value_0 in save_json['pages'].items():
@@ -186,6 +180,12 @@ class Menu:
                 sections.append(s)
 
             PageContent(self.frame_right, page_name, "#e8e8e8", nb_row, nb_column, sections)
+
+        # Load the tables
+        for key, value in save_json['tables'].items():
+            table_name = key
+            table_filename = value
+            PageTable(self.frame_left, self.frame_right, table_filename, table_name)
 
         # Change page to show the first PageContent
         if self.frame_right.pages_content != []:

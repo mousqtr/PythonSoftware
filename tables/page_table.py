@@ -39,7 +39,7 @@ class PageTable:
         self.frame_table.grid_propagate(False)
 
         # Fill the section with the table
-        self.table = PrevisualisationTable(self.frame_table, p_filename, p_name)
+        self.table = SectionTable(self.frame_table, p_filename, p_name)
 
         # Set parameters to the RightFrame class (add the frame in frame_content list/ set current_frame)
         self.right_frame.pages_table.append(self)
@@ -51,6 +51,9 @@ class PageTable:
         new_button_left = ButtonLeftText(self.name, row, self.left_frame.moving_frames[3], "white",
                                          self.change_page)
         self.left_frame.buttons_table.append(new_button_left)
+
+        # Update
+        self.right_frame.update()
 
     def change_page(self):
         """ Change the page (= FrameContent) """
@@ -75,8 +78,11 @@ class PageTable:
         # Change the page - put frame in forward
         self.frame.lift()
 
+    def update(self):
+        print("Update Table")
 
-class PrevisualisationTable:
+
+class SectionTable:
     """ Widget that displays a table """
 
     def __init__(self, p_table_frame, p_filename, p_table_name):
@@ -243,12 +249,12 @@ class PrevisualisationTable:
         # Boolean that indicates the creation of the table
         self.is_table_created = True
 
-        self.save_table()
+        # self.save_table()
 
     def resize(self, event):
         """ Function called when the parent section is resized"""
 
-        print("Resize Table")
+        print("Resize SectionTable")
 
         if self.is_table_created:
 
@@ -279,12 +285,13 @@ class PrevisualisationTable:
             frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
             self.frame_containing_cells.config(height=frame_canvas_height)
 
-    def save_table(self):
+    # def save_table(self):
+    #
+    #     # Build the data that will be add to the saving file
+    #     value_data = {str(self.table_name): str(self.filename)}
+    #
+    #     # Update the saving file (.json) with these data
+    #     tables_json['list_tables'].update(value_data)
+    #     with open('tables/tables.json', 'w') as outfile:
+    #         json.dump(tables_json, outfile, indent=4)
 
-        # Build the data that will be add to the saving file
-        value_data = {str(self.table_name): str(self.filename)}
-
-        # Update the saving file (.json) with these data
-        tables_json['list_tables'].update(value_data)
-        with open('tables/tables.json', 'w') as outfile:
-            json.dump(tables_json, outfile, indent=4)
