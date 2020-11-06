@@ -4,8 +4,8 @@ import json
 
 
 from tables.page_table import PageTable
-from pages.page_content import PageContent
-from pages.edit_page import EditPage, Section
+from pages.page_content import PageContent, Section
+from pages.edit_page import EditPage
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -126,8 +126,7 @@ class Menu:
             cpt = 0
             for section in page.sections:
                 section_name = "section_" + str(cpt)
-                list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan}
-                # list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan, "widget": section.widget}
+                list_sections[section_name] = {"row": section.row, "column": section.column, "rowspan": section.rowspan, "columnspan": section.columnspan, "widget": section.widget}
                 cpt += 1
 
             # Add this page to list of pages
@@ -176,11 +175,13 @@ class Menu:
                 column = section_data['column']
                 rowspan = section_data['rowspan']
                 columnspan = section_data['columnspan']
+                widget = section_data['widget']
 
-                s = Section(row, column, rowspan, columnspan)
+                s = Section(row, column, rowspan, columnspan, widget)
+
                 sections.append(s)
 
-            PageContent(self.frame_right, page_name, "#e8e8e8", nb_row, nb_column, sections)
+            page_content = PageContent(self.frame_right, page_name, "#e8e8e8", nb_row, nb_column, sections)
 
         # Load the tables
         for key, value in save_json['tables'].items():

@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 from gui import ButtonLeftText
-from pages.page_content import PageContent
+from pages.page_content import Section
 
 with open('settings.json') as json_file:
     settings = json.load(json_file)
@@ -382,7 +382,7 @@ class ButtonSection:
         self.height = p_h
         self.id = p_id
 
-        self.section = Section(self.row, self.column, self.rowspan, self.columnspan)
+        self.section = Section(self.row, self.column, self.rowspan, self.columnspan, {})
 
         bg_identification = settings['colors']['bg_identification']
         self.button = tk.Button(p_parent.frame_sections, bg=bg_identification, width=p_w, height=p_h)
@@ -412,11 +412,3 @@ class ButtonSection:
     def destroy(self):
         if self.rowspan != 1 or self.columnspan != 1:
             self.button.grid_forget()
-
-
-class Section:
-    def __init__(self, p_row, p_column, p_rowspan, p_columnspan):
-        self.row = p_row
-        self.column = p_column
-        self.rowspan = p_rowspan
-        self.columnspan = p_columnspan

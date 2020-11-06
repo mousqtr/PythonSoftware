@@ -327,6 +327,10 @@ class PageContent:
         # Hide the widget to continue in the edit widget mode
         self.hide_widgets()
 
+    def load_widgets(self):
+
+        print()
+
     def hide_widgets(self):
         """ Hide the existing widgets to show the edit_widget mode """
 
@@ -361,6 +365,7 @@ class FrameSection:
         self.id = p_id
         self.frame_left = self.page_content.frame_left
         self.section = p_section
+        self.widget = p_section.widget
 
         # Calculate the dimensions of a mono section
         section_width = int(self.page_content.frame["width"] / self.page_content.nb_column)
@@ -389,6 +394,8 @@ class FrameSection:
         self.page_content.configuration_widgets.append(widget_setting)
         self.page_content.frames_configuration_widgets.append(widget_setting.frame)
 
+        self.load_widget()
+
         # User interaction with the button
         self.frame.bind("<Button-1>", self.on_click)
 
@@ -399,8 +406,43 @@ class FrameSection:
         self.frame_left.change_config_widget_frame()
 
     def bind_widget(self, p_widget, p_widget_id):
-        self.section.widget = {"type": p_widget.type, "parameters": p_widget.widget_parameters}
+        self.widget = p_widget
+        self.section.widget = p_widget
         self.widget_index = p_widget_id
+
+    def load_widget(self):
+
+        if self.widget != {}:
+
+            # Get the properties of the current section
+            widget_configuration = self.page_content.configuration_widgets[self.id]
+
+            # If the selected widget is Summary, create a summary widget in the current section
+            if self.widget['type'] == "Table":
+                widget = WidgetTable(self, widget_configuration)
+                widget.load(self.widget['parameters'])
+
+
+            # if p_id_widget == 1:
+            #     widget = WidgetSummary(p_section, widget_configuration)
+            #
+            # if p_id_widget == 2:
+            #     widget = WidgetTable(p_section, widget_configuration)
+            #
+            self.page_content.widgets.append(widget)
+
+    def save_widget(self, p_widget):
+        self.widget = p_widget
+        self.section.widget = p_widget
+
+
+class Section:
+    def __init__(self, p_row, p_column, p_rowspan, p_columnspan, p_widget):
+        self.row = p_row
+        self.column = p_column
+        self.rowspan = p_rowspan
+        self.columnspan = p_columnspan
+        self.widget = p_widget
 
 
 class WidgetFrameConfiguration:

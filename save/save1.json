@@ -8,103 +8,130 @@
                     "row": 0,
                     "column": 0,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_1": {
                     "row": 0,
                     "column": 1,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_2": {
                     "row": 0,
                     "column": 2,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_3": {
                     "row": 0,
                     "column": 3,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_4": {
                     "row": 0,
                     "column": 4,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_5": {
                     "row": 1,
                     "column": 0,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_6": {
                     "row": 1,
                     "column": 1,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_7": {
                     "row": 1,
                     "column": 2,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_8": {
                     "row": 1,
                     "column": 3,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_9": {
                     "row": 1,
                     "column": 4,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_10": {
                     "row": 2,
                     "column": 0,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_11": {
                     "row": 2,
                     "column": 1,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_12": {
                     "row": 3,
                     "column": 0,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_13": {
                     "row": 3,
                     "column": 1,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_14": {
                     "row": 4,
                     "column": 0,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_15": {
                     "row": 4,
                     "column": 1,
                     "rowspan": 1,
-                    "columnspan": 1
+                    "columnspan": 1,
+                    "widget": {}
                 },
                 "section_16": {
                     "row": 2,
                     "column": 2,
                     "rowspan": 3,
-                    "columnspan": 3
+                    "columnspan": 3,
+                    "widget": {
+                        "title": "titre22",
+                        "filename": "C:/Users/mbenb/Desktop/Inventory_software/csv/laptop.csv",
+                        "list_columns": [
+                            0,
+                            2,
+                            3,
+                            4,
+                            6
+                        ]
+                    }
                 }
             }
         }
