@@ -122,14 +122,16 @@
                     "rowspan": 3,
                     "columnspan": 3,
                     "widget": {
+                        "type": "Table",
                         "title": "titre22",
-                        "filename": "C:/Users/mbenb/Desktop/Inventory_software/csv/laptop.csv",
+                        "filename": "C:/Users/mbenb/Desktop/Inventory_software/csv/csv_test.csv",
                         "list_columns": [
                             0,
+                            1,
                             2,
                             3,
                             4,
-                            6
+                            5
                         ]
                     }
                 }

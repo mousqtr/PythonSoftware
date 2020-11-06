@@ -420,7 +420,7 @@ class FrameSection:
             # If the selected widget is Summary, create a summary widget in the current section
             if self.widget['type'] == "Table":
                 widget = WidgetTable(self, widget_configuration)
-                widget.load(self.widget['parameters'])
+                widget.load(self.widget)
 
 
             # if p_id_widget == 1:

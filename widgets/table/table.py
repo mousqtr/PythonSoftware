@@ -157,6 +157,8 @@ class WidgetTable:
 
         nb_column = len(self.list_columns)
 
+        print(self.list_columns)
+
         # Update the column width
         width_column = int(self.frame_containing_headers.winfo_width()/nb_column)
 
@@ -234,7 +236,7 @@ class WidgetTable:
                 self.buttons_cell[i][j].bind("<Button-1>", self.on_click)
 
         # Save the widget
-        widget = {"title": self.label_title["text"], "filename": self.filename, "list_columns": self.list_columns}
+        widget = {"type": "Table", "title": self.label_title["text"], "filename": self.filename, "list_columns": self.list_columns}
         self.section.save_widget(widget)
 
     def on_click(self, e):
@@ -290,8 +292,11 @@ class WidgetTable:
             self.combo_column_choice[j] = ttk.Combobox(self.frame_widget_configuration, values=self.list_headers, state="readonly")
             self.combo_column_choice[j].grid(row=j + 6, column=1, sticky='nw', padx=10, pady=1)
             self.combo_column_choice[j].config(font=("Calibri bold", 9))
-            # if self.list_headers != [] :
-            #     self.combo_column_choice[j].current(0)
+
+            if j < len(self.list_columns):
+                value = self.list_columns[j] + 1
+                self.combo_column_choice[j].current(value)
+
 
         # Button - Validation
         button_validate = tk.Button(self.frame_widget_configuration, text="Valider", width=22, bg="orange", fg="white")
@@ -310,6 +315,7 @@ class WidgetTable:
             self.list_headers.insert(0, " ")
             for j in range(self.nb_column_max):
                 self.combo_column_choice[j]["values"] = self.list_headers
+                self.combo_column_choice[j].current(0)
 
     def color_line(self, p_row):
         """
@@ -339,6 +345,7 @@ class WidgetTable:
             filename = self.list_tables_filenames[table_index]
             if filename != self.filename:
                 self.filename = filename
+                self.list_columns = []
             self.list_rows = []
             self.create_table(self.list_rows)
 
@@ -346,9 +353,9 @@ class WidgetTable:
         title = self.entry_title.get()
 
         # If there is no title
-        if title == "":
+        if title == "" or title == " ":
             self.label_title.grid_forget()
-            self.label_title["text"] = ""
+            self.label_title["text"] = " "
         else:
             self.label_title.grid(row=0, column=0, sticky="nwes")
             self.label_title["text"] = title
@@ -357,15 +364,14 @@ class WidgetTable:
         list_columns = []
         for j in range(self.nb_column_max):
             col = self.combo_column_choice[j].current() - 1
-            if (col != -2) and (col not in list_columns):
+            if (col >= 0) and (col not in list_columns):
                 list_columns.append(col)
 
         # Sort columns in order
         list_columns.sort()
 
         # Replace columns with new ones
-        number_col = len(list_columns)
-        if number_col != 0 and self.filename != " ":
+        if self.filename != " ":
             self.delete_buttons()
             self.list_rows = []
             self.list_columns = list_columns
@@ -377,7 +383,7 @@ class WidgetTable:
         self.widget_parameters["list_columns"] = self.list_columns
 
         # Change the frame_containing_cells height
-        if self.label_title["text"] != "":
+        if self.label_title["text"] != "" or self.label_title["text"] != " ":
             frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
         else:
             frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height()
@@ -427,7 +433,7 @@ class WidgetTable:
                 current_col += 1
 
             # Change the frame_containing_cells height
-            if self.label_title["text"] != "":
+            if self.label_title["text"] != " " or self.label_title["text"] != "":
                 frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height() - 25
             else:
                 frame_canvas_height = self.frame.winfo_height() - self.frame_containing_headers.winfo_height()
