@@ -5,13 +5,13 @@ The goal of this project is to create a software to handle multiple functions (s
 ## Usage
 ### Clone the project
 ```
-clone https://github.com/mousqtr/Raven.git
+clone https://github.com/mousqtr/PythonSoftware.git
 ```
 or download and extract the .zip file
 
 ### Create and activate the virtual environment in the folder
 ```
-cd Raven
+cd PythonSoftware
 python -m venv venv
 venv\Scripts\activate.bat
 ```
