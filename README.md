@@ -28,3 +28,15 @@ python main.py
 Home page           |  Open the left menu
 :-------------------------:|:-------------------------:
 <img src="/resources/images/image1.png?raw=true" alt="preview" style="width: 100px;"/>  |  <img src="/resources/images/image2.png?raw=true" alt="preview" style="width: 100px;"/>
+
+Create a new page          |  Choose the page format
+:-------------------------:|:-------------------------:
+<img src="/resources/images/image3.png?raw=true" alt="preview" style="width: 100px;"/>  |  <img src="/resources/images/image4.png?raw=true" alt="preview" style="width: 100px;"/>
+
+Create the widget section        |  Enter in widget mode
+:-------------------------:|:-------------------------:
+<img src="/resources/images/image5.png?raw=true" alt="preview" style="width: 100px;"/>  |  <img src="/resources/images/image6.png?raw=true" alt="preview" style="width: 100px;"/>
+
+Choose the widget        |  Customize the widget
+:-------------------------:|:-------------------------:
+<img src="/resources/images/image7.png?raw=true" alt="preview" style="width: 100px;"/>  |  <img src="/resources/images/image8.png?raw=true" alt="preview" style="width: 100px;"/>
