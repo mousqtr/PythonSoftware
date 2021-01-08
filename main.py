@@ -81,17 +81,6 @@ window_login = Login(main_window.frame)
 # button_login = ButtonTopText("Se connecter", 2, frame_top.third_top_frame, window_login.create_login_window)
 
 
-# Initialization of the edit button
-# def edit_page():
-#     if len(frame_right.frames_content) > 0:
-#         EditPage(main_window.frame, frame_left, frame_right, frame_top)
-
-    # print(frame_left.widgets_frames)
-
-
-# button_edit_page = ButtonTopText("Editer la page", 0, frame_top.third_top_frame, edit_page)
-
-
 # Initialization of the create page button
 def add_page():
     """ Function called when the user clicks on the add_page button """
@@ -137,18 +126,3 @@ main_window.frame.protocol("WM_DELETE_WINDOW", on_closing)
 # Launch the GUI
 main_window.frame.mainloop()
 
-
-
-
-
-# # Widget group
-# Widget_group_1 = WidgetGroup(1)
-# Widget_group_2 = WidgetGroup(2)
-
-# # Widgets
-# Widget_summary = Summary(Frame_dashboard, Widget_group_1, 1)
-# Widget_donut_chart = DonutChart(Frame_dashboard, Widget_group_1, 2)
-# Widget_research = Filters(Frame_research, Widget_group_1, 1)
-# Widget_table_1 = Table(Frame_research, Widget_group_1, 2)
-# Widget_modifier = Modifiers(Frame_modification, Widget_group_1, 1)
-# Widget_table_2 = Table(Frame_modification, Widget_group_2, 2)

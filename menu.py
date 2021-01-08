@@ -27,7 +27,7 @@ class Menu:
         self.widget_images = p_widget_images
 
         # Creation of the menu
-        menu_bar = tk.Menu(self.main_window.frame)
+        menu_bar = tk.Menu(self.main_window.frame, activeforeground   = "#0000FF")
 
         # File button
         menu_file = tk.Menu(menu_bar, tearoff=0)
