@@ -23,3 +23,8 @@ pip install -r requirements.txt
 ```
 python main.py
 ```
+
+## Preview
+Home page           |  Open the left menu
+:-------------------------:|:-------------------------:
+<img src="/resources/images/image1.png?raw=true" alt="preview" style="width: 100px;"/>  |  <img src="/resources/images/image2.png?raw=true" alt="preview" style="width: 100px;"/>
