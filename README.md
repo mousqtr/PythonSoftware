@@ -5,7 +5,7 @@ The goal of this project is to create a software to handle multiple functions (s
 ## Usage
 ### Clone the project
 ```
-clone https://github.com/mousqtr/PythonSoftware.git
+git clone https://github.com/mousqtr/PythonSoftware.git
 ```
 or download and extract the .zip file
 
